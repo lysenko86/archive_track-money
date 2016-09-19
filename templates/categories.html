@@ -1,0 +1,21 @@
+<div class="alert" ng-class="message.class" ng-if="message.text">{{message.text}}</div>
+<div class="row">
+	<div class="col-xs-6">
+		<h3>Доходи<button class="btn btn-primary btn-sm pull-right" ng-click="addCategory('plus')">Додати</button></h3>
+		<ul class="list-group" ng-if="catsPlus.length">
+			<li class="list-group-item" ng-repeat="cat in catsPlus">
+				<span ng-click="editCategory('plus', cat.id, cat.title)">{{cat.title}}</span>
+				<a href="" title="Видалити" class="pull-right" ng-click="delCategory('plus', cat.id)"><span class="glyphicon glyphicon-remove"></span></a>
+			</li>
+		</ul>
+	</div>
+	<div class="col-xs-6">
+		<h3>Витрати<button class="btn btn-primary btn-sm pull-right" ng-click="addCategory('minus')">Додати</button></h3>
+		<ul class="list-group" ng-if="catsMinus.length">
+			<li class="list-group-item" ng-repeat="cat in catsMinus">
+				<span ng-click="editCategory('minus', cat.id, cat.title)">{{cat.title}}</span>
+				<a href="" title="Видалити" class="pull-right" ng-click="delCategory('minus', cat.id)"><span class="glyphicon glyphicon-remove"></span></a>
+			</li>
+		</ul>
+	</div>
+</div>
