@@ -1,5 +1,5 @@
 <?php
-    $dbName = 'money';
-    $dbUser = 'root';
-    $dbPass = '';
+    $dbName = 'db_money';
+    $dbUser = 'u_money';
+    $dbPass = 'wPA602Pr';
 ?>
