@@ -1,0 +1,47 @@
+<div class="alert" ng-class="message.class" ng-if="message.text">{{message.text}}</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="panel panel-default panel-primary panelForm-add" ng-show="formType == 'add'">
+			<div class="panel-heading">Додавання рахунку</div>
+			<div class="panel-body">
+				<form class="form-inline" ng-submit="addAccount()">
+					<ng-include src="'templates/_fieldsAccount.html'"></ng-include>
+					<button type="submit" class="btn btn-primary">Додати</button>
+				</form>
+			</div>
+		</div>
+		<div class="panel panel-default panel-primary panelForm-edit" ng-show="formType == 'edit'">
+			<div class="panel-heading">Редагування рахунку</div>
+			<div class="panel-body">
+				<form class="form-inline" ng-submit="editAccount()">
+					<ng-include src="'templates/_fieldsAccount.html'"></ng-include>
+					<button type="submit" class="btn btn-primary">Зберегти</button>
+					<button type="button" class="btn btn-default" ng-click="getAccount()">Відмінити</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<table class="table table-bordered table-hover" ng-if="accounts.length">
+			<thead class="bg-primary"><tr>
+				<th width="70px">ID</th>
+				<th>Назва</th>
+				<th width="90px">Баланс</th>
+				<th width="60px">Дії</th>
+			</tr></thead>
+			<tbody>
+				<tr ng-repeat="item in accounts">
+					<td>{{item.id}}</td>
+					<td>{{item.title}}</td>
+					<td>{{item.balance}}</td>
+					<td class="text-center">
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getAccount(item.id)"></span></button>
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delAccount(item.id)"></span></button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

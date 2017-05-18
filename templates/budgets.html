@@ -1,0 +1,126 @@
+<div class="alert" ng-class="message.class" ng-if="message.text">{{message.text}}</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="panel panel-default panel-primary panelForm-add" ng-show="formType == 'add'">
+			<div class="panel-heading">Додавання категорії</div>
+			<div class="panel-body">
+				<form class="form-inline" ng-submit="addCategory()">
+					<ng-include src="'templates/_fieldsBudget.html'"></ng-include>
+					<button type="submit" class="btn btn-primary">Додати</button>
+				</form>
+			</div>
+		</div>
+		<div class="panel panel-default panel-primary panelForm-edit" ng-show="formType == 'edit'">
+			<div class="panel-heading">Редагування категорії</div>
+			<div class="panel-body">
+				<form class="form-inline" ng-submit="editCategory()">
+					<ng-include src="'templates/_fieldsBudget.html'"></ng-include>
+					<button type="submit" class="btn btn-primary">Зберегти</button>
+					<button type="button" class="btn btn-default" ng-click="getCategory()">Відмінити</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="panel panel-default panel-primary">
+			<div class="panel-heading">Бюджет за...</div>
+			<div class="panel-body">
+				<form class="form-inline" ng-submit="getBudget()">
+					<div class="form-group">
+						<label for="month">Місяць:</label>
+						<select class="form-control" id="month" ng-model="budget.month">
+							<option value="">- Оберіть -</option>
+							<option value="1">Січень</option>
+							<option value="2">Лютий</option>
+							<option value="3">Березень</option>
+							<option value="4">Квітень</option>
+							<option value="5">Травень</option>
+							<option value="6">Червень</option>
+							<option value="7">Липень</option>
+							<option value="8">Серпень</option>
+							<option value="9">Вересень</option>
+							<option value="10">Жовтень</option>
+							<option value="11">Листопад</option>
+							<option value="12">Грудень</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="year">Рік:</label>
+						<input type="text" class="form-control" id="year" ng-model="budget.year" placeholder="2017" maxLength="4" size="1" />
+					</div>
+					<button type="submit" class="btn btn-primary">Показати</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-6 balance-head text-right">Баланс план: <span class="{{budget.plusPlan - budget.minusPlan >= 0 ? 'plus' : 'minus'}}">{{budget.plusPlan - budget.minusPlan}}</span></div>
+	<div class="col-xs-6 balance-head text-left">Баланс факт: <span class="{{budget.plusFact - budget.minusFact >= 0 ? 'plus' : 'minus'}}">{{budget.plusFact - budget.minusFact}}</span></div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<table class="table table-bordered table-hover" ng-if="budget.categories.length">
+			<thead class="over-head"><tr>
+				<th colspan="2">Доходи</th>
+				<th>{{budget.plusPlan}}</th>
+				<th>{{budget.plusFact}}</th>
+				<th></th>
+				<th></th>
+			</tr></thead>
+			<thead class="bg-primary"><tr>
+				<th width="70px">ID</th>
+				<th>Категорія</th>
+				<th width="90px">План</th>
+				<th width="90px">Факт</th>
+				<th width="110px">Залишилось</th>
+				<th width="60px">Дії</th>
+			</tr></thead>
+			<tbody>
+				<tr ng-repeat="item in budget.categories" ng-if="item.type=='plus'">
+					<td>{{item.id}}</td>
+					<td>{{item.category_title}}</td>
+					<td>{{item.plan}}</td>
+					<td>{{item.fact}}</td>
+					<td class="budget-sum{{item.plan - item.fact < 0 ? ' over' : '' }} {{item.type}}">{{item.plan - item.fact < 0 ? (item.type == 'plus' ? '+' : '-') : ''}}{{mathAbs(item.plan - item.fact)}}</td>
+					<td class="text-center">
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getCategory(item.id)"></span></button>
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delCategory(item.id)"></span></button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="table table-bordered table-hover" ng-if="budget.categories.length">
+			<thead class="over-head"><tr>
+				<th colspan="2">Витрати</th>
+				<th>{{budget.minusPlan}}</th>
+				<th>{{budget.minusFact}}</th>
+				<th></th>
+				<th></th>
+			</tr></thead>
+			<thead class="bg-primary"><tr>
+				<th width="70px">ID</th>
+				<th>Категорія</th>
+				<th width="90px">План</th>
+				<th width="90px">Факт</th>
+				<th width="110px">Залишилось</th>
+				<th width="60px">Дії</th>
+			</tr></thead>
+			<tbody>
+				<tr ng-repeat="item in budget.categories" ng-if="item.type=='minus'">
+					<td>{{item.id}}</td>
+					<td>{{item.category_title}}</td>
+					<td>{{item.plan}}</td>
+					<td>{{item.fact}}</td>
+					<td class="budget-sum{{item.plan - item.fact < 0 ? ' over' : '' }} {{item.type}}">{{item.plan - item.fact < 0 ? (item.type == 'plus' ? '+' : '-') : ''}}{{mathAbs(item.plan - item.fact)}}</td>
+					<td class="text-center">
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getCategory(item.id)"></span></button>
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delCategory(item.id)"></span></button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

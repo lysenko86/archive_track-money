@@ -1,103 +1,455 @@
-moneyApp.controller('menuCtrl', function($scope, $cookies){
-	$scope.auth = $cookies.get('user');
+"use strict";
+
+moneyApp.controller('menuCtrl', function($location, $scope){
+	$scope.setActive = function(path){
+		return ($location.path().substr(0, path.length) === path) ? 'active' : '';
+	}
 });
 
 
 
-moneyApp.controller('homeCtrl', function(){});
+moneyApp.controller('homeCtrl', function($scope, messagesServ){
+	$scope.message = messagesServ.message;
+});
 
 
 
-moneyApp.controller('regCtrl', function($scope, usersServices, messagesServices){
-	$scope.message = messagesServices.message;
-	$scope.user = {
-		email: '',
-		pass: '',
-		name: '',
-		city: ''
+moneyApp.controller('actionsCtrl', function($scope, messagesServ, actionsServ, categoriesServ, accountsServ){
+	$scope.message = messagesServ.message;
+	let obj = new Date();
+	let d = '0' + obj.getDate();
+	let m = '0' + (obj.getMonth()+1);
+	$scope.today = d.substr(d.length-2, 2) + '.' + m.substr(m.length-2, 2) + '.' + obj.getFullYear();
+	$scope.action = {
+		date: $scope.today,
+		type: '',
+		accountFrom_id: '',
+		accountTo_id: '',
+		category_id: '',
+		sum: '',
+		description: ''
 	};
-	$scope.submit = function(){
-		if (!$scope.user.email || !$scope.user.pass || !$scope.user.name){
-			messagesServices.showMessage('error', 'Помилка! Треба ввести E-mail, пароль та ім\'я!');
-		}
-		else{
-			usersServices.regUser($scope.user, function(data){
-				$scope.user.email = $scope.user.pass = $scope.user.name = $scope.user.city = '';
-				messagesServices.showMessage(data.status, data.msg);
-            });
-		}
-	}
-});
-
-
-
-moneyApp.controller('loginCtrl', function($scope, $cookies, $location, $window, usersServices, messagesServices){
-	$scope.message = messagesServices.message;
-	$scope.email = '';
-	$scope.pass = '';
-	$scope.submit = function(){
-        if (!$scope.email || !$scope.pass){
-            messagesServices.showMessage('error', 'Помилка! Треба ввести E-mail та пароль!');
-        }
-        else{
-            usersServices.getUserByEmailPass($scope.email, $scope.pass, function(data){
-                $scope.email = $scope.pass = '';
-                messagesServices.showMessage(data.status, data.msg);
-                if (data.status == 'success'){
-					$cookies.put('user', data.arr.id);
-					$location.path('/');
-					$window.location.reload();
-                }
-            });
-        }
-	}
-});
-
-
-
-moneyApp.controller('logoutCtrl', function($cookies, $location, $window){
-	$cookies.remove('user');
-	$location.path('/');
-	$window.location.reload();
-});
-
-
-
-moneyApp.controller('categoriesCtrl', function($scope, $cookies, categoriesServices, messagesServices){
-	$scope.message = messagesServices.message;
-	$scope.catsPlus = [];
-	$scope.catsMinus = [];
-	categoriesServices.getCategories($cookies.get('user'), function(data){
+	$scope.actions = $scope.categories = $scope.accounts = [];
+	$scope.formType = 'add';
+	$scope.editID = '';
+	$scope.types = {
+		plus: 'Доходи',
+		minus: 'Витрати',
+		move: 'Переказ'
+	};
+	categoriesServ.getCategories(function(data){
 		if (data.status == 'success'){
 			data.arr = data.arr ? data.arr : [];
-			for (var i=0; i<data.arr.length; i++){
-				if (data.arr[i].type == 'plus') $scope.catsPlus.push(data.arr[i]);
-				else $scope.catsMinus.push(data.arr[i]);
-			}
+			$scope.categories = data.arr;
 		}
 	});
-	$scope.addCategory = function(type){
-		var title = 'Нова категорія ' + (type == 'plus' ? 'доходів' : 'витрат');
-		categoriesServices.addCategory($cookies.get('user'), type, title, function(data){
-			messagesServices.showMessage(data.status, data.msg);
-			if (data.arr.type == 'plus') $scope.catsPlus.push({title: data.arr.title});
-			else $scope.catsMinus.push({title: data.arr.title});
-		});
-	}
-	$scope.delCategory = function(type, cid){
-		if (confirm('Ви точно хочете видалити цю категорію?')){
-			categoriesServices.delCategory(cid, function(data){
-				var arr = type == 'plus' ? $scope.catsPlus : $scope.catsMinus;
-				for (var i=0; i<arr.length; i++){
-					if (arr[i].id == cid) arr.splice(i, 1);
-				}
-				if (type == 'plus') $scope.catsPlus = arr;
-				else $scope.catsMinus = arr;
-				messagesServices.showMessage(data.status, data.msg);
+	accountsServ.getAccounts(function(data){
+		if (data.status == 'success'){
+			data.arr = data.arr ? data.arr : [];
+			$scope.accounts = data.arr;
+		}
+	});
+	actionsServ.getActions(function(data){
+		if (data.status == 'success'){
+			data.arr = data.arr ? data.arr : [];
+			$scope.actions = data.arr;
+		}
+	});
+	$scope.getAction = function(id){
+		if (id == undefined){
+			$scope.formType = 'add';
+			$scope.action.date = $scope.today;
+			$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = $scope.editID = '';
+		}
+		else{
+			$scope.editID = id;
+			actionsServ.getAction(id, function(data){
+				$scope.formType = 'edit';
+				$scope.action.date = data.arr.date;
+				$scope.action.type = data.arr.type;
+				$scope.action.accountFrom_id = data.arr.accountFrom_id;
+				$scope.action.accountTo_id = data.arr.accountTo_id;
+				$scope.action.category_id = data.arr.category_id;
+				$scope.action.sum = data.arr.sum;
+				$scope.action.description = data.arr.description;
 			});
 		}
 	}
-	$scope.editCategory = function(type, cid, title){
-		console.log(type, cid, title);
+	$scope.addAction = function(){
+		if (!$scope.action.type){
+			messagesServ.showMessage('error', 'Помилка! Поле "Тип" обов\'язкове для заповнення!');
+		}
+		else if ($scope.action.type == 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.accountTo_id || !$scope.action.sum)){
+			messagesServ.showMessage('error', 'Помилка! Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!');
+		}
+		else if ($scope.action.type != 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.category_id || !$scope.action.sum)){
+			messagesServ.showMessage('error', 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!');
+		}
+		else if (!/^\d{2}\.\d{2}\.\d{4}$/.test($scope.action.date)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!');
+		}
+		else if (!/^[\d\.]+$/.test($scope.action.sum)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Сума" має бути числовим!');
+		}
+		else{
+			if ($scope.action.type == 'move'){
+				$scope.action.category_id = '0';
+			}
+			else if ($scope.action.type != 'move'){
+				$scope.action.accountTo_id = '0';
+			}
+			actionsServ.addAction($scope.action, function(data){
+				if (data.status == 'success'){
+					$scope.actions.push(data.arr);
+					$scope.action.date = $scope.today;
+					$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
+				}
+				messagesServ.showMessage(data.status, data.msg);
+            });
+		}
+	}
+	$scope.editAction = function(){
+		if (!$scope.action.type){
+			messagesServ.showMessage('error', 'Помилка! Поле "Тип" обов\'язкове для заповнення!');
+		}
+		else if ($scope.action.type == 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.accountTo_id || !$scope.action.sum)){
+			messagesServ.showMessage('error', 'Помилка! Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!');
+		}
+		else if ($scope.action.type != 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.category_id || !$scope.action.sum)){
+			messagesServ.showMessage('error', 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!');
+		}
+		else if (!/^\d{2}\.\d{2}\.\d{4}$/.test($scope.action.date)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!');
+		}
+		else if (!/^[\d\.]+$/.test($scope.action.sum)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Сума" має бути числовим!');
+		}
+		else{
+			if ($scope.action.type == 'move'){
+				$scope.action.category_id = '0';
+			}
+			else if ($scope.action.type != 'move'){
+				$scope.action.accountTo_id = '0';
+			}
+			actionsServ.editAction($scope.editID, $scope.action, function(data){
+				if (data.status == 'success'){
+					$scope.formType = 'add';
+					for (var i=0; i<$scope.actions.length; i++){
+						if ($scope.actions[i].id == $scope.editID){
+							$scope.actions[i] = data.arr;
+						}
+					}
+					$scope.action.date = $scope.today;
+					$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = $scope.editID = '';
+				}
+				messagesServ.showMessage(data.status, data.msg);
+			});
+		}
+	}
+	$scope.delAction = function(id){
+		if (confirm('Ви точно хочете видалити цю транзакцію?')){
+			actionsServ.delAction(id, function(data){
+				if (data.status == 'success'){
+					for (var i=0; i<$scope.actions.length; i++){
+						if ($scope.actions[i].id == id) $scope.actions.splice(i, 1);
+					}
+				}
+				messagesServ.showMessage(data.status, data.msg);
+			});
+		}
+	}
+});
+
+
+
+moneyApp.controller('categoriesCtrl', function($scope, messagesServ, categoriesServ){
+	$scope.message = messagesServ.message;
+	$scope.category = {
+		title: '',
+		type: ''
+	};
+	$scope.categories = [];
+	$scope.formType = 'add';
+	$scope.editID = '';
+	$scope.types = {
+		plus: 'Доходи',
+		minus: 'Витрати'
+	};
+	categoriesServ.getCategories(function(data){
+		if (data.status == 'success'){
+			data.arr = data.arr ? data.arr : [];
+			$scope.categories = data.arr;
+		}
+	});
+	$scope.getCategory = function(id){
+		if (id == undefined){
+			$scope.formType = 'add';
+			$scope.category.title = $scope.category.type = $scope.editID = '';
+		}
+		else{
+			$scope.editID = id;
+			categoriesServ.getCategory(id, function(data){
+				$scope.formType = 'edit';
+				$scope.category.title = data.arr.title;
+				$scope.category.type = data.arr.type;
+			});
+		}
+	}
+	$scope.addCategory = function(){
+		if (!$scope.category.title || !$scope.category.type){
+			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Тип" обов\'язкові для заповнення!');
+		}
+		else{
+			categoriesServ.addCategory($scope.category, function(data){
+				if (data.status == 'success'){
+					$scope.categories.push(data.arr);
+					$scope.category.title = $scope.category.type = '';
+				}
+				messagesServ.showMessage(data.status, data.msg);
+            });
+		}
+	}
+	$scope.editCategory = function(){
+		if (!$scope.category.title || !$scope.category.type){
+			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Тип" обов\'язкові для заповнення!');
+		}
+		else{
+			categoriesServ.editCategory($scope.editID, $scope.category, function(data){
+				if (data.status == 'success'){
+					$scope.formType = 'add';
+					for (var i=0; i<$scope.categories.length; i++){
+						if ($scope.categories[i].id == $scope.editID){
+							$scope.categories[i] = data.arr;
+						}
+					}
+					$scope.category.title = $scope.category.type = $scope.editID = '';
+				}
+				messagesServ.showMessage(data.status, data.msg);
+			});
+		}
+	}
+	$scope.delCategory = function(id){
+		if (confirm('Ви точно хочете видалити цю категорію?')){
+			categoriesServ.delCategory(id, function(data){
+				if (data.status == 'success'){
+					for (var i=0; i<$scope.categories.length; i++){
+						if ($scope.categories[i].id == id) $scope.categories.splice(i, 1);
+					}
+				}
+				messagesServ.showMessage(data.status, data.msg);
+			});
+		}
+	}
+});
+
+
+
+moneyApp.controller('accountsCtrl', function($scope, messagesServ, accountsServ){
+	$scope.message = messagesServ.message;
+	$scope.account = {
+		title: '',
+		balance: ''
+	};
+	$scope.accounts = [];
+	$scope.formType = 'add';
+	$scope.editID = '';
+	accountsServ.getAccounts(function(data){
+		if (data.status == 'success'){
+			data.arr = data.arr ? data.arr : [];
+			$scope.accounts = data.arr;
+		}
+	});
+	$scope.getAccount = function(id){
+		if (id == undefined){
+			$scope.formType = 'add';
+			$scope.account.title = $scope.account.balance = $scope.editID = '';
+		}
+		else{
+			$scope.editID = id;
+			accountsServ.getAccount(id, function(data){
+				$scope.formType = 'edit';
+				$scope.account.title = data.arr.title;
+				$scope.account.balance = data.arr.balance;
+			});
+		}
+	}
+	$scope.addAccount = function(){
+		if (!$scope.account.title || $scope.account.balance == ''){
+			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
+		}
+		else if (!/^[\d\.]+$/.test($scope.account.balance)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
+		}
+		else{
+			accountsServ.addAccount($scope.account, function(data){
+				if (data.status == 'success'){
+					$scope.accounts.push(data.arr);
+					$scope.account.title = $scope.account.balance = '';
+				}
+				messagesServ.showMessage(data.status, data.msg);
+            });
+		}
+	}
+	$scope.editAccount = function(){
+		if (!$scope.account.title || $scope.account.balance == ''){
+			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
+		}
+		else if (!/^[\d\.]+$/.test($scope.account.balance)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
+		}
+		else{
+			accountsServ.editAccount($scope.editID, $scope.account, function(data){
+				if (data.status == 'success'){
+					$scope.formType = 'add';
+					for (var i=0; i<$scope.accounts.length; i++){
+						if ($scope.accounts[i].id == $scope.editID){
+							$scope.accounts[i] = data.arr;
+						}
+					}
+					$scope.account.title = $scope.account.type = $scope.editID = '';
+				}
+				messagesServ.showMessage(data.status, data.msg);
+			});
+		}
+	}
+	$scope.delAccount = function(id){
+		if (confirm('Ви точно хочете видалити цей рахунок?')){
+			accountsServ.delAccount(id, function(data){
+				if (data.status == 'success'){
+					for (var i=0; i<$scope.accounts.length; i++){
+						if ($scope.accounts[i].id == id) $scope.accounts.splice(i, 1);
+					}
+				}
+				messagesServ.showMessage(data.status, data.msg);
+			});
+		}
+	}
+});
+
+
+
+moneyApp.controller('budgetsCtrl', function($scope, messagesServ, budgetsServ, categoriesServ){
+	$scope.message = messagesServ.message;
+	let obj = new Date();
+	$scope.budget = {
+		month: obj.getMonth()+1+'',
+		year: obj.getFullYear(),
+		categories: [],
+		plusPlan: '',
+		plusFact: '',
+		minusPlan: '',
+		minusFact: ''
+	};
+	$scope.category = {
+		month: '',
+		year: '',
+		category_id: '',
+		sum: ''
+	};
+	$scope.categories = [];
+	$scope.formType = 'add';
+	$scope.editID = '';
+	$scope.mathAbs = window.Math.abs;
+	categoriesServ.getCategories(function(data){
+		if (data.status == 'success'){
+			data.arr = data.arr ? data.arr : [];
+			$scope.categories = data.arr;
+		}
+	});
+	$scope.getBudget = function(){
+		if (!$scope.budget.month || !$scope.budget.year){
+			messagesServ.showMessage('error', 'Помилка! Поля "Місяць" та "Рік" обов\'язкові для заповнення!');
+		}
+		else if (!/^\d{4}$/.test($scope.budget.year)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
+		}
+		else{
+			budgetsServ.getBudget($scope.budget, function(data){
+				$scope.budget.categories = data.arr;
+				for (var i=0; i<$scope.budget.categories.length; i++){
+					if ($scope.budget.categories[i].type == 'plus'){
+						$scope.budget.plusPlan = $scope.budget.plusPlan*1 + $scope.budget.categories[i].plan*1;
+						$scope.budget.plusFact = $scope.budget.plusFact*1 + $scope.budget.categories[i].fact*1;
+					}
+					else{
+						$scope.budget.minusPlan = $scope.budget.minusPlan*1 + $scope.budget.categories[i].plan*1;
+						$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
+					}
+				}
+			});
+		}
+	}
+	$scope.getBudget();
+	$scope.getCategory = function(id){
+		if (id == undefined){
+			$scope.formType = 'add';
+			$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = $scope.editID = '';
+		}
+		else{
+			$scope.editID = id;
+			budgetsServ.getCategory(id, function(data){
+				$scope.formType = 'edit';
+				$scope.category.month = data.arr.month;
+				$scope.category.year = data.arr.year;
+				$scope.category.category_id = data.arr.category_id;
+				$scope.category.sum = data.arr.sum;
+			});
+		}
+	}
+	$scope.addCategory = function(){
+		if (!$scope.category.month || !$scope.category.year || !$scope.category.category_id || !$scope.category.sum){
+			messagesServ.showMessage('error', 'Помилка! Поля "Місяць", "Рік", "Категорія" та "Сума" обов\'язкові для заповнення!');
+		}
+		else if (!/^\d{4}$/.test($scope.category.year)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
+		}
+		else if (!/^[\d\.]+$/.test($scope.category.sum)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Сума" має бути числовим!');
+		}
+		else{
+			budgetsServ.addCategory($scope.category, function(data){
+				if (data.status == 'success'){
+					$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = '';
+				}
+				messagesServ.showMessage(data.status, data.msg);
+            });
+		}
+	}
+	$scope.editCategory = function(){
+		if (!$scope.category.month || !$scope.category.year || !$scope.category.category_id || !$scope.category.sum){
+			messagesServ.showMessage('error', 'Помилка! Поля "Місяць", "Рік", "Категорія" та "Сума" обов\'язкові для заповнення!');
+		}
+		else if (!/^\d{4}$/.test($scope.category.year)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
+		}
+		else if (!/^[\d\.]+$/.test($scope.category.sum)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Сума" має бути числовим!');
+		}
+		else{
+			budgetsServ.editCategory($scope.editID, $scope.category, function(data){
+				if (data.status == 'success'){
+					$scope.formType = 'add';
+					for (var i=0; i<$scope.budget.categories.length; i++){
+						if ($scope.budget.categories[i].id == $scope.editID){
+							$scope.budget.categories[i] = data.arr;
+						}
+					}
+					$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = $scope.editID = '';
+				}
+				messagesServ.showMessage(data.status, data.msg);
+			});
+		}
+	}
+	$scope.delCategory = function(id){
+		if (confirm('Ви точно хочете видалити цю категорію?')){
+			budgetsServ.delCategory(id, function(data){
+				if (data.status == 'success'){
+					for (var i=0; i<$scope.budget.categories.length; i++){
+						if ($scope.budget.categories[i].id == id) $scope.budget.categories.splice(i, 1);
+					}
+				}
+				messagesServ.showMessage(data.status, data.msg);
+			});
+		}
 	}
 });

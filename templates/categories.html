@@ -1,21 +1,47 @@
 <div class="alert" ng-class="message.class" ng-if="message.text">{{message.text}}</div>
 <div class="row">
-	<div class="col-xs-6">
-		<h3>Доходи<button class="btn btn-primary btn-sm pull-right" ng-click="addCategory('plus')">Додати</button></h3>
-		<ul class="list-group" ng-if="catsPlus.length">
-			<li class="list-group-item" ng-repeat="cat in catsPlus">
-				<span ng-click="editCategory('plus', cat.id, cat.title)">{{cat.title}}</span>
-				<a href="" title="Видалити" class="pull-right" ng-click="delCategory('plus', cat.id)"><span class="glyphicon glyphicon-remove"></span></a>
-			</li>
-		</ul>
+	<div class="col-xs-12">
+		<div class="panel panel-default panel-primary panelForm-add" ng-show="formType == 'add'">
+			<div class="panel-heading">Додавання категорії</div>
+			<div class="panel-body">
+				<form class="form-inline" ng-submit="addCategory()">
+					<ng-include src="'templates/_fieldsCategory.html'"></ng-include>
+					<button type="submit" class="btn btn-primary">Додати</button>
+				</form>
+			</div>
+		</div>
+		<div class="panel panel-default panel-primary panelForm-edit" ng-show="formType == 'edit'">
+			<div class="panel-heading">Редагування категорії</div>
+			<div class="panel-body">
+				<form class="form-inline" ng-submit="editCategory()">
+					<ng-include src="'templates/_fieldsCategory.html'"></ng-include>
+					<button type="submit" class="btn btn-primary">Зберегти</button>
+					<button type="button" class="btn btn-default" ng-click="getCategory()">Відмінити</button>
+				</form>
+			</div>
+		</div>
 	</div>
-	<div class="col-xs-6">
-		<h3>Витрати<button class="btn btn-primary btn-sm pull-right" ng-click="addCategory('minus')">Додати</button></h3>
-		<ul class="list-group" ng-if="catsMinus.length">
-			<li class="list-group-item" ng-repeat="cat in catsMinus">
-				<span ng-click="editCategory('minus', cat.id, cat.title)">{{cat.title}}</span>
-				<a href="" title="Видалити" class="pull-right" ng-click="delCategory('minus', cat.id)"><span class="glyphicon glyphicon-remove"></span></a>
-			</li>
-		</ul>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<table class="table table-bordered table-hover" ng-if="categories.length">
+			<thead class="bg-primary"><tr>
+				<th width="70px">ID</th>
+				<th>Назва</th>
+				<th width="80px">Тип</th>
+				<th width="60px">Дії</th>
+			</tr></thead>
+			<tbody>
+				<tr ng-repeat="item in categories">
+					<td>{{item.id}}</td>
+					<td>{{item.title}}</td>
+					<td>{{types[item.type]}}</td>
+					<td class="text-center">
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getCategory(item.id)"></span></button>
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delCategory(item.id)"></span></button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </div>

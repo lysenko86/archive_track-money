@@ -1,0 +1,44 @@
+<div class="form-group">
+	<label for="date">Дата:</label>
+	<input type="text" class="form-control" id="date" ng-model="action.date" placeholder="01.01.2017" maxLength="10" size="6" />
+</div>
+<div class="form-group">
+	<label for="type">Тип:</label>
+	<select class="form-control" id="type" ng-model="action.type">
+		<option value=''>- Оберіть -</option>
+		<option value='plus'>Дохід</option>
+		<option value='minus'>Витрата</option>
+		<option value='move'>Переказ</option>
+	</select>
+</div>
+<div class="form-group">
+	<label for="accountFrom_id" ng-if="action.type!='move'">Рахунок:</label>
+	<label for="accountFrom_id" ng-if="action.type=='move'">Звідки:</label>
+	<select class="form-control" id="accountFrom_id" ng-model="action.accountFrom_id">
+		<option value=''>- Оберіть -</option>
+		<option ng-repeat="item in accounts" value='{{item.id}}'>{{item.title}}</option>
+	</select>
+</div>
+<div class="form-group" ng-if="action.type=='move'">
+	<label for="accountTo_id">Куди:</label>
+	<select class="form-control" id="accountTo_id" ng-model="action.accountTo_id">
+		<option value=''>- Оберіть -</option>
+		<option ng-repeat="item in accounts" value='{{item.id}}'>{{item.title}}</option>
+	</select>
+</div>
+<div class="form-group" ng-if="action.type!='move'">
+	<label for="category_id">Категорія:</label>
+	<select class="form-control" id="category_id" ng-model="action.category_id">
+		<option value=''>- Оберіть -</option>
+		<option ng-repeat="item in categories" value='{{item.id}}' ng-if="action.type==item.type">{{item.title}}</option>
+	</select>
+</div>
+<br/><br/>
+<div class="form-group">
+	<label for="sum">Сума:</label>
+	<input type="text" class="form-control" id="sum" ng-model="action.sum" placeholder="0.00" size="7" />
+</div>
+<div class="form-group">
+	<label for="description">Коментар:</label>
+	<input type="text" class="form-control" id="description" ng-model="action.description" placeholder="Коментар" size="70" />
+</div>

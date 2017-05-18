@@ -1,38 +1,33 @@
 <!DOCTYPE html>
 <html ng-app="moneyApp">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link type="text/css" href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link type="text/css" href="css/styles.css" rel="stylesheet">
-    <script type="text/javascript" src="libs/jquery/jquery-3.1.0.min.js"></script>
-    <script type="text/javascript" src="libs/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="libs/angular/angular.min.js"></script>
-	<script type="text/javascript" src="libs/angular/angular-route.min.js"></script>
-	<script type="text/javascript" src="libs/angular/angular-cookies.min.js"></script>
-    <script type="text/javascript" src="js/app.js"></script>
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link type="text/css" href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link type="text/css" href="css/styles.css" rel="stylesheet">
+	<script type="text/javascript" src="libs/jquery/jquery-3.1.0.min.js"></script>
+	<script type="text/javascript" src="libs/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="libs/angular/angular.min.js"></script>
+		<script type="text/javascript" src="libs/angular/angular-route.min.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript" src="js/services.js"></script>
 	<script type="text/javascript" src="js/controllers.js"></script>
+  <title>MONEY</title>
 </head>
 <body>
-    <div class="container">
+	<div class="container">
         <div class="row">
             <div class="col-xs-12">
                 <div class="header">
-                    <div class="logo"><a href="#/home"><img src="images/logo.png"></a></div>
+                    <div class="logo"><a href="/"><img src="images/logo.png"></a></div>
                     <div class="menu" ng-controller="menuCtrl">
-                        <ul ng-if="!auth">
-							<li><a href="#/home">Головна</a></li>
-                            <li><a href="#/login">Вхід</a></li>
-							<li><a href="#/reg">Реєстрація</a></li>
-                        </ul>
-                        <ul ng-if="auth">
-							<li><a href="#/home">Головна</a></li>
-							<li><a href="#/panel">Панель</a></li>
-                            <li><a href="#/budget">Бюджет</a></li>
-                            <li><a href="#/actions">Записи</a></li>
-                            <li><a href="#/accounts">Рахунки</a></li>
-                            <li><a href="#/categories">Категорії</a></li>
-                            <li><a href="#/logout">Вийти</a></li>
+                        <ul>
+							<li ng-class="setActive('/home')"><a href="#/home">Головна</a></li>
+							<li ng-class="setActive('/actions')"><a href="#/actions">Транзакції</a></li>
+                            <li ng-class="setActive('/categories')"><a href="#/categories">Категорії</a></li>
+                            <li ng-class="setActive('/accounts')"><a href="#/accounts">Рахунки</a></li>
+                            <li ng-class="setActive('/budget')"><a href="#/budgets">Бюджети</a></li>
                         </ul>
                     </div>
                     <div class="clearfix"></div>
@@ -50,7 +45,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <div class="footer">&copy;2016 Money. Всі права захищені</div>
+                <div class="footer">&copy;2017 Money. Всі права захищені</div>
             </div>
         </div>
     </div>

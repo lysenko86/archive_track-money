@@ -1,4 +1,6 @@
-var moneyApp = angular.module('moneyApp', ['ngRoute', 'ngCookies']);
+"use strict";
+
+var moneyApp = angular.module('moneyApp', ['ngRoute']);
 
 moneyApp.config(function($routeProvider){
 	$routeProvider
@@ -6,21 +8,21 @@ moneyApp.config(function($routeProvider){
 		templateUrl: 'templates/home.html',
 		controller: 'homeCtrl'
 	})
-	.when('/reg', {
-		templateUrl: 'templates/reg.html',
-		controller: 'regCtrl'
-	})
-	.when('/login', {
-		templateUrl: 'templates/login.html',
-		controller: 'loginCtrl'
-	})
-	.when('/logout', {
-		template: '',
-		controller: 'logoutCtrl'
+	.when('/actions', {
+		templateUrl: 'templates/actions.html',
+		controller: 'actionsCtrl'
 	})
 	.when('/categories', {
 		templateUrl: 'templates/categories.html',
 		controller: 'categoriesCtrl'
+	})
+	.when('/accounts', {
+		templateUrl: 'templates/accounts.html',
+		controller: 'accountsCtrl'
+	})
+	.when('/budgets', {
+		templateUrl: 'templates/budgets.html',
+		controller: 'budgetsCtrl'
 	})
 	.otherwise({
 		redirectTo: '/home'

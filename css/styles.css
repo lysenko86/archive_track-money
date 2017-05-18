@@ -3,48 +3,124 @@
     background-color: #678c40;
     color: #ffffff;
 }
-        .header .logo{
-            float: left;
-            padding: 8px
-        }
-                .header .logo img{
-                    width: 140px;
-                }
-        .header .authForm, .header .menu{
-            float: right;
-            padding-top: 20px;
-            padding-right: 20px;
-        }
-                .header .menu ul{
-                    list-style: inside none;
-                    margin: 0px;
-                    padding: 0px;
-                }
-                        .header .menu ul li{
-                            display: inline-block;
-                            padding: 7px 10px;
-                            border-radius: 3px;
-                        }
-                                .header .menu ul li a{
-                                    font-size: 16px;
-                                    line-height: 18px;
-                                    color: #ffffff;
-                                    text-decoration: none;
-                                }
-                                .header .menu ul li a:hover{
-                                    color: #e5dd8f;
-                                    text-decoration: none;
-                                }
-                        .header .menu ul li.active{
-                            background-color: #337ab7;
-                        }
-                                .header .menu ul li.active a{
-                                    color: #ffffff;
-                                }
+
+
+.header .logo{
+	float: left;
+	padding: 8px
+}
+	.header .logo img{
+		height: 54px;
+	}
+
+
+.header .menu{
+	float: right;
+	padding-top: 20px;
+	padding-right: 20px;
+}
+	.header .menu ul{
+		list-style: inside none;
+		margin: 0px;
+		padding: 0px;
+	}
+		.header .menu ul li{
+			display: inline-block;
+			padding: 7px 10px;
+			border-radius: 3px;
+		}
+			.header .menu ul li a{
+				font-size: 16px;
+				line-height: 18px;
+				color: #ffffff;
+				text-decoration: none;
+			}
+			.header .menu ul li a:hover{
+				color: #e5dd8f;
+				text-decoration: none;
+			}
+		.header .menu ul li.active{
+			background-color: #e5dd8f;
+		}
+			.header .menu ul li.active a{
+				color: #678c40;
+			}
+
+
 .main{
     background-color: #ffffff;
     padding: 40px 0px 30px;
 }
+
+
+.main .table{
+	border: none;
+}
+
+
+.main .table>thead>tr>th{
+	text-align: center;
+	border-bottom-width: 1px;
+}
+.main .table>thead.over-head>tr>th{
+	border: none;
+}
+	.main .table>thead.over-head>tr>th:first-child{
+		text-align: left;
+		padding: 2px;
+		font-size: 20px;
+	}
+
+
+.main .table>tbody>tr>td>.button-icon{
+	padding: 0;
+	cursor: pointer;
+	background: 0 0;
+	border: 0;
+	top: 2px;
+	position: relative;
+}
+	.main .table>tbody>tr>td>.button-icon>span{
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 1;
+		color: #000;
+		opacity: .2;
+	}
+	.main .table>tbody>tr>td>.button-icon>span:hover{
+		opacity: 1;
+	}
+.main .table>tbody>tr>td.action-sum.plus{
+	color: #390;
+}
+.main .table>tbody>tr>td.action-sum.minus{
+	color: #F80;
+}
+.main .table>tbody>tr>td.action-sum.move{
+	color: #333;
+}
+.main .table>tbody>tr>td.budget-sum.over.plus{
+	color: #390;
+}
+.main .table>tbody>tr>td.budget-sum.over.minus{
+	color: #FF0000;
+}
+
+
+.main .panel .panel-heading{
+	font-weight: 700;
+}
+.main .balance-head{
+	font-size: 20px;
+}
+	.main .balance-head span.plus{
+		color: #390;
+	}
+	.main .balance-head span.minus{
+		color: #F80;
+	}
+
+
 .footer{
     height: 30px;
     background-color: #e5dd90;
@@ -52,4 +128,33 @@
     padding-top: 9px;
     font-size: 12px;
     line-height: 14px;
+}
+
+
+
+
+
+
+
+@media screen and (max-width: 650px){
+
+
+.header .logo{
+	width: 148px;
+}
+
+
+.header .menu{
+	width: 180px;
+	padding-top: 2px;
+	padding-right: 8px;
+}
+	.header .menu ul li{
+		padding: 1px 5px;
+	}
+		.header .menu ul li a{
+			font-size: 14px;
+		}
+
+
 }
