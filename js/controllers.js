@@ -306,7 +306,7 @@ moneyApp.controller('accountsCtrl', function($scope, messagesServ, accountsServ)
 							$scope.accounts[i] = data.arr;
 						}
 					}
-					$scope.account.title = $scope.account.type = $scope.editID = '';
+					$scope.account.title = $scope.account.balance = $scope.editID = '';
 				}
 				messagesServ.showMessage(data.status, data.msg);
 			});
