@@ -321,7 +321,7 @@
                 $data['status'] = 'error';
                 $data['msg']    = 'Помилка! Значення полів "Назва" та "Баланс" не може бути пустим!';
             }
-			elseif (!preg_match('/^[\d\.]+$/', $balance)){
+			elseif (!preg_match('/^[\-\+\d\.]+$/', $balance)){
                 $data['status'] = 'error';
                 $data['msg']    = 'Помилка! Значення поля "Баланс" має бути числовим!';
             }
@@ -345,7 +345,7 @@
                 $data['status'] = 'error';
                 $data['msg']    = 'Помилка! Значення полів "Назва" та "Баланс" не може бути пустим!';
             }
-			elseif (!preg_match('/^[\d\.]+$/', $balance)){
+			elseif (!preg_match('/^[\-\+\d\.]+$/', $balance)){
                 $data['status'] = 'error';
                 $data['msg']    = 'Помилка! Значення поля "Баланс" має бути числовим!';
             }

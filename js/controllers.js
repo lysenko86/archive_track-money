@@ -277,7 +277,7 @@ moneyApp.controller('accountsCtrl', function($scope, messagesServ, accountsServ)
 		if (!$scope.account.title || $scope.account.balance == ''){
 			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
 		}
-		else if (!/^[\d\.]+$/.test($scope.account.balance)){
+		else if (!/^[\-\+\d\.]+$/.test($scope.account.balance)){
 			messagesServ.showMessage('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
 		}
 		else{
@@ -294,7 +294,7 @@ moneyApp.controller('accountsCtrl', function($scope, messagesServ, accountsServ)
 		if (!$scope.account.title || $scope.account.balance == ''){
 			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
 		}
-		else if (!/^[\d\.]+$/.test($scope.account.balance)){
+		else if (!/^[\-\+\d\.]+$/.test($scope.account.balance)){
 			messagesServ.showMessage('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
 		}
 		else{
