@@ -26,7 +26,7 @@
 					LEFT JOIN `accounts` AS `a1` ON (`a1`.`id` = `a`.`accountFrom_id`)
 					LEFT JOIN `accounts` AS `a2` ON (`a2`.`id` = `a`.`accountTo_id`)
 					LEFT JOIN `categories` AS `c` ON (`c`.`id` = `a`.`category_id`)
-				ORDER BY `a`.`date` DESC
+				ORDER BY `a`.`id` DESC
 			");
             $query->execute();
             $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
