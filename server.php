@@ -15,6 +15,9 @@
 
 
 		case 'getActions':
+            $from = trim($_GET['from']);
+            $count = trim($_GET['count']);
+            $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             $query = $db->prepare("
 				SELECT
 					`a`.*,
@@ -27,8 +30,9 @@
 					LEFT JOIN `accounts` AS `a2` ON (`a2`.`id` = `a`.`accountTo_id`)
 					LEFT JOIN `categories` AS `c` ON (`c`.`id` = `a`.`category_id`)
 				ORDER BY `a`.`id` DESC
+                LIMIT ?,?
 			");
-            $query->execute();
+            $query->execute(array($from, $count));
             $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
 			$data['status'] = 'success';
         break;
@@ -496,8 +500,8 @@
 
 
     }
-    
+
     echo json_encode($data);
-    
+
     $db = null;
 ?>

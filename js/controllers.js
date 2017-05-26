@@ -37,6 +37,7 @@ moneyApp.controller('actionsCtrl', function($scope, messagesServ, actionsServ, c
 		minus: 'Витрати',
 		move: 'Переказ'
 	};
+	$scope.isShowMoreButton = true;
 	categoriesServ.getCategories(function(data){
 		if (data.status == 'success'){
 			data.arr = data.arr ? data.arr : [];
@@ -49,12 +50,18 @@ moneyApp.controller('actionsCtrl', function($scope, messagesServ, actionsServ, c
 			$scope.accounts = data.arr;
 		}
 	});
-	actionsServ.getActions(function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.actions = data.arr;
-		}
-	});
+	$scope.getActions = function(data){
+		actionsServ.getActions($scope.actions.length, 20, function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.actions = $scope.actions.concat(data.arr);
+				if (!data.arr.length){
+					$scope.isShowMoreButton = false;
+				}
+			}
+		});
+	}
+	$scope.getActions();
 	$scope.getAction = function(id){
 		if (id == undefined){
 			$scope.formType = 'add';

@@ -21,8 +21,8 @@ moneyApp.service('messagesServ', function($timeout){
 
 
 moneyApp.service('actionsServ', function($http){
-	this.getActions = function(cb){
-        $http.get('server.php?action=getActions')
+	this.getActions = function(from, count, cb){
+        $http.get('server.php?action=getActions&from=' + from + '&count=' + count)
 		.success(function(data){
             cb(data);
         });
