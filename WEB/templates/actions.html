@@ -1,0 +1,60 @@
+<div class="alert" ng-class="message.class" ng-if="message.text">{{message.text}}</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="panel panel-default panel-primary panelForm-add" ng-show="formType == 'add'">
+			<div class="panel-heading">Додавання транзакції</div>
+			<div class="panel-body">
+				<form class="form-inline" ng-submit="addAction()">
+					<ng-include src="'templates/_fieldsAction.html'"></ng-include>
+					<button type="submit" class="btn btn-primary">Додати</button>
+				</form>
+			</div>
+		</div>
+		<div class="panel panel-default panel-primary panelForm-edit" ng-show="formType == 'edit'">
+			<div class="panel-heading">Редагування транзакції</div>
+			<div class="panel-body">
+				<form class="form-inline" ng-submit="editAction()">
+					<ng-include src="'templates/_fieldsAction.html'"></ng-include>
+					<button type="submit" class="btn btn-primary">Зберегти</button>
+					<button type="button" class="btn btn-default" ng-click="getAction()">Відмінити</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<table class="table table-bordered table-hover" ng-if="actions.length">
+			<thead class="bg-primary"><tr>
+				<th width="70px">ID</th>
+				<th width="100px">Дата</th>
+				<th width="80px">Тип</th>
+				<th width="150px">Рахунок / Звідки</th>
+				<th width="150px">Категорія / Куди</th>
+				<th width="90px">Сума</th>
+				<th>Коментар</th>
+				<th width="60px">Дії</th>
+			</tr></thead>
+			<tbody>
+				<tr ng-repeat="item in actions">
+					<td>{{item.id}}</td>
+					<td>{{item.date}}</td>
+					<td>{{types[item.type]}}</td>
+					<td>{{item.accountFrom_title}}</td>
+					<td>{{item.type == 'move' ? item.accountTo_title : item.category_title}}</td>
+					<td class="action-sum {{item.type}}">{{item.sum}}</td>
+					<td>{{item.description}}</td>
+					<td class="text-center">
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getAction(item.id)"></span></button>
+						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delAction(item.id)"></span></button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<button type="button" class="btn btn-primary center-block" ng-click="getActions()" ng-show="isShowMoreButton">Показати щє 20 транзакцій</button>
+	</div>
+</div>
