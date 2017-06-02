@@ -1,7 +1,7 @@
 {
-    "name": "MONEY.API",
+    "name": "TrackMoney",
     "version": "1.0.0",
-    "description": "The service for accounting money",
+    "description": "The service for tracking your money.",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
