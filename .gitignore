@@ -2,17 +2,18 @@ API/node_modules
 
 
 
-APP/hooks
 APP/node_modules
 APP/platforms
 APP/plugins
-APP/resources
+
+APP/hooks
 APP/scss
 APP/www/lib
 
+APP/ionic.project
+
 APP/.bowerrc
-APP/.editorconfig
 APP/bower.json
+APP/.editorconfig
 APP/gulpfile.js
 APP/ionic.config.json
-APP/ionic.project
