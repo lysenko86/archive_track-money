@@ -59,7 +59,7 @@ angular.module('moneyApp.controllers', [])
         balancePlan: '',
         balanceFact: ''
 	};
-    let obj = new Date();
+    var obj = new Date();
     $scope.mathAbs = window.Math.abs;
 	budgetsServ.getBudget(obj.getMonth()+1+'', obj.getFullYear(), function(data){
 		$scope.budget.categories = data.arr;
