@@ -1,5 +1,44 @@
 <ion-view view-title="Бюджет">
-  <ion-content>
-    Budget page<br/>Budget page<br/>Budget page<br/>Budget page<br/>Budget page<br/>Budget page<br/>Budget page
-  </ion-content>
+    <ion-content class="budgetsPage">
+        <div class="row">
+            <div class="col text-center totalSum">Баланс план: <span class="{{budget.balancePlan >= 0 ? 'plus' : 'minus'}}">{{budget.balancePlan}}</span></div>
+            <div class="col text-center totalSum">Баланс факт: <span class="{{budget.balanceFact >= 0 ? 'plus' : 'minus'}}">{{budget.balanceFact}}</span></div>
+        </div>
+        <div class="row">
+            <div class="col col-40">Доходи</div>
+            <div class="col col-20">0</div>
+            <div class="col col-20">0</div>
+            <div class="col col-20">0</div>
+        </div>
+        <div class="row tableHead">
+            <div class="col col-40 text-center">Категорія</div>
+            <div class="col col-20 text-center">План</div>
+            <div class="col col-20 text-center">Факт</div>
+            <div class="col col-20 text-center">Решта</div>
+        </div>
+        <div class="row">
+            <div class="col col-40">Кат1</div>
+            <div class="col col-20">0</div>
+            <div class="col col-20">0</div>
+            <div class="col col-20">0</div>
+        </div>
+        <div class="row">
+            <div class="col col-40">Витрати</div>
+            <div class="col col-20">0</div>
+            <div class="col col-20">0</div>
+            <div class="col col-20">0</div>
+        </div>
+        <div class="row tableHead bar bar-positive">
+            <div class="col col-40 text-center">Категорія</div>
+            <div class="col col-20 text-center">План</div>
+            <div class="col col-20 text-center">Факт</div>
+            <div class="col col-20 text-center">Решта</div>
+        </div>
+        <div class="row">
+            <div class="col col-40">Кат1</div>
+            <div class="col col-20">0</div>
+            <div class="col col-20">0</div>
+            <div class="col col-20">0</div>
+        </div>
+    </ion-content>
 </ion-view>

@@ -345,7 +345,9 @@ moneyApp.controller('budgetsCtrl', function($scope, messagesServ, budgetsServ, c
 		plusPlan: '',
 		plusFact: '',
 		minusPlan: '',
-		minusFact: ''
+		minusFact: '',
+        balancePlan: '',
+        balanceFact: ''
 	};
 	$scope.category = {
 		month: '',
@@ -373,6 +375,7 @@ moneyApp.controller('budgetsCtrl', function($scope, messagesServ, budgetsServ, c
 		else{
 			budgetsServ.getBudget($scope.budget, function(data){
 				$scope.budget.categories = data.arr;
+				$scope.budget.plusPlan = $scope.budget.plusFact = $scope.budget.minusPlan = $scope.budget.minusFact = $scope.budget.balancePlan = $scope.budget.balanceFact = '';
 				for (var i=0; i<$scope.budget.categories.length; i++){
 					if ($scope.budget.categories[i].type == 'plus'){
 						$scope.budget.plusPlan = $scope.budget.plusPlan*1 + $scope.budget.categories[i].plan*1;
@@ -383,6 +386,8 @@ moneyApp.controller('budgetsCtrl', function($scope, messagesServ, budgetsServ, c
 						$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
 					}
 				}
+				$scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
+		        $scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
 			});
 		}
 	}

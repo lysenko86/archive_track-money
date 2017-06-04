@@ -57,8 +57,8 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-xs-6 balance-head text-right">Баланс план: <span class="{{budget.plusPlan - budget.minusPlan >= 0 ? 'plus' : 'minus'}}">{{budget.plusPlan - budget.minusPlan}}</span></div>
-	<div class="col-xs-6 balance-head text-left">Баланс факт: <span class="{{budget.plusFact - budget.minusFact >= 0 ? 'plus' : 'minus'}}">{{budget.plusFact - budget.minusFact}}</span></div>
+	<div class="col-xs-6 balance-head text-right">Баланс план: <span class="{{budget.balancePlan >= 0 ? 'plus' : 'minus'}}">{{budget.balancePlan}}</span></div>
+	<div class="col-xs-6 balance-head text-left">Баланс факт: <span class="{{budget.balanceFact >= 0 ? 'plus' : 'minus'}}">{{budget.balanceFact}}</span></div>
 </div>
 <div class="row">
 	<div class="col-xs-12">

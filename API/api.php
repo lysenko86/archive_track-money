@@ -14,7 +14,14 @@
 
 
 
-		case 'getActions':
+        case 'testConnection':
+            $query = $db->prepare("SELECT COUNT(*) AS `count` FROM `accounts`");
+            $query->execute(array());
+            $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+            $data['arr'] = $data['arr'][0];
+            $data['status'] = 'success';
+        break;
+        case 'getActions':
             $from = trim($_GET['from']);
             $count = trim($_GET['count']);
             $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
