@@ -401,14 +401,14 @@
 					`b`.`category_id`,
 					IFNULL(`c`.`title`, 'Категорія видалена') as `category_title`,
 					`c`.`type`,
-					`b`.`sum` AS `plan`,
-					IFNULL((SELECT SUM(`sum`) FROM `actions` WHERE `category_id` = `b`.`category_id`), 0) AS `fact`
+					ROUND(`b`.`sum`) AS `plan`,
+					ROUND(IFNULL((SELECT SUM(`sum`) FROM `actions` WHERE `category_id` = `b`.`category_id` AND MONTH(`date`) = ? AND YEAR(`date`) = ?), 0)) AS `fact`
 				FROM `budgets` AS `b`
 					LEFT JOIN `categories` AS `c` ON (`c`.`id` = `b`.`category_id`)
 				WHERE `b`.`month` = ? AND `b`.`year` = ?
 				ORDER BY `b`.`id` DESC
 			");
-            $query->execute(array($month, $year));
+            $query->execute(array($month, $year, $month, $year));
             $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
 			$data['status'] = 'success';
         break;

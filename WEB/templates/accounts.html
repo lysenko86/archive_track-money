@@ -35,7 +35,7 @@
 				<tr ng-repeat="item in accounts">
 					<td>{{item.id}}</td>
 					<td>{{item.title}}</td>
-					<td>{{item.balance}}</td>
+					<td ng-class="item.balance >= 0 ? 'colorPlus' : 'colorMinus'">{{item.balance}}</td>
 					<td class="text-center">
 						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getAccount(item.id)"></span></button>
 						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delAccount(item.id)"></span></button>

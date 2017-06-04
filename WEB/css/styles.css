@@ -1,3 +1,18 @@
+.colorPlus{
+    color: #390;
+}
+.colorMinus{
+    color: #F80;
+}
+.colorOverPlus{
+    color: #390;
+}
+.colorOverMinus{
+    color: #f00;
+}
+
+
+
 .header{
     height: 70px;
     background-color: #678c40;
@@ -90,21 +105,7 @@
 	.main .table>tbody>tr>td>.button-icon>span:hover{
 		opacity: 1;
 	}
-.main .table>tbody>tr>td.action-sum.plus{
-	color: #390;
-}
-.main .table>tbody>tr>td.action-sum.minus{
-	color: #F80;
-}
-.main .table>tbody>tr>td.action-sum.move{
-	color: #333;
-}
-.main .table>tbody>tr>td.budget-sum.over.plus{
-	color: #390;
-}
-.main .table>tbody>tr>td.budget-sum.over.minus{
-	color: #FF0000;
-}
+
 
 
 .main .panel .panel-heading{
@@ -113,12 +114,6 @@
 .main .balance-head{
 	font-size: 20px;
 }
-	.main .balance-head span.plus{
-		color: #390;
-	}
-	.main .balance-head span.minus{
-		color: #F80;
-	}
 
 
 .footer{

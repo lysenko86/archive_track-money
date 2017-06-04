@@ -1,23 +1,27 @@
+.colorPlus{
+    color: #390;
+}
+.colorMinus{
+    color: #F80;
+}
+.colorOverPlus{
+    color: #390;
+}
+.colorOverMinus{
+    color: #f00;
+}
+
 .nav-bar-block ion-header-bar.bar-header{
   background-color: #678c40;
   border-color: #555555;
   background-image: linear-gradient(0deg, #555555, #555555 50%, transparent 50%);
 }
 
-.accountsPage .list span.plus{
-    color: #390;
-}
-.accountsPage .list span.minus{
-    color: #F80;
+.budgetsPage .totalSum{
+    font-weight: bold;
 }
 
-.budgetsPage .totalSum span.plus{
-    color: #390;
+.budgetsPage .tableHead{
+    background-color: #387ef5;
+    color: #fff;
 }
-.budgetsPage .totalSum span.minus{
-    color: #F80;
-}
-
-/*.budgetsPage .tableHead{
-    background-color:
-}*/

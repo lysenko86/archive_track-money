@@ -57,8 +57,8 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-xs-6 balance-head text-right">Баланс план: <span class="{{budget.balancePlan >= 0 ? 'plus' : 'minus'}}">{{budget.balancePlan}}</span></div>
-	<div class="col-xs-6 balance-head text-left">Баланс факт: <span class="{{budget.balanceFact >= 0 ? 'plus' : 'minus'}}">{{budget.balanceFact}}</span></div>
+	<div class="col-xs-6 balance-head text-right">Баланс план: <span class="{{budget.balancePlan >= 0 ? 'colorPlus' : 'colorMinus'}}">{{budget.balancePlan}}</span></div>
+	<div class="col-xs-6 balance-head text-left">Баланс факт: <span class="{{budget.balanceFact >= 0 ? 'colorPlus' : 'colorMinus'}}">{{budget.balanceFact}}</span></div>
 </div>
 <div class="row">
 	<div class="col-xs-12">
@@ -67,7 +67,7 @@
 				<th colspan="2">Доходи</th>
 				<th>{{budget.plusPlan}}</th>
 				<th>{{budget.plusFact}}</th>
-				<th></th>
+				<th class="{{budget.plusRest < 0 ? ' colorOverPlus' : '' }}">{{budget.plusRest < 0 ? '+' : ''}}{{mathAbs(budget.plusRest)}}</th>
 				<th></th>
 			</tr></thead>
 			<thead class="bg-primary"><tr>
@@ -84,7 +84,7 @@
 					<td>{{item.category_title}}</td>
 					<td>{{item.plan}}</td>
 					<td>{{item.fact}}</td>
-					<td class="budget-sum{{item.plan - item.fact < 0 ? ' over' : '' }} {{item.type}}">{{item.plan - item.fact < 0 ? (item.type == 'plus' ? '+' : '-') : ''}}{{mathAbs(item.plan - item.fact)}}</td>
+					<td class="{{item.plan - item.fact < 0 ? 'colorOverPlus' : '' }}">{{item.plan - item.fact < 0 ? '+' : ''}}{{mathAbs(item.plan - item.fact)}}</td>
 					<td class="text-center">
 						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getCategory(item.id)"></span></button>
 						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delCategory(item.id)"></span></button>
@@ -97,7 +97,7 @@
 				<th colspan="2">Витрати</th>
 				<th>{{budget.minusPlan}}</th>
 				<th>{{budget.minusFact}}</th>
-				<th></th>
+				<th class="{{budget.minusRest < 0 ? ' colorOverMinus' : '' }}">{{budget.minusRest < 0 ? '-' : ''}}{{mathAbs(budget.minusRest)}}</th>
 				<th></th>
 			</tr></thead>
 			<thead class="bg-primary"><tr>
@@ -114,7 +114,7 @@
 					<td>{{item.category_title}}</td>
 					<td>{{item.plan}}</td>
 					<td>{{item.fact}}</td>
-					<td class="budget-sum{{item.plan - item.fact < 0 ? ' over' : '' }} {{item.type}}">{{item.plan - item.fact < 0 ? (item.type == 'plus' ? '+' : '-') : ''}}{{mathAbs(item.plan - item.fact)}}</td>
+					<td class="{{item.plan - item.fact < 0 ? 'colorOverMinus' : '' }}">{{item.plan - item.fact < 0 ? '-' : ''}}{{mathAbs(item.plan - item.fact)}}</td>
 					<td class="text-center">
 						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getCategory(item.id)"></span></button>
 						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delCategory(item.id)"></span></button>
