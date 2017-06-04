@@ -1,5 +1,31 @@
 <ion-view view-title="Транзакції">
-    <ion-content>
-        Actions page<br/>Actions page<br/>Actions page<br/>Actions page<br/>Actions page<br/>Actions page<br/>Actions page
+    <ion-content class="actionsPage">
+        <div class="row tableHead">
+            <div class="col col-20 text-center">Тип</div>
+            <div class="col col-30 text-center">Рахунок/Звідки</div>
+            <div class="col col-30 text-center">Категорія/Куди</div>
+            <div class="col col-20 text-center">Сума</div>
+        </div>
+        <div class="tableItem" ng-repeat="item in actions">
+            <div class="row rowDate" ng-show="item.date != actions[$index-1].date">
+                <div class="col">{{item.date}}</div>
+            </div>
+            <div class="rowData">
+                <div class="row">
+                    <div class="col col-20">{{types[item.type]}}</div>
+                    <div class="col col-30">{{item.accountFrom_title}}</div>
+                    <div class="col col-30">{{item.type == 'move' ? item.accountTo_title : item.category_title}}</div>
+                    <div class="col col-20" ng-class="item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : '')">{{item.sum}}</div>
+                </div>
+                <div class="row rowDescr" ng-show="item.description">{{item.description}}</div>
+            </div>
+        </div>
+                <button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getAction(item.id)"></span></button>
+                <button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delAction(item.id)"></span></button>
+        <div class="row">
+        	<div class="col">
+        		<button class="button button-block button-positive" ng-click="getActions()" ng-show="isShowMoreButton">Показати щє 20 транзакцій</button>
+        	</div>
+        </div>
     </ion-content>
 </ion-view>

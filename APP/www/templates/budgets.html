@@ -17,7 +17,7 @@
             <div class="col col-20 text-center">Факт</div>
             <div class="col col-20 text-center">Решта</div>
         </div>
-        <div class="row" ng-repeat="item in budget.categories" ng-if="item.type=='plus'">
+        <div class="row tableRow" ng-repeat="item in budget.categories" ng-if="item.type=='plus'">
             <div class="col col-40">{{item.category_title}}</div>
             <div class="col col-20">{{item.plan}}</div>
             <div class="col col-20">{{item.fact}}</div>
@@ -36,7 +36,7 @@
             <div class="col col-20 text-center">Факт</div>
             <div class="col col-20 text-center">Решта</div>
         </div>
-        <div class="row" ng-repeat="item in budget.categories" ng-if="item.type=='minus'">
+        <div class="row tableRow" ng-repeat="item in budget.categories" ng-if="item.type=='minus'">
             <div class="col col-40">{{item.category_title}}</div>
             <div class="col col-20">{{item.plan}}</div>
             <div class="col col-20">{{item.fact}}</div>

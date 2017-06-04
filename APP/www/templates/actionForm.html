@@ -1,0 +1,52 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-positive">
+        <button class="button button-icon button-clear ion-close-circled" ng-click="closeModal()"></button>
+        <h1 class="title">Додавання транзакції</h1>
+        <button class="button button-icon button-clear ion-checkmark-circled" type="submit" form="addAction"></button>
+    </ion-header-bar>
+    <ion-content>
+        <form ng-submit="addAction()" id="addAction">
+            <ion-list>
+                <label class="item item-input">
+                    <span class="input-label">Дата:</span>
+                    <input type="text" ng-model="action.date" placeholder="01.01.2017" maxLength="10" />
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Тип:</span>
+                    <ion-radio ng-model="action.type" value="plus">Дохід</ion-radio>
+                    <ion-radio ng-model="action.type" value="minus">Витрата</ion-radio>
+                    <ion-radio ng-model="action.type" value="move">Переказ</ion-radio>
+                </label>
+                <label class="item item-input item-select">
+                    <span class="input-label">{{action.type != 'move' ? 'Рахунок:' : 'Звідки:'}}</span>
+                    <select ng-model="action.accountFrom_id">
+                        <option value=''>- Оберіть -</option>
+                		<option ng-repeat="item in accounts" value='{{item.id}}'>{{item.title}}</option>
+                    </select>
+                </label>
+                <label class="item item-input item-select" ng-if="action.type=='move'">
+                    <span class="input-label">Куди:</span>
+                    <select ng-model="action.accountTo_id">
+                        <option value=''>- Оберіть -</option>
+                		<option ng-repeat="item in accounts" value='{{item.id}}'>{{item.title}}</option>
+                    </select>
+                </label>
+                <label class="item item-input item-select" ng-if="action.type!='move'">
+                    <span class="input-label">Категорія:</span>
+                    <select ng-model="action.category_id">
+                        <option value=''>- Оберіть -</option>
+                		<option ng-repeat="item in categories" value='{{item.id}}' ng-if="action.type==item.type">{{item.title}}</option>
+                    </select>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Сума:</span>
+                    <input type="text" ng-model="action.sum" placeholder="0.00" />
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Коментар:</span>
+                    <textarea ng-model="action.description" placeholder="Коментар..."></textarea>
+                </label>
+            </ion-list>
+        </form>
+    </ion-content>
+</ion-modal-view>

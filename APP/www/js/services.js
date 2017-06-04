@@ -19,13 +19,41 @@ angular.module('moneyApp.services', [])
 
 
 .service('actionsServ', function($http){
-
+    this.getActions = function(from, count, cb){
+        $http.get('http://money.fastovmanicure.com.ua/server.php?action=getActions&from=' + from + '&count=' + count)
+		.success(function(data){
+            cb(data);
+        });
+    }
+    this.addAction = function(action, cb){
+		$http.post('http://money.fastovmanicure.com.ua/server.php', {
+			action: 'addAction',
+			date: action.date.substr(6,4) + '-' + action.date.substr(3,2) + '-' + action.date.substr(0,2),
+			type: action.type,
+			accountFrom_id: action.accountFrom_id,
+			accountTo_id: action.accountTo_id,
+			category_id: action.category_id,
+			sum: action.sum,
+			description: action.description
+		})
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(){
+			cb(false);
+		});
+	}
 })
 
 
 
 .service('categoriesServ', function($http){
-
+    this.getCategories = function(cb){
+        $http.get('http://money.fastovmanicure.com.ua/server.php?action=getCategories')
+		.success(function(data){
+            cb(data);
+        });
+    }
 })
 
 
