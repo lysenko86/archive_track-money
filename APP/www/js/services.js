@@ -25,9 +25,17 @@ angular.module('moneyApp.services', [])
             cb(data);
         });
     }
-    this.addAction = function(action, cb){
+    this.getAction = function(id, cb){
+        $http.get('http://money.fastovmanicure.com.ua/server.php?action=getAction&id=' + id)
+		.success(function(data){
+			data.arr.date = data.arr.date.substr(8,2) + '.' + data.arr.date.substr(5,2) + '.' + data.arr.date.substr(0,4);
+            cb(data);
+        });
+    }
+    this.editAction = function(id, action, cb){
 		$http.post('http://money.fastovmanicure.com.ua/server.php', {
-			action: 'addAction',
+			action: 'editAction',
+            id: id,
 			date: action.date.substr(6,4) + '-' + action.date.substr(3,2) + '-' + action.date.substr(0,2),
 			type: action.type,
 			accountFrom_id: action.accountFrom_id,

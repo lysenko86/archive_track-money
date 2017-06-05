@@ -21,12 +21,19 @@ angular.module('moneyApp.controllers', [])
 
 
 
-.controller('headerCtrl', function($scope, $ionicModal, $ionicPopup, actionsServ, categoriesServ, accountsServ){
+.controller('homeCtrl', function($scope, $ionicPopup, connectionServ){
+    connectionServ.testConnection(testConnection($ionicPopup));
+})
+
+
+
+.controller('actionsCtrl', function($scope, $state, $ionicModal, $ionicPopup, connectionServ, actionsServ, categoriesServ, accountsServ){
+    connectionServ.testConnection(testConnection($ionicPopup));
     var obj = new Date();
 	var d = '0' + obj.getDate();
 	var m = '0' + (obj.getMonth()+1);
 	$scope.today = d.substr(d.length-2, 2) + '.' + m.substr(m.length-2, 2) + '.' + obj.getFullYear();
-	$scope.action = {
+    $scope.action = {
 		date: $scope.today,
 		type: '',
 		accountFrom_id: '',
@@ -35,37 +42,76 @@ angular.module('moneyApp.controllers', [])
 		sum: '',
 		description: ''
 	};
-    $scope.categories = $scope.accounts = [];
+    $scope.types = {
+		plus: 'Доходи',
+		minus: 'Витрати',
+		move: 'Переказ'
+	};
+    $scope.actions = $scope.categories = $scope.accounts = [];
+    $scope.isShowMoreButton = true;
     $scope.modal = false;
+    $scope.editID = false;
+
+    accountsServ.getAccounts(function(data){
+        if (data.status == 'success'){
+            data.arr = data.arr ? data.arr : [];
+            $scope.accounts = data.arr;
+        }
+    });
+    categoriesServ.getCategories(function(data){
+        if (data.status == 'success'){
+            data.arr = data.arr ? data.arr : [];
+            $scope.categories = data.arr;
+        }
+    });
 
     $ionicModal.fromTemplateUrl('templates/actionForm.html', {
         scope: $scope
     }).then(function(modal){
         $scope.modal = modal;
     });
-    $scope.openModal = function(){
-        $scope.modal.show();
+    $scope.editActionOpenModal = function(id){
+        if (id){
+            $scope.editID = id;
+            actionsServ.getAction(id, function(data){
+                $scope.action.date = data.arr.date;
+                $scope.action.type = data.arr.type;
+                $scope.action.accountFrom_id = data.arr.accountFrom_id;
+                $scope.action.accountTo_id = data.arr.accountTo_id;
+                $scope.action.category_id = data.arr.category_id;
+                $scope.action.sum = data.arr.sum;
+                $scope.action.description = data.arr.description;
+                $scope.modal.show();
+                console.log($scope.action);
+            });
+        }
+        else{
+            $scope.editID = false;
+            $scope.action.date = $scope.today;
+            $scope.modal.show();
+        }
     }
-    $scope.closeModal = function(){
+    $scope.editActionCloseModal = function(){
         $scope.modal.hide();
-        $scope.action.date = $scope.today;
-        $scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
+        $scope.action.date = $scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
+        $scope.editID = false;
     }
 
-    accountsServ.getAccounts(function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.accounts = data.arr;
-		}
-	});
-    categoriesServ.getCategories(function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.categories = data.arr;
-		}
-	});
+    $scope.getActions = function(data){
+		actionsServ.getActions($scope.actions.length, 20, function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.actions = $scope.actions.concat(data.arr);
+				if (!data.arr.length){
+					$scope.isShowMoreButton = false;
+				}
+			}
+		});
+	}
+	$scope.getActions();
 
-    $scope.addAction = function(){
+    $scope.editAction = function(){
+        console.log($scope.action);
 		if (!$scope.action.type){
             $ionicPopup.alert({
                 title: 'Помилка!',
@@ -103,7 +149,7 @@ angular.module('moneyApp.controllers', [])
 			else if ($scope.action.type != 'move'){
 				$scope.action.accountTo_id = '0';
 			}
-			actionsServ.addAction($scope.action, function(data){
+			actionsServ.editAction($scope.editID, $scope.action, function(data){
                 if (data === false){
                     $ionicPopup.alert({
                         title: 'Помилка!',
@@ -117,39 +163,14 @@ angular.module('moneyApp.controllers', [])
                     });
                 }
 				else if (data.status == 'success'){
-                    $scope.closeModal();
+                    $scope.editActionCloseModal();
+                    if ($state.current.url == '/actions'){
+                        $state.go('actions', {}, {reload: true});
+                    }
 				}
             });
 		}
 	}
-})
-
-
-
-.controller('homeCtrl', function($scope, $ionicPopup, connectionServ){
-    connectionServ.testConnection(testConnection($ionicPopup));
-})
-
-
-
-.controller('actionsCtrl', function($scope, $ionicPopup, connectionServ, actionsServ){
-    connectionServ.testConnection(testConnection($ionicPopup));
-    $scope.actions = [];
-    $scope.isShowMoreButton = true;
-    $scope.types = {
-		plus: 'Доходи',
-		minus: 'Витрати',
-		move: 'Переказ'
-	};
-	actionsServ.getActions($scope.actions.length, 20, function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.actions = $scope.actions.concat(data.arr);
-			if (!data.arr.length){
-				$scope.isShowMoreButton = false;
-			}
-		}
-	});
 })
 
 

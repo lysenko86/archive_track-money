@@ -150,59 +150,93 @@
                 $data['msg']    = 'Помилка! Значення поля "Тип" не корректне!';
             }
 			else{
-				$query = $db->prepare("SELECT * FROM `actions` WHERE `id` = ?");
-				$query->execute(array($id));
-				$tmp = $query->fetchAll(PDO::FETCH_ASSOC);
-				$ttype = $tmp[0]['type'];
-				$ssum = $tmp[0]['sum'];
-				$aaccountFrom_id = $tmp[0]['accountFrom_id'];
-				$aaccountTo_id = $tmp[0]['accountTo_id'];
-				switch ($ttype){
-					case 'plus':
-						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
-						$query->execute(array($ssum, $aaccountFrom_id));
-					break;
-					case 'minus':
-						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
-						$query->execute(array($ssum, $aaccountFrom_id));
-					break;
-					case 'move':
-						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
-						$query->execute(array($ssum, $aaccountFrom_id));
-						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
-						$query->execute(array($ssum, $aaccountTo_id));
-					break;
-				}
-				switch ($type){
-					case 'plus':
-						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
-						$query->execute(array($sum, $accountFrom_id));
-					break;
-					case 'minus':
-						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
-						$query->execute(array($sum, $accountFrom_id));
-					break;
-					case 'move':
-						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
-						$query->execute(array($sum, $accountFrom_id));
-						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
-						$query->execute(array($sum, $accountTo_id));
-					break;
-				}
-				$query = $db->prepare("UPDATE `actions` SET `date` = ?, `type` = ?, `accountFrom_id` = ?, `accountTo_id` = ?, `category_id` = ?, `sum` = ?, `description` = ? WHERE `id` = ?");
-				$query->execute(array($date, $type, $accountFrom_id, $accountTo_id, $category_id, $sum, $description, $id));
-				$data['arr'] = array(
-					id    => $id,
-					date  => $date,
-					type   => $type,
-					accountFrom_id => $accountFrom_id,
-					accountTo_id => $accountTo_id,
-					category_id => $category_id,
-					sum => $sum,
-					description => $description
-				);
-				$data['status'] = 'success';
-				$data['msg']    = "Готово! Транзакція успішно змінена.";
+                if ($id){
+    				$query = $db->prepare("SELECT * FROM `actions` WHERE `id` = ?");
+    				$query->execute(array($id));
+    				$tmp = $query->fetchAll(PDO::FETCH_ASSOC);
+    				$ttype = $tmp[0]['type'];
+    				$ssum = $tmp[0]['sum'];
+    				$aaccountFrom_id = $tmp[0]['accountFrom_id'];
+    				$aaccountTo_id = $tmp[0]['accountTo_id'];
+    				switch ($ttype){
+    					case 'plus':
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
+    						$query->execute(array($ssum, $aaccountFrom_id));
+    					break;
+    					case 'minus':
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
+    						$query->execute(array($ssum, $aaccountFrom_id));
+    					break;
+    					case 'move':
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
+    						$query->execute(array($ssum, $aaccountFrom_id));
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
+    						$query->execute(array($ssum, $aaccountTo_id));
+    					break;
+    				}
+    				switch ($type){
+    					case 'plus':
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
+    						$query->execute(array($sum, $accountFrom_id));
+    					break;
+    					case 'minus':
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
+    						$query->execute(array($sum, $accountFrom_id));
+    					break;
+    					case 'move':
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
+    						$query->execute(array($sum, $accountFrom_id));
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
+    						$query->execute(array($sum, $accountTo_id));
+    					break;
+    				}
+    				$query = $db->prepare("UPDATE `actions` SET `date` = ?, `type` = ?, `accountFrom_id` = ?, `accountTo_id` = ?, `category_id` = ?, `sum` = ?, `description` = ? WHERE `id` = ?");
+    				$query->execute(array($date, $type, $accountFrom_id, $accountTo_id, $category_id, $sum, $description, $id));
+    				$data['arr'] = array(
+    					id    => $id,
+    					date  => $date,
+    					type   => $type,
+    					accountFrom_id => $accountFrom_id,
+    					accountTo_id => $accountTo_id,
+    					category_id => $category_id,
+    					sum => $sum,
+    					description => $description
+    				);
+    				$data['status'] = 'success';
+    				$data['msg']    = "Готово! Транзакція успішно змінена.";
+                }
+                else{
+                    switch ($type){
+    					case 'plus':
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
+    						$query->execute(array($sum, $accountFrom_id));
+    					break;
+    					case 'minus':
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
+    						$query->execute(array($sum, $accountFrom_id));
+    					break;
+    					case 'move':
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
+    						$query->execute(array($sum, $accountFrom_id));
+    						$query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
+    						$query->execute(array($sum, $accountTo_id));
+    					break;
+    				}
+    				$query = $db->prepare("INSERT INTO `actions` (`date`, `type`, `accountFrom_id`, `accountTo_id`, `category_id`, `sum`, `description`) VALUES(?, ?, ?, ?, ?, ?, ?)");
+    				$query->execute(array($date, $type, $accountFrom_id, $accountTo_id, $category_id, $sum, $description));
+    				$data['arr'] = array(
+    					id    => $db->lastInsertId(),
+    					date  => $date,
+    					type   => $type,
+    					accountFrom_id => $accountFrom_id,
+    					accountTo_id => $accountTo_id,
+    					category_id => $category_id,
+    					sum => $sum,
+    					description => $description
+    				);
+    				$data['status'] = 'success';
+    				$data['msg']    = "Готово! Транзакція успішно додана.";
+                }
             }
         break;
 		case 'delAction':

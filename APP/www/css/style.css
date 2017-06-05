@@ -10,6 +10,9 @@
 .colorOverMinus{
     color: #f00;
 }
+.colorMove{
+    color: #444;
+}
 
 label.item-radio{
     border: none;
@@ -17,7 +20,8 @@ label.item-radio{
 }
 label.item-radio .radio-content .item-content{
     padding: 4px 15px 4px 0px;
-    margin-right: 15px;
+    margin-right: 13px;
+    font-size: 90%;
 }
 label.item-radio input:checked + .radio-content .item-content{
     background-color: #fff;
@@ -38,17 +42,21 @@ label.item-radio .radio-content .radio-icon{
     border-bottom: 1px solid #eee;
     margin-top: 5px;
 }
+.tableItem{
+    padding: 0px;
+}
 .tableItem .rowDate{
     font-weight: bold;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ddd;
 }
 .tableItem .rowData{
-    border-bottom: 1px solid #eee;
+    margin-top: 5px;
 }
-.tableItem .rowData .rowDescr{
+.tableItem .rowDescr{
     color: #888;
-    font-size: 90%;
+    font-size: 80%;
     line-height: 1.2;
+    white-space: normal;
     margin-top: -9px;
     padding-left: 10px;
     padding-right: 10px;
