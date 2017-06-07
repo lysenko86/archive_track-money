@@ -82,7 +82,6 @@ angular.module('moneyApp.controllers', [])
                 $scope.action.sum = data.arr.sum;
                 $scope.action.description = data.arr.description;
                 $scope.modal.show();
-                console.log($scope.action);
             });
         }
         else{
@@ -92,9 +91,14 @@ angular.module('moneyApp.controllers', [])
         }
     }
     $scope.editActionCloseModal = function(){
-        $scope.modal.hide();
+        $scope.modal.remove();
         $scope.action.date = $scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
         $scope.editID = false;
+        $ionicModal.fromTemplateUrl('templates/actionForm.html', {
+            scope: $scope
+        }).then(function(modal){
+            $scope.modal = modal;
+        });
     }
 
     $scope.getActions = function(data){
@@ -111,7 +115,6 @@ angular.module('moneyApp.controllers', [])
 	$scope.getActions();
 
     $scope.editAction = function(){
-        console.log($scope.action);
 		if (!$scope.action.type){
             $ionicPopup.alert({
                 title: 'Помилка!',
@@ -170,6 +173,35 @@ angular.module('moneyApp.controllers', [])
 				}
             });
 		}
+	}
+    $scope.deleteAction = function(){
+        $ionicPopup.confirm({
+            title: 'Увага!',
+            template: 'Ви дійсно хочете видалити цю транзакцію?'
+        }).then(function(res){
+            if (res){
+                actionsServ.deleteAction($scope.editID, function(data){
+                    if (data === false){
+                        $ionicPopup.alert({
+                            title: 'Помилка!',
+                            template: 'Відсутнє підключення до мережі Інтернет.'
+                        });
+                    }
+                    else if (data.status == 'error'){
+                        $ionicPopup.alert({
+                            title: 'Помилка!',
+                            template: data.msg
+                        });
+                    }
+    				else if (data.status == 'success'){
+                        $scope.editActionCloseModal();
+                        if ($state.current.url == '/actions'){
+                            $state.go('actions', {}, {reload: true});
+                        }
+    				}
+    			});
+            }
+        });
 	}
 })
 

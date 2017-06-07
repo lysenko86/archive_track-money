@@ -51,6 +51,18 @@ angular.module('moneyApp.services', [])
 			cb(false);
 		});
 	}
+    this.deleteAction = function(id, cb){
+		$http.post('http://money.fastovmanicure.com.ua/server.php', {
+			action: 'delAction',
+			id: id
+		})
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(){
+			cb(false);
+		});
+    }
 })
 
 

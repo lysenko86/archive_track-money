@@ -1,7 +1,8 @@
 <ion-modal-view>
     <ion-header-bar class="bar-positive">
-        <button class="button button-icon button-clear ion-close-circled" ng-click="editActionCloseModal()"></button>
+        <button class="button button-icon button-clear ion-backspace" ng-click="editActionCloseModal()"></button>
         <h1 class="title">{{editID ? 'Редагування' : 'Додавання'}} транзакції</h1>
+        <button class="button button-icon button-clear ion-close-circled" ng-if="editID" ng-click="deleteAction()"></button>
         <button class="button button-icon button-clear ion-checkmark-circled" type="submit" form="editAction"></button>
     </ion-header-bar>
     <ion-content>
