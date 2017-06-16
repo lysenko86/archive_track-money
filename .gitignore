@@ -17,3 +17,4 @@ APP/bower.json
 APP/.editorconfig
 APP/gulpfile.js
 APP/ionic.config.json
+APP/package-lock.json
