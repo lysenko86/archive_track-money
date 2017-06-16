@@ -52,12 +52,13 @@ label.item-radio .radio-content .radio-icon{
 .tableItem .rowDate{
     font-weight: bold;
     border-bottom: 1px solid #ddd;
+    color: #bbb;
 }
 .tableItem .rowData{
     margin-top: 5px;
 }
 .tableItem .rowDescr{
-    color: #888;
+    color: #aaa;
     font-size: 80%;
     line-height: 1.2;
     white-space: normal;
