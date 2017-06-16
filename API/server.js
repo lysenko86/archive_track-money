@@ -6,9 +6,9 @@ var mysql = require('mysql');
 router = new router();
 mysql = mysql.createConnection({
     host: 'localhost',
-    database: 'db_money',
-    user: 'u_money',
-    password: 'ZUx1WZjP'
+    database: 'db_trackmoney',
+    user: 'u_trackmoney',
+    password: 'X39MWT22'
 });
 
 var app = express();
