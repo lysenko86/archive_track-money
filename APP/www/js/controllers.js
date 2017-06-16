@@ -167,9 +167,7 @@ angular.module('moneyApp.controllers', [])
                 }
 				else if (data.status == 'success'){
                     $scope.editActionCloseModal();
-                    if ($state.current.url == '/actions'){
-                        $state.go('actions', {}, {reload: true});
-                    }
+                    $state.go('actions', {}, {reload: true});
 				}
             });
 		}
