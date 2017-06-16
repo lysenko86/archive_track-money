@@ -1,6 +1,7 @@
 {
     "name": "TrackMoney",
     "version": "1.0.0",
+    "author": "Oleksandr Lysenko",
     "description": "The service for tracking your money.",
     "dependencies": {
         "cordova-android": "^6.2.3",
