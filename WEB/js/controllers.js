@@ -1,6 +1,7 @@
 "use strict";
 
-moneyApp.controller('menuCtrl', function($location, $scope){
+moneyApp.controller('menuCtrl', function($location, $scope, localStorageService){
+	$scope.isAuth = localStorageService.get('accessToken');
 	$scope.setActive = function(path){
 		return ($location.path().substr(0, path.length) === path) ? 'active' : '';
 	}
@@ -8,9 +9,29 @@ moneyApp.controller('menuCtrl', function($location, $scope){
 
 
 
-moneyApp.controller('homeCtrl', function($scope, messagesServ){
+moneyApp.controller('homeCtrl', function($scope, messagesServ, localStorageService){
+	this.phrases = [
+		{text:"Якщо умієш щось, не роби цього безкоштовно.", author:"The Dark Knight"},
+		{text:"- І скільки ж це буде коштувати?\n- Це безкоштовно!\n- Звучить дорогувато.", author:"Сімпсони (The Simpsons)"},
+		{text:"Не в грошах щастя, а в покупках.", author:"Мерілін Монро"},
+		{text:"Гроші не можуть змінити людей, вони можуть лише допомогти їм стати тими, ким вони є насправді.", author:"Сімпсони (The Simpsons)"},
+		{text:"Накопичувати гроші – річ корисна, особливо якщо це вже зробили ваші батьки.", author:"Вінстон Черчилль"},
+		{text:"Всім відомо, що за гроші можна купити туфлі, але не щастя, їжу, але не апетит, ліжко, але не сон, ліки, але не здоров'я, слуг, але не друзів, розваги, але не радість, вчителів, але не розум.", author:"Сократ"},
+		{text:"Працюйте так, немов гроші не мають для Вас жодного значення.",author:"Марк Твен"}
+	];
+	let index = Math.round(Math.random() * (this.phrases.length-1));
+	$scope.phrase = this.phrases[index];
+	$scope.isAuth = localStorageService.get('accessToken');
 	$scope.message = messagesServ.message;
 });
+
+
+
+moneyApp.controller('signinCtrl', function($scope, messagesServ, localStorageService){});
+
+
+
+moneyApp.controller('signupCtrl', function($scope, messagesServ, localStorageService){});
 
 
 

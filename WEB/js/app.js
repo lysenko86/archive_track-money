@@ -1,14 +1,24 @@
 "use strict";
 
-var moneyApp = angular.module('moneyApp', ['ngRoute']);
+var moneyApp = angular.module('moneyApp', ['ngRoute', 'LocalStorageModule']);
 
-moneyApp.config(function($routeProvider){
+moneyApp.config(function($routeProvider, localStorageServiceProvider){
+    localStorageServiceProvider.setPrefix('TrackMoney_');
+
 	$routeProvider
 	.when('/home', {
 		templateUrl: 'templates/home.html',
 		controller: 'homeCtrl'
 	})
-	.when('/actions', {
+    .when('/signin', {
+		templateUrl: 'templates/signin.html',
+		controller: 'signinCtrl'
+	})
+    .when('/signup', {
+		templateUrl: 'templates/signup.html',
+		controller: 'signupCtrl'
+	})
+    .when('/actions', {
 		templateUrl: 'templates/actions.html',
 		controller: 'actionsCtrl'
 	})
