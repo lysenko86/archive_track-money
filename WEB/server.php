@@ -613,7 +613,7 @@
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST');
     header('Access-Control-Allow-Headers: Content-Type');
-    echo json_encode($data);
+	echo json_encode($data);
 
     $db = null;
 ?>

@@ -3,6 +3,9 @@
 	<div class="col-xs-12">
 		<h1>Вітаємо в сервісі TrackMoney!</h1>
 		<div>Цей сервіс створено, щоб допомогти кожному керувати своїми фінансами.</div>
-		<div ng-show="isAuth">{{phrase.text}}{{phrase.author}}</div>
+		<blockquote ng-show="isAuth" class="blockquote-reverse">
+  			<p>{{phrase.text}}</p>
+  			<footer>{{phrase.author}}</footer>
+		</blockquote>
 	</div>
 </div>

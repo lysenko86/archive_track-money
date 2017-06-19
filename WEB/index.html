@@ -18,25 +18,11 @@
 </head>
 <body>
 	<div class="container">
-        <div class="row">
+		<div class="row">
             <div class="col-xs-12">
-                <div class="header">
-                    <div class="logo"><a href="/"><img src="images/logo.png"></a></div>
-                    <div class="menu" ng-controller="menuCtrl">
-                        <ul>
-							<li ng-class="setActive('/home')"><a href="#/home">Головна</a></li>
-							<li ng-class="setActive('/signin')" ng-hide="isAuth"><a href="#/signin">Вхід</a></li>
-							<li ng-class="setActive('/signup')" ng-hide="isAuth"><a href="#/signup">Реєстрація</a></li>
-							<li ng-class="setActive('/actions')" ng-show="isAuth"><a href="#/actions">Транзакції</a></li>
-                            <li ng-class="setActive('/categories')" ng-show="isAuth"><a href="#/categories">Категорії</a></li>
-                            <li ng-class="setActive('/accounts')" ng-show="isAuth"><a href="#/accounts">Рахунки</a></li>
-                            <li ng-class="setActive('/budget')" ng-show="isAuth"><a href="#/budgets">Бюджети</a></li>
-                        </ul>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
+				<ng-include src="'templates/_menu.html'"></ng-include>
+			</div>
+		</div>
     </div>
     <div class="container">
         <div class="row">

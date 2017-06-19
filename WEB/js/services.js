@@ -1,5 +1,29 @@
 "use strict";
 
+moneyApp.service('usersServ', function($http){
+    this.signin = function(user, cb){
+        $http.post('server.php', {
+			action: 'signin',
+			email: user.email,
+			password: user.password
+		})
+		.success(function(data){
+            cb(data);
+        });
+    }
+    this.signup = function(user, cb){
+        $http.post('server.php', {
+			action: 'signup',
+			email: user.email,
+			password: user.password,
+            agree: user.agree
+		})
+		.success(function(data){
+            cb(data);
+        });
+    }
+});
+
 moneyApp.service('messagesServ', function($timeout){
     var self = this;
     this.message = {

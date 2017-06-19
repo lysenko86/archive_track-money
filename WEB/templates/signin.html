@@ -1,16 +1,17 @@
+<div class="alert" ng-class="message.class" ng-if="message.text">{{message.text}}</div>
 <div class="row">
-    <div class="col-xs-6 col-xs-offset-3">
-        <div class="panel panel-default panel-primary">
+    <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+        <div class="panel panel-primary">
             <div class="panel-heading">Авторизація</div>
             <div class="panel-body">
-                <form ng-submit="signup()">
+                <form ng-submit="signin()">
                     <div class="form-group">
                         <label for="text">Email:</label>
-                        <input type="text" class="form-control" id="email" ng-model="action.email" placeholder="email@email.com" />
+                        <input type="text" class="form-control" id="email" ng-model="user.email" placeholder="email@email.com" />
                     </div>
                     <div class="form-group">
                         <label for="text">Пароль:</label>
-                        <input type="password" class="form-control" id="password" ng-model="action.password" />
+                        <input type="password" class="form-control" id="password" ng-model="user.password" />
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary">Увійти</button>
@@ -19,3 +20,4 @@
             </div>
         </div>
     </div>
+</div>

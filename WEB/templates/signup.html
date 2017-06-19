@@ -1,20 +1,28 @@
-<div class="panel panel-default panel-primary panelForm-edit">
-    <div class="panel-heading">Реєстрація</div>
-    <div class="panel-body">
-        <form class="form-inline" ng-submit="signin()">
-            <div class="form-group">
-                <label for="text">Email:</label>
-                <input type="text" class="form-control" id="email" ng-model="action.email" placeholder="email@email.com" />
+<div class="alert" ng-class="message.class" ng-if="message.text">{{message.text}}</div>
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-lg-4 col-lg-offset-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Реєстрація</div>
+            <div class="panel-body">
+                <form ng-submit="signup()">
+                    <div class="form-group">
+                        <label for="text">Email:</label>
+                        <input type="text" class="form-control" id="email" ng-model="user.email" placeholder="email@email.com" />
+                    </div>
+                    <div class="form-group">
+                        <label for="text">Пароль:</label>
+                        <input type="password" class="form-control" id="password" ng-model="user.password" />
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label for="text"><input type="checkbox" id="agree" ng-model="user.agree" />Приймаю умови <a href="#/agree" target="_blank">користувацької угоди</a></label>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Реєструватися</button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="text">Пароль:</label>
-                <input type="password" class="form-control" id="password" ng-model="action.password" />
-            </div>
-            <div class="form-group">
-                <label for="text">Приймаю умови <a href="#test" target="_blank">користувацької угоди</a></label>
-                <input type="checkbox" class="form-control" id="agree" ng-model="action.agree" />
-            </div>
-            <button type="submit" class="btn btn-primary">Реєструватися</button>
-        </form>
+        </div>
     </div>
 </div>

@@ -18,6 +18,10 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
 		templateUrl: 'templates/signup.html',
 		controller: 'signupCtrl'
 	})
+    .when('/agree', {
+		templateUrl: 'templates/agree.html',
+		controller: 'agreeCtrl'
+	})
     .when('/actions', {
 		templateUrl: 'templates/actions.html',
 		controller: 'actionsCtrl'
@@ -33,6 +37,10 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
 	.when('/budgets', {
 		templateUrl: 'templates/budgets.html',
 		controller: 'budgetsCtrl'
+	})
+    .when('/logout', {
+		templateUrl: 'templates/logout.html',
+		controller: 'logoutCtrl'
 	})
 	.otherwise({
 		redirectTo: '/home'

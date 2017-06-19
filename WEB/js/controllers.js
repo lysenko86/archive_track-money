@@ -1,76 +1,177 @@
 "use strict";
 
+
+
 moneyApp.controller('menuCtrl', function($location, $scope, localStorageService){
-	$scope.isAuth = localStorageService.get('accessToken');
+	this.init = function(){
+		$scope.isAuth = localStorageService.get('token');
+	}
 	$scope.setActive = function(path){
 		return ($location.path().substr(0, path.length) === path) ? 'active' : '';
 	}
+
+	this.init();
 });
 
 
 
-moneyApp.controller('homeCtrl', function($scope, messagesServ, localStorageService){
-	this.phrases = [
-		{text:"Якщо умієш щось, не роби цього безкоштовно.", author:"The Dark Knight"},
-		{text:"- І скільки ж це буде коштувати?\n- Це безкоштовно!\n- Звучить дорогувато.", author:"Сімпсони (The Simpsons)"},
-		{text:"Не в грошах щастя, а в покупках.", author:"Мерілін Монро"},
-		{text:"Гроші не можуть змінити людей, вони можуть лише допомогти їм стати тими, ким вони є насправді.", author:"Сімпсони (The Simpsons)"},
-		{text:"Накопичувати гроші – річ корисна, особливо якщо це вже зробили ваші батьки.", author:"Вінстон Черчилль"},
-		{text:"Всім відомо, що за гроші можна купити туфлі, але не щастя, їжу, але не апетит, ліжко, але не сон, ліки, але не здоров'я, слуг, але не друзів, розваги, але не радість, вчителів, але не розум.", author:"Сократ"},
-		{text:"Працюйте так, немов гроші не мають для Вас жодного значення.",author:"Марк Твен"}
-	];
-	let index = Math.round(Math.random() * (this.phrases.length-1));
-	$scope.phrase = this.phrases[index];
-	$scope.isAuth = localStorageService.get('accessToken');
-	$scope.message = messagesServ.message;
+moneyApp.controller('homeCtrl', function($scope, localStorageService){
+	this.init = function(){
+		$scope.isAuth = localStorageService.get('token');
+		this.phrases = [
+			{text:"Якщо умієш щось, не роби цього безкоштовно.", author:"The Dark Knight"},
+			{text:"- І скільки ж це буде коштувати?\n- Це безкоштовно!\n- Звучить дорогувато.", author:"Сімпсони (The Simpsons)"},
+			{text:"Не в грошах щастя, а в покупках.", author:"Мерілін Монро"},
+			{text:"Гроші не можуть змінити людей, вони можуть лише допомогти їм стати тими, ким вони є насправді.", author:"Сімпсони (The Simpsons)"},
+			{text:"Накопичувати гроші – річ корисна, особливо якщо це вже зробили ваші батьки.", author:"Вінстон Черчилль"},
+			{text:"Всім відомо, що за гроші можна купити туфлі, але не щастя, їжу, але не апетит, ліжко, але не сон, ліки, але не здоров'я, слуг, але не друзів, розваги, але не радість, вчителів, але не розум.", author:"Сократ"},
+			{text:"Працюйте так, немов гроші не мають для Вас жодного значення.",author:"Марк Твен"}
+		];
+		let index = Math.round(Math.random() * (this.phrases.length-1));
+		$scope.phrase = this.phrases[index];
+	}
+
+	this.init();
 });
 
 
 
-moneyApp.controller('signinCtrl', function($scope, messagesServ, localStorageService){});
-
-
-
-moneyApp.controller('signupCtrl', function($scope, messagesServ, localStorageService){});
-
-
-
-moneyApp.controller('actionsCtrl', function($scope, messagesServ, actionsServ, categoriesServ, accountsServ){
-	$scope.message = messagesServ.message;
-	let obj = new Date();
-	let d = '0' + obj.getDate();
-	let m = '0' + (obj.getMonth()+1);
-	$scope.today = d.substr(d.length-2, 2) + '.' + m.substr(m.length-2, 2) + '.' + obj.getFullYear();
-	$scope.action = {
-		date: $scope.today,
-		type: '',
-		accountFrom_id: '',
-		accountTo_id: '',
-		category_id: '',
-		sum: '',
-		description: ''
-	};
-	$scope.actions = $scope.categories = $scope.accounts = [];
-	$scope.formType = 'add';
-	$scope.editID = '';
-	$scope.types = {
-		plus: 'Доходи',
-		minus: 'Витрати',
-		move: 'Переказ'
-	};
-	$scope.isShowMoreButton = true;
-	categoriesServ.getCategories(function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.categories = data.arr;
+moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
+	this.init = function(){
+		$scope.message = messagesServ.message;
+		$scope.isAuth = localStorageService.get('token');
+		if ($scope.isAuth){
+			$location.url('home');
 		}
-	});
-	accountsServ.getAccounts(function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.accounts = data.arr;
+		$scope.user = {
+			email: '',
+			password: ''
+		};
+	}
+	$scope.signin = function(){
+		if (!$scope.user.email || !$scope.user.password){
+			messagesServ.showMessage('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
 		}
-	});
+		else{
+			usersServ.signin($scope.user, function(data){
+				if (data.status == 'success'){
+					localStorageService.set('token', data.arr.token);
+					$scope.user.email = $scope.user.password = '';
+					$window.location.href = '/';
+				}
+				messagesServ.showMessage(data.status, data.msg);
+            });
+		}
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, localStorageService, usersServ){
+	this.init = function(){
+		$scope.message = messagesServ.message;
+		$scope.isAuth = localStorageService.get('token');
+		if ($scope.isAuth){
+			$location.url('home');
+		}
+		$scope.user = {
+			email: '',
+			password: '',
+			agree: false
+		};
+	}
+	$scope.signup = function(){
+		if (!$scope.user.email || !$scope.user.password){
+			messagesServ.showMessage('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
+		}
+		else if (!/^\S+@\S+$/.test($scope.user.email)){
+			messagesServ.showMessage('error', 'Помилка! Значення поля "Email" має бути наступного формату: email@email.com!');
+		}
+		else if (!$scope.user.agree){
+			messagesServ.showMessage('error', 'Помилка! Ви повинні прийняти умови користувацької угоди!');
+		}
+		else{
+			usersServ.signup($scope.user, function(data){
+				if (data.status == 'success'){
+					$scope.user.email = $scope.user.password = $scope.user.agree = '';
+					$location.url('home');
+				}
+				messagesServ.showMessage(data.status, data.msg);
+			});
+		}
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('agreeCtrl', function(){});
+
+
+
+moneyApp.controller('logoutCtrl', function($location, $window, $scope, localStorageService){
+	this.init = function(){
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
+		else{
+			localStorageService.remove('token');
+			$window.location.href = '/';
+		}
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
+	this.init = function(){
+		$scope.message = messagesServ.message;
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
+		let obj = new Date();
+		let d = '0' + obj.getDate();
+		let m = '0' + (obj.getMonth()+1);
+		$scope.today = d.substr(d.length-2, 2) + '.' + m.substr(m.length-2, 2) + '.' + obj.getFullYear();
+		$scope.action = {
+			date: $scope.today,
+			type: '',
+			accountFrom_id: '',
+			accountTo_id: '',
+			category_id: '',
+			sum: '',
+			description: ''
+		};
+		$scope.actions = $scope.categories = $scope.accounts = [];
+		$scope.formType = 'add';
+		$scope.editID = '';
+		$scope.types = {
+			plus: 'Доходи',
+			minus: 'Витрати',
+			move: 'Переказ'
+		};
+		$scope.isShowMoreButton = true;
+		categoriesServ.getCategories(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.categories = data.arr;
+			}
+		});
+		accountsServ.getAccounts(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.accounts = data.arr;
+			}
+		});
+		$scope.getActions();
+	};
 	$scope.getActions = function(data){
 		actionsServ.getActions($scope.actions.length, 20, function(data){
 			if (data.status == 'success'){
@@ -82,7 +183,6 @@ moneyApp.controller('actionsCtrl', function($scope, messagesServ, actionsServ, c
 			}
 		});
 	}
-	$scope.getActions();
 	$scope.getAction = function(id){
 		if (id == undefined){
 			$scope.formType = 'add';
@@ -186,29 +286,40 @@ moneyApp.controller('actionsCtrl', function($scope, messagesServ, actionsServ, c
 			});
 		}
 	}
+
+	this.init();
 });
 
 
 
-moneyApp.controller('categoriesCtrl', function($scope, messagesServ, categoriesServ){
-	$scope.message = messagesServ.message;
-	$scope.category = {
-		title: '',
-		type: ''
-	};
-	$scope.categories = [];
-	$scope.formType = 'add';
-	$scope.editID = '';
-	$scope.types = {
-		plus: 'Доходи',
-		minus: 'Витрати'
-	};
-	categoriesServ.getCategories(function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.categories = data.arr;
+moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, categoriesServ, localStorageService){
+	this.init = function(){
+		$scope.message = messagesServ.message;
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
 		}
-	});
+		$scope.category = {
+			title: '',
+			type: ''
+		};
+		$scope.categories = [];
+		$scope.formType = 'add';
+		$scope.editID = '';
+		$scope.types = {
+			plus: 'Доходи',
+			minus: 'Витрати'
+		};
+		$scope.getCategories();
+	}
+	$scope.getCategories = function(){
+		categoriesServ.getCategories(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.categories = data.arr;
+			}
+		});
+	}
 	$scope.getCategory = function(id){
 		if (id == undefined){
 			$scope.formType = 'add';
@@ -268,25 +379,36 @@ moneyApp.controller('categoriesCtrl', function($scope, messagesServ, categoriesS
 			});
 		}
 	}
+
+	this.init();
 });
 
 
 
-moneyApp.controller('accountsCtrl', function($scope, messagesServ, accountsServ){
-	$scope.message = messagesServ.message;
-	$scope.account = {
-		title: '',
-		balance: ''
-	};
-	$scope.accounts = [];
-	$scope.formType = 'add';
-	$scope.editID = '';
-	accountsServ.getAccounts(function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.accounts = data.arr;
+moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, accountsServ, localStorageService){
+	this.init = function(){
+		$scope.message = messagesServ.message;
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
 		}
-	});
+		$scope.account = {
+			title: '',
+			balance: ''
+		};
+		$scope.accounts = [];
+		$scope.formType = 'add';
+		$scope.editID = '';
+		$scope.getAccounts();
+	}
+	$scope.getAccounts = function(){
+		accountsServ.getAccounts(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.accounts = data.arr;
+			}
+		});
+	}
 	$scope.getAccount = function(id){
 		if (id == undefined){
 			$scope.formType = 'add';
@@ -352,42 +474,51 @@ moneyApp.controller('accountsCtrl', function($scope, messagesServ, accountsServ)
 			});
 		}
 	}
+
+	this.init();
 });
 
 
 
-moneyApp.controller('budgetsCtrl', function($scope, messagesServ, budgetsServ, categoriesServ){
-	$scope.message = messagesServ.message;
-	let obj = new Date();
-	$scope.budget = {
-		month: obj.getMonth()+1+'',
-		year: obj.getFullYear(),
-		categories: [],
-		plusPlan: '',
-		plusFact: '',
-        plusRest: '',
-		minusPlan: '',
-		minusFact: '',
-        minusRest: '',
-        balancePlan: '',
-        balanceFact: ''
-	};
-	$scope.category = {
-		month: '',
-		year: '',
-		category_id: '',
-		sum: ''
-	};
-	$scope.categories = [];
-	$scope.formType = 'add';
-	$scope.editID = '';
-	$scope.mathAbs = window.Math.abs;
-	categoriesServ.getCategories(function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.categories = data.arr;
+moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, budgetsServ, categoriesServ, localStorageService){
+	this.init = function(){
+		$scope.message = messagesServ.message;
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
 		}
-	});
+		let obj = new Date();
+		$scope.budget = {
+			month: obj.getMonth()+1+'',
+			year: obj.getFullYear(),
+			categories: [],
+			plusPlan: '',
+			plusFact: '',
+	        plusRest: '',
+			minusPlan: '',
+			minusFact: '',
+	        minusRest: '',
+	        balancePlan: '',
+	        balanceFact: ''
+		};
+		$scope.category = {
+			month: '',
+			year: '',
+			category_id: '',
+			sum: ''
+		};
+		$scope.categories = [];
+		$scope.formType = 'add';
+		$scope.editID = '';
+		$scope.mathAbs = window.Math.abs;
+		categoriesServ.getCategories(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.categories = data.arr;
+			}
+		});
+		$scope.getBudget();
+	}
 	$scope.getBudget = function(){
 		if (!$scope.budget.month || !$scope.budget.year){
 			messagesServ.showMessage('error', 'Помилка! Поля "Місяць" та "Рік" обов\'язкові для заповнення!');
@@ -416,7 +547,6 @@ moneyApp.controller('budgetsCtrl', function($scope, messagesServ, budgetsServ, c
 			});
 		}
 	}
-	$scope.getBudget();
 	$scope.getCategory = function(id){
 		if (id == undefined){
 			$scope.formType = 'add';
@@ -489,4 +619,6 @@ moneyApp.controller('budgetsCtrl', function($scope, messagesServ, budgetsServ, c
 			});
 		}
 	}
+
+	this.init();
 });
