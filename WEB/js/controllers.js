@@ -10,7 +10,9 @@ moneyApp.controller('menuCtrl', function($location, $scope, localStorageService)
 		return ($location.path().substr(0, path.length) === path) ? 'active' : '';
 	}
 	$scope.hideMenu = function(){
-		angular.element('nav.navbar .navbar-header button.navbar-toggle').click();
+		if (angular.element('nav.navbar .navbar-collapse.collapse').hasClass('in')){
+			angular.element('nav.navbar .navbar-header button.navbar-toggle').click();
+		}
 	}
 
 	this.init();
