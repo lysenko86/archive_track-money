@@ -45,7 +45,7 @@
 			}
 			else{
                 $password = md5($salt . md5($password) . $salt);
-				$query = $db->prepare("SELECT `id`, `confirm` FROM `users` WHERE `email` = ? AND `password` = ?");
+				$query = $db->prepare("SELECT `id`, `token`, `confirm` FROM `users` WHERE `email` = ? AND `password` = ?");
 				$query->execute(array($email, $password));
                 $isUser = $query->fetchAll(PDO::FETCH_ASSOC);
                 if (!$isUser){
@@ -59,9 +59,14 @@
                     $data['msg']    = "Помилка! Ваш Email не підтверджено.";
                 }
                 else{
-                    $token = md5(uniqid(rand(), 1));
-                    $query = $db->prepare("UPDATE `users` SET `token` = ? WHERE `email` = ?");
-    				$query->execute(array($token, $email));
+                    if ($isUser[0]['token']){
+                        $token = $isUser[0]['token'];
+                    }
+                    else{
+                        $token = md5(uniqid(rand(), 1));
+                        $query = $db->prepare("UPDATE `users` SET `token` = ? WHERE `email` = ?");
+        				$query->execute(array($token, $email));
+                    }
                     $data['arr']['token'] = $isUser[0]['id'].'.'.$token;
     				$data['status'] = 'success';
     				$data['msg']    = "Готово! Авторизація пройшла успішно.";
@@ -106,17 +111,11 @@
 			}
         break;
         case 'logout':
-            if (getAccess($db)){
-                $uid = getUID();
-                $query = $db->prepare("UPDATE `users` SET `token` = ? WHERE `id` = ?");
-                $query->execute(array('', $uid));
-                $data['status'] = 'success';
-                $data['msg']    = "Готово! Ви успішно вийшли зі свого аккаунту.";
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-    			$data['status'] = 'error';
-            }
+            $uid = getUID();
+            $query = $db->prepare("UPDATE `users` SET `token` = ? WHERE `id` = ?");
+            $query->execute(array('', $uid));
+            $data['status'] = 'success';
+            $data['msg']    = "Готово! Ви успішно вийшли зі свого аккаунту.";
         break;
         case 'confirmEmail':
             $confirm = explode('.', trim($_GET['confirm']));
