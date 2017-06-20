@@ -3,7 +3,7 @@
 var moneyApp = angular.module('moneyApp', ['ngRoute', 'LocalStorageModule']);
 
 moneyApp.config(function($routeProvider, localStorageServiceProvider){
-    localStorageServiceProvider.setPrefix('TrackMoney_');
+    localStorageServiceProvider.setPrefix('TrackMoney');
 
 	$routeProvider
 	.when('/home', {
@@ -19,8 +19,11 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
 		controller: 'signupCtrl'
 	})
     .when('/agree', {
-		templateUrl: 'templates/agree.html',
-		controller: 'agreeCtrl'
+		templateUrl: 'templates/agree.html'
+	})
+    .when('/confirm/:confirm', {
+		templateUrl: 'templates/confirm.html',
+		controller: 'confirmCtrl'
 	})
     .when('/actions', {
 		templateUrl: 'templates/actions.html',

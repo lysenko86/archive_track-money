@@ -38,7 +38,7 @@ moneyApp.controller('homeCtrl', function($scope, localStorageService){
 
 moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
-		$scope.message = messagesServ.message;
+		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
@@ -50,16 +50,17 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 	}
 	$scope.signin = function(){
 		if (!$scope.user.email || !$scope.user.password){
-			messagesServ.showMessage('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
 		}
 		else{
 			usersServ.signin($scope.user, function(data){
-				if (data.status == 'success'){
-					localStorageService.set('token', data.arr.token);
-					$scope.user.email = $scope.user.password = '';
-					$window.location.href = '/';
-				}
-				messagesServ.showMessage(data.status, data.msg);
+				$scope.user.email = $scope.user.password = '';
+				messagesServ.showMessages(data.status, data.msg, 2000, function(){
+					if (data.status == 'success'){
+						localStorageService.set('token', data.arr.token);
+						$window.location.href = '/';
+					}
+				});
             });
 		}
 	}
@@ -71,7 +72,7 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 
 moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
-		$scope.message = messagesServ.message;
+		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
@@ -84,21 +85,22 @@ moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, loca
 	}
 	$scope.signup = function(){
 		if (!$scope.user.email || !$scope.user.password){
-			messagesServ.showMessage('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
 		}
 		else if (!/^\S+@\S+$/.test($scope.user.email)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Email" має бути наступного формату: email@email.com!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Email" має бути наступного формату: email@email.com!');
 		}
 		else if (!$scope.user.agree){
-			messagesServ.showMessage('error', 'Помилка! Ви повинні прийняти умови користувацької угоди!');
+			messagesServ.showMessages('error', 'Помилка! Ви повинні прийняти умови користувацької угоди!');
 		}
 		else{
 			usersServ.signup($scope.user, function(data){
-				if (data.status == 'success'){
-					$scope.user.email = $scope.user.password = $scope.user.agree = '';
-					$location.url('home');
-				}
-				messagesServ.showMessage(data.status, data.msg);
+				$scope.user.email = $scope.user.password = $scope.user.agree = '';
+				messagesServ.showMessages(data.status, data.msg, 6000, function(){
+					if (data.status == 'success'){
+						$location.url('home');
+					}
+				});
 			});
 		}
 	}
@@ -108,20 +110,41 @@ moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, loca
 
 
 
-moneyApp.controller('agreeCtrl', function(){});
-
-
-
-moneyApp.controller('logoutCtrl', function($location, $window, $scope, localStorageService){
+moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
+		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
 		else{
-			localStorageService.remove('token');
-			$window.location.href = '/';
+			usersServ.logout(function(data){
+				messagesServ.showMessages(data.status, data.msg, 2000, function(){
+					if (data.status == 'success'){
+						localStorageService.remove('token');
+						$window.location.href = '/';
+					}
+				});
+			});
 		}
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routeParams, messagesServ, usersServ){
+	this.init = function(){
+		$scope.messages = messagesServ.messages;
+		let confirm = $routeParams.confirm.split('.');
+		usersServ.confirm(confirm, function(data){
+			messagesServ.showMessages(data.status, data.msg, 2000, function(){
+				if (data.status == 'success'){
+					$location.url('home');
+				}
+			});
+		});
 	}
 
 	this.init();
@@ -131,7 +154,7 @@ moneyApp.controller('logoutCtrl', function($location, $window, $scope, localStor
 
 moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
 	this.init = function(){
-		$scope.message = messagesServ.message;
+		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
@@ -163,11 +186,17 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 				data.arr = data.arr ? data.arr : [];
 				$scope.categories = data.arr;
 			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
+			}
 		});
 		accountsServ.getAccounts(function(data){
 			if (data.status == 'success'){
 				data.arr = data.arr ? data.arr : [];
 				$scope.accounts = data.arr;
+			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 		$scope.getActions();
@@ -181,6 +210,9 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 					$scope.isShowMoreButton = false;
 				}
 			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
+			}
 		});
 	}
 	$scope.getAction = function(id){
@@ -192,32 +224,38 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 		else{
 			$scope.editID = id;
 			actionsServ.getAction(id, function(data){
-				$scope.formType = 'edit';
-				$scope.action.date = data.arr.date;
-				$scope.action.type = data.arr.type;
-				$scope.action.accountFrom_id = data.arr.accountFrom_id;
-				$scope.action.accountTo_id = data.arr.accountTo_id;
-				$scope.action.category_id = data.arr.category_id;
-				$scope.action.sum = data.arr.sum;
-				$scope.action.description = data.arr.description;
+				if (data.status == 'success'){
+					data.arr.date = data.arr.date.substr(8,2) + '.' + data.arr.date.substr(5,2) + '.' + data.arr.date.substr(0,4);
+					$scope.formType = 'edit';
+					$scope.action.date = data.arr.date;
+					$scope.action.type = data.arr.type;
+					$scope.action.accountFrom_id = data.arr.accountFrom_id;
+					$scope.action.accountTo_id = data.arr.accountTo_id;
+					$scope.action.category_id = data.arr.category_id;
+					$scope.action.sum = data.arr.sum;
+					$scope.action.description = data.arr.description;
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
 			});
 		}
 	}
 	$scope.addAction = function(){
 		if (!$scope.action.type){
-			messagesServ.showMessage('error', 'Помилка! Поле "Тип" обов\'язкове для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поле "Тип" обов\'язкове для заповнення!');
 		}
 		else if ($scope.action.type == 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.accountTo_id || !$scope.action.sum)){
-			messagesServ.showMessage('error', 'Помилка! Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!');
 		}
 		else if ($scope.action.type != 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.category_id || !$scope.action.sum)){
-			messagesServ.showMessage('error', 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!');
 		}
 		else if (!/^\d{2}\.\d{2}\.\d{4}$/.test($scope.action.date)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!');
 		}
 		else if (!/^[\d\.]+$/.test($scope.action.sum)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Сума" має бути числовим!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим!');
 		}
 		else{
 			if ($scope.action.type == 'move'){
@@ -232,25 +270,25 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 					$scope.action.date = $scope.today;
 					$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.editAction = function(){
 		if (!$scope.action.type){
-			messagesServ.showMessage('error', 'Помилка! Поле "Тип" обов\'язкове для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поле "Тип" обов\'язкове для заповнення!');
 		}
 		else if ($scope.action.type == 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.accountTo_id || !$scope.action.sum)){
-			messagesServ.showMessage('error', 'Помилка! Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!');
 		}
 		else if ($scope.action.type != 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.category_id || !$scope.action.sum)){
-			messagesServ.showMessage('error', 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!');
 		}
 		else if (!/^\d{2}\.\d{2}\.\d{4}$/.test($scope.action.date)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!');
 		}
 		else if (!/^[\d\.]+$/.test($scope.action.sum)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Сума" має бути числовим!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим!');
 		}
 		else{
 			if ($scope.action.type == 'move'){
@@ -270,7 +308,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 					$scope.action.date = $scope.today;
 					$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = $scope.editID = '';
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -282,7 +320,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 						if ($scope.actions[i].id == id) $scope.actions.splice(i, 1);
 					}
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -294,7 +332,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 
 moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, categoriesServ, localStorageService){
 	this.init = function(){
-		$scope.message = messagesServ.message;
+		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
@@ -318,6 +356,9 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 				data.arr = data.arr ? data.arr : [];
 				$scope.categories = data.arr;
 			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
+			}
 		});
 	}
 	$scope.getCategory = function(id){
@@ -328,15 +369,20 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 		else{
 			$scope.editID = id;
 			categoriesServ.getCategory(id, function(data){
-				$scope.formType = 'edit';
-				$scope.category.title = data.arr.title;
-				$scope.category.type = data.arr.type;
+				if (data.status == 'success'){
+					$scope.formType = 'edit';
+					$scope.category.title = data.arr.title;
+					$scope.category.type = data.arr.type;
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
 			});
 		}
 	}
 	$scope.addCategory = function(){
 		if (!$scope.category.title || !$scope.category.type){
-			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Тип" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Назва" та "Тип" обов\'язкові для заповнення!');
 		}
 		else{
 			categoriesServ.addCategory($scope.category, function(data){
@@ -344,13 +390,13 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 					$scope.categories.push(data.arr);
 					$scope.category.title = $scope.category.type = '';
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.editCategory = function(){
 		if (!$scope.category.title || !$scope.category.type){
-			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Тип" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Назва" та "Тип" обов\'язкові для заповнення!');
 		}
 		else{
 			categoriesServ.editCategory($scope.editID, $scope.category, function(data){
@@ -363,7 +409,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 					}
 					$scope.category.title = $scope.category.type = $scope.editID = '';
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -375,7 +421,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 						if ($scope.categories[i].id == id) $scope.categories.splice(i, 1);
 					}
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -387,7 +433,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 
 moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, accountsServ, localStorageService){
 	this.init = function(){
-		$scope.message = messagesServ.message;
+		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
@@ -407,6 +453,9 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 				data.arr = data.arr ? data.arr : [];
 				$scope.accounts = data.arr;
 			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
+			}
 		});
 	}
 	$scope.getAccount = function(id){
@@ -417,18 +466,23 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 		else{
 			$scope.editID = id;
 			accountsServ.getAccount(id, function(data){
-				$scope.formType = 'edit';
-				$scope.account.title = data.arr.title;
-				$scope.account.balance = data.arr.balance;
+				if (data.status == 'success'){
+					$scope.formType = 'edit';
+					$scope.account.title = data.arr.title;
+					$scope.account.balance = data.arr.balance;
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
 			});
 		}
 	}
 	$scope.addAccount = function(){
 		if (!$scope.account.title || $scope.account.balance == ''){
-			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
 		}
 		else if (!/^[\-\+\d\.]+$/.test($scope.account.balance)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
 		}
 		else{
 			accountsServ.addAccount($scope.account, function(data){
@@ -436,16 +490,16 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 					$scope.accounts.push(data.arr);
 					$scope.account.title = $scope.account.balance = '';
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.editAccount = function(){
 		if (!$scope.account.title || $scope.account.balance == ''){
-			messagesServ.showMessage('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
 		}
 		else if (!/^[\-\+\d\.]+$/.test($scope.account.balance)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
 		}
 		else{
 			accountsServ.editAccount($scope.editID, $scope.account, function(data){
@@ -458,7 +512,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 					}
 					$scope.account.title = $scope.account.balance = $scope.editID = '';
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -470,7 +524,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 						if ($scope.accounts[i].id == id) $scope.accounts.splice(i, 1);
 					}
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -482,7 +536,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 
 moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, budgetsServ, categoriesServ, localStorageService){
 	this.init = function(){
-		$scope.message = messagesServ.message;
+		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
@@ -516,34 +570,42 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 				data.arr = data.arr ? data.arr : [];
 				$scope.categories = data.arr;
 			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
+			}
 		});
 		$scope.getBudget();
 	}
 	$scope.getBudget = function(){
 		if (!$scope.budget.month || !$scope.budget.year){
-			messagesServ.showMessage('error', 'Помилка! Поля "Місяць" та "Рік" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Місяць" та "Рік" обов\'язкові для заповнення!');
 		}
 		else if (!/^\d{4}$/.test($scope.budget.year)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
 		}
 		else{
 			budgetsServ.getBudget($scope.budget, function(data){
-				$scope.budget.categories = data.arr;
-				$scope.budget.plusPlan = $scope.budget.plusFact = $scope.budget.plusRest = $scope.budget.minusPlan = $scope.budget.minusFact = $scope.budget.minusRest = $scope.budget.balancePlan = $scope.budget.balanceFact = '';
-				for (var i=0; i<$scope.budget.categories.length; i++){
-					if ($scope.budget.categories[i].type == 'plus'){
-						$scope.budget.plusPlan = $scope.budget.plusPlan*1 + $scope.budget.categories[i].plan*1;
-						$scope.budget.plusFact = $scope.budget.plusFact*1 + $scope.budget.categories[i].fact*1;
+				if (data.status == 'success'){
+					$scope.budget.categories = data.arr;
+					$scope.budget.plusPlan = $scope.budget.plusFact = $scope.budget.plusRest = $scope.budget.minusPlan = $scope.budget.minusFact = $scope.budget.minusRest = $scope.budget.balancePlan = $scope.budget.balanceFact = '';
+					for (var i=0; i<$scope.budget.categories.length; i++){
+						if ($scope.budget.categories[i].type == 'plus'){
+							$scope.budget.plusPlan = $scope.budget.plusPlan*1 + $scope.budget.categories[i].plan*1;
+							$scope.budget.plusFact = $scope.budget.plusFact*1 + $scope.budget.categories[i].fact*1;
+						}
+						else{
+							$scope.budget.minusPlan = $scope.budget.minusPlan*1 + $scope.budget.categories[i].plan*1;
+							$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
+						}
 					}
-					else{
-						$scope.budget.minusPlan = $scope.budget.minusPlan*1 + $scope.budget.categories[i].plan*1;
-						$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
-					}
+					$scope.budget.plusRest = $scope.budget.plusPlan - $scope.budget.plusFact;
+			        $scope.budget.minusRest = $scope.budget.minusPlan - $scope.budget.minusFact;
+					$scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
+			        $scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
 				}
-				$scope.budget.plusRest = $scope.budget.plusPlan - $scope.budget.plusFact;
-		        $scope.budget.minusRest = $scope.budget.minusPlan - $scope.budget.minusFact;
-				$scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
-		        $scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
 			});
 		}
 	}
@@ -555,42 +617,47 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 		else{
 			$scope.editID = id;
 			budgetsServ.getCategory(id, function(data){
-				$scope.formType = 'edit';
-				$scope.category.month = data.arr.month;
-				$scope.category.year = data.arr.year;
-				$scope.category.category_id = data.arr.category_id;
-				$scope.category.sum = data.arr.sum;
+				if (data.status == 'success'){
+					$scope.formType = 'edit';
+					$scope.category.month = data.arr.month;
+					$scope.category.year = data.arr.year;
+					$scope.category.category_id = data.arr.category_id;
+					$scope.category.sum = data.arr.sum;
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
 			});
 		}
 	}
 	$scope.addCategory = function(){
 		if (!$scope.category.month || !$scope.category.year || !$scope.category.category_id || !$scope.category.sum){
-			messagesServ.showMessage('error', 'Помилка! Поля "Місяць", "Рік", "Категорія" та "Сума" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Місяць", "Рік", "Категорія" та "Сума" обов\'язкові для заповнення!');
 		}
 		else if (!/^\d{4}$/.test($scope.category.year)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
 		}
 		else if (!/^[\d\.]+$/.test($scope.category.sum)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Сума" має бути числовим!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим!');
 		}
 		else{
 			budgetsServ.addCategory($scope.category, function(data){
 				if (data.status == 'success'){
 					$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = '';
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.editCategory = function(){
 		if (!$scope.category.month || !$scope.category.year || !$scope.category.category_id || !$scope.category.sum){
-			messagesServ.showMessage('error', 'Помилка! Поля "Місяць", "Рік", "Категорія" та "Сума" обов\'язкові для заповнення!');
+			messagesServ.showMessages('error', 'Помилка! Поля "Місяць", "Рік", "Категорія" та "Сума" обов\'язкові для заповнення!');
 		}
 		else if (!/^\d{4}$/.test($scope.category.year)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
 		}
 		else if (!/^[\d\.]+$/.test($scope.category.sum)){
-			messagesServ.showMessage('error', 'Помилка! Значення поля "Сума" має бути числовим!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим!');
 		}
 		else{
 			budgetsServ.editCategory($scope.editID, $scope.category, function(data){
@@ -603,7 +670,7 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 					}
 					$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = $scope.editID = '';
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -615,7 +682,7 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 						if ($scope.budget.categories[i].id == id) $scope.budget.categories.splice(i, 1);
 					}
 				}
-				messagesServ.showMessage(data.status, data.msg);
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
