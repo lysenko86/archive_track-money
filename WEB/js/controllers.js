@@ -9,6 +9,9 @@ moneyApp.controller('menuCtrl', function($location, $scope, localStorageService)
 	$scope.setActive = function(path){
 		return ($location.path().substr(0, path.length) === path) ? 'active' : '';
 	}
+	$scope.hideMenu = function(){
+		angular.element('nav.navbar .navbar-header button.navbar-toggle').click();
+	}
 
 	this.init();
 });
@@ -145,6 +148,20 @@ moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routePa
 				}
 			});
 		});
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('forumCtrl', function($location, $scope, messagesServ, localStorageService){
+	this.init = function(){
+		$scope.messages = messagesServ.messages;
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
 	}
 
 	this.init();
