@@ -10,6 +10,9 @@ moneyApp.service('usersServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
     this.signup = function(user, cb){
@@ -21,18 +24,27 @@ moneyApp.service('usersServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
     this.logout = function(cb){
         $http.get('server.php?action=logout&token=' + token)
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
     this.confirm = function(confirm, cb){
         $http.get('server.php?action=confirmEmail&confirm='+confirm[0]+'.'+confirm[1])
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 });
@@ -66,12 +78,18 @@ moneyApp.service('actionsServ', function($http, localStorageService){
         $http.get('server.php?action=getActions&token=' + token + '&from=' + from + '&count=' + count)
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 	this.getAction = function(id, cb){
         $http.get('server.php?action=getAction&token=' + token + '&id=' + id)
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 	this.addAction = function(action, cb){
@@ -87,6 +105,9 @@ moneyApp.service('actionsServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
 	}
 	this.editAction = function(id, action, cb){
@@ -103,6 +124,9 @@ moneyApp.service('actionsServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
 	}
 	this.delAction = function(id, cb){
@@ -112,6 +136,9 @@ moneyApp.service('actionsServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 });
@@ -124,12 +151,18 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
         $http.get('server.php?action=getCategories&token=' + token)
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 	this.getCategory = function(id, cb){
         $http.get('server.php?action=getCategory&token=' + token + '&id=' + id)
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 	this.addCategory = function(category, cb){
@@ -140,6 +173,9 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
 	}
 	this.editCategory = function(id, category, cb){
@@ -151,6 +187,9 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
 	}
 	this.delCategory = function(id, cb){
@@ -160,6 +199,9 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 });
@@ -172,12 +214,18 @@ moneyApp.service('accountsServ', function($http, localStorageService){
         $http.get('server.php?action=getAccounts&token=' + token)
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 	this.getAccount = function(id, cb){
         $http.get('server.php?action=getAccount&token=' + token + '&id=' + id)
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 	this.addAccount = function(account, cb){
@@ -188,6 +236,9 @@ moneyApp.service('accountsServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
 	}
 	this.editAccount = function(id, account, cb){
@@ -199,6 +250,9 @@ moneyApp.service('accountsServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
 	}
 	this.delAccount = function(id, cb){
@@ -208,6 +262,9 @@ moneyApp.service('accountsServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 });
@@ -220,12 +277,18 @@ moneyApp.service('budgetsServ', function($http, localStorageService){
         $http.get('server.php?action=getBudget&token=' + token + '&month=' + budget.month + '&year=' + budget.year)
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 	this.getCategory = function(id, cb){
         $http.get('server.php?action=getBudgetCategory&token=' + token + '&id=' + id)
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 	this.addCategory = function(category, cb){
@@ -238,6 +301,9 @@ moneyApp.service('budgetsServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
 	}
 	this.editCategory = function(id, category, cb){
@@ -251,6 +317,9 @@ moneyApp.service('budgetsServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
 	}
 	this.delCategory = function(id, cb){
@@ -260,6 +329,9 @@ moneyApp.service('budgetsServ', function($http, localStorageService){
 		})
 		.success(function(data){
             cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
         });
     }
 });
