@@ -2,6 +2,15 @@
 
 moneyApp.service('usersServ', function($http, localStorageService){
     var token = localStorageService.get('token');
+    this.getCount = function(cb){
+        $http.get('server.php?action=getCountUsers&token=' + token)
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+    }
     this.signin = function(user, cb){
         $http.post('server.php', {
 			action: 'signin',

@@ -20,7 +20,7 @@ moneyApp.controller('menuCtrl', function($location, $scope, localStorageService)
 
 
 
-moneyApp.controller('homeCtrl', function($scope, localStorageService){
+moneyApp.controller('homeCtrl', function($scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
 		this.phrases = [
@@ -34,6 +34,21 @@ moneyApp.controller('homeCtrl', function($scope, localStorageService){
 		];
 		let index = Math.round(Math.random() * (this.phrases.length-1));
 		$scope.phrase = this.phrases[index];
+		usersServ.getCount(function(data){
+			if (data == 'requestError'){
+				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			}
+			else{
+				if (data.status == 'success'){
+					data.arr = data.arr ? data.arr : [];
+					$scope.categories = data.arr;
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
+			}
+		});
+		$scope.countUsers = '8';
 	}
 
 	this.init();

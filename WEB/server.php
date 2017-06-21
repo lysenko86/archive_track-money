@@ -36,6 +36,19 @@
 
 
 
+        case 'getCountUsers':
+            if (getAccess($db)){
+                $query = $db->prepare("SELECT COUNT(*) as `count` FROM `users` WHERE `confirm` = ?");
+                $query->execute(array('1'));
+                $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                $data['arr'] = $data['arr'][0];
+                $data['status'] = 'success';
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
         case 'signin':
             $email = trim($request->email);
             $password = trim($request->password);
