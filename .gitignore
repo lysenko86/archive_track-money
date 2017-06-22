@@ -1,4 +1,11 @@
 API/node_modules
+API/access.log
+API/error.log
+
+
+
+WEB/access.log
+WEB/error.log
 
 
 
@@ -18,3 +25,8 @@ APP/.editorconfig
 APP/gulpfile.js
 APP/ionic.config.json
 APP/package-lock.json
+
+
+
+site/access.log
+site/error.log
