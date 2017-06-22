@@ -1,9 +1,14 @@
 "use strict";
 
+var config = {
+    api: 'http://api.trackmoney/server.php'     // Development
+//    api: 'server.php'     // Production
+}
+
 moneyApp.service('usersServ', function($http, localStorageService){
     var token = localStorageService.get('token');
     this.getCount = function(cb){
-        $http.get('server.php?action=getCountUsers&token=' + token)
+        $http.get(config.api + '?action=getCountUsers&token=' + token)
 		.success(function(data){
             cb(data);
         })
@@ -12,7 +17,7 @@ moneyApp.service('usersServ', function($http, localStorageService){
         });
     }
     this.signin = function(user, cb){
-        $http.post('server.php', {
+        $http.post(config.api, {
 			action: 'signin',
 			email: user.email,
 			password: user.password
@@ -25,7 +30,7 @@ moneyApp.service('usersServ', function($http, localStorageService){
         });
     }
     this.signup = function(user, cb){
-        $http.post('server.php', {
+        $http.post(config.api, {
 			action: 'signup',
 			email: user.email,
 			password: user.password,
@@ -39,7 +44,7 @@ moneyApp.service('usersServ', function($http, localStorageService){
         });
     }
     this.logout = function(cb){
-        $http.get('server.php?action=logout&token=' + token)
+        $http.get(config.api + '?action=logout&token=' + token)
 		.success(function(data){
             cb(data);
         })
@@ -48,7 +53,7 @@ moneyApp.service('usersServ', function($http, localStorageService){
         });
     }
     this.confirm = function(confirm, cb){
-        $http.get('server.php?action=confirmEmail&confirm='+confirm[0]+'.'+confirm[1])
+        $http.get(config.api + '?action=confirmEmail&confirm='+confirm[0]+'.'+confirm[1])
 		.success(function(data){
             cb(data);
         })
@@ -84,7 +89,7 @@ moneyApp.service('messagesServ', function($timeout){
 moneyApp.service('actionsServ', function($http, localStorageService){
     var token = localStorageService.get('token');
 	this.getActions = function(from, count, cb){
-        $http.get('server.php?action=getActions&token=' + token + '&from=' + from + '&count=' + count)
+        $http.get(config.api + '?action=getActions&token=' + token + '&from=' + from + '&count=' + count)
 		.success(function(data){
             cb(data);
         })
@@ -93,7 +98,7 @@ moneyApp.service('actionsServ', function($http, localStorageService){
         });
     }
 	this.getAction = function(id, cb){
-        $http.get('server.php?action=getAction&token=' + token + '&id=' + id)
+        $http.get(config.api + '?action=getAction&token=' + token + '&id=' + id)
 		.success(function(data){
             cb(data);
         })
@@ -102,7 +107,7 @@ moneyApp.service('actionsServ', function($http, localStorageService){
         });
     }
 	this.addAction = function(action, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'addAction',
 			date: action.date.substr(6,4) + '-' + action.date.substr(3,2) + '-' + action.date.substr(0,2),
 			type: action.type,
@@ -120,7 +125,7 @@ moneyApp.service('actionsServ', function($http, localStorageService){
         });
 	}
 	this.editAction = function(id, action, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'editAction',
 			id: id,
 			date: action.date.substr(6,4) + '-' + action.date.substr(3,2) + '-' + action.date.substr(0,2),
@@ -139,7 +144,7 @@ moneyApp.service('actionsServ', function($http, localStorageService){
         });
 	}
 	this.delAction = function(id, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'delAction',
 			id: id
 		})
@@ -157,7 +162,7 @@ moneyApp.service('actionsServ', function($http, localStorageService){
 moneyApp.service('categoriesServ', function($http, localStorageService){
     var token = localStorageService.get('token');
     this.getCategories = function(cb){
-        $http.get('server.php?action=getCategories&token=' + token)
+        $http.get(config.api + '?action=getCategories&token=' + token)
 		.success(function(data){
             cb(data);
         })
@@ -166,7 +171,7 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
         });
     }
 	this.getCategory = function(id, cb){
-        $http.get('server.php?action=getCategory&token=' + token + '&id=' + id)
+        $http.get(config.api + '?action=getCategory&token=' + token + '&id=' + id)
 		.success(function(data){
             cb(data);
         })
@@ -175,7 +180,7 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
         });
     }
 	this.addCategory = function(category, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'addCategory',
 			title: category.title,
 			type: category.type
@@ -188,7 +193,7 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
         });
 	}
 	this.editCategory = function(id, category, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'editCategory',
 			id: id,
 			title: category.title,
@@ -202,7 +207,7 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
         });
 	}
 	this.delCategory = function(id, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'delCategory',
 			id: id
 		})
@@ -220,7 +225,7 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
 moneyApp.service('accountsServ', function($http, localStorageService){
     var token = localStorageService.get('token');
 	this.getAccounts = function(cb){
-        $http.get('server.php?action=getAccounts&token=' + token)
+        $http.get(config.api + '?action=getAccounts&token=' + token)
 		.success(function(data){
             cb(data);
         })
@@ -229,7 +234,7 @@ moneyApp.service('accountsServ', function($http, localStorageService){
         });
     }
 	this.getAccount = function(id, cb){
-        $http.get('server.php?action=getAccount&token=' + token + '&id=' + id)
+        $http.get(config.api + '?action=getAccount&token=' + token + '&id=' + id)
 		.success(function(data){
             cb(data);
         })
@@ -238,7 +243,7 @@ moneyApp.service('accountsServ', function($http, localStorageService){
         });
     }
 	this.addAccount = function(account, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'addAccount',
 			title: account.title,
 			balance: account.balance
@@ -251,7 +256,7 @@ moneyApp.service('accountsServ', function($http, localStorageService){
         });
 	}
 	this.editAccount = function(id, account, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'editAccount',
 			id: id,
 			title: account.title,
@@ -265,7 +270,7 @@ moneyApp.service('accountsServ', function($http, localStorageService){
         });
 	}
 	this.delAccount = function(id, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'delAccount',
 			id: id
 		})
@@ -283,7 +288,7 @@ moneyApp.service('accountsServ', function($http, localStorageService){
 moneyApp.service('budgetsServ', function($http, localStorageService){
     var token = localStorageService.get('token');
 	this.getBudget = function(budget, cb){
-        $http.get('server.php?action=getBudget&token=' + token + '&month=' + budget.month + '&year=' + budget.year)
+        $http.get(config.api + '?action=getBudget&token=' + token + '&month=' + budget.month + '&year=' + budget.year)
 		.success(function(data){
             cb(data);
         })
@@ -292,7 +297,7 @@ moneyApp.service('budgetsServ', function($http, localStorageService){
         });
     }
 	this.getCategory = function(id, cb){
-        $http.get('server.php?action=getBudgetCategory&token=' + token + '&id=' + id)
+        $http.get(config.api + '?action=getBudgetCategory&token=' + token + '&id=' + id)
 		.success(function(data){
             cb(data);
         })
@@ -301,7 +306,7 @@ moneyApp.service('budgetsServ', function($http, localStorageService){
         });
     }
 	this.addCategory = function(category, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'addBudgetCategory',
 			month: category.month,
 			year: category.year,
@@ -316,7 +321,7 @@ moneyApp.service('budgetsServ', function($http, localStorageService){
         });
 	}
 	this.editCategory = function(id, category, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'editBudgetCategory',
 			id: id,
 			month: category.month,
@@ -332,7 +337,7 @@ moneyApp.service('budgetsServ', function($http, localStorageService){
         });
 	}
 	this.delCategory = function(id, cb){
-		$http.post('server.php?token=' + token, {
+		$http.post(config.api + '?token=' + token, {
 			action: 'delBudgetCategory',
 			id: id
 		})
