@@ -213,12 +213,97 @@ moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routePa
 
 
 
-moneyApp.controller('forumCtrl', function($location, $scope, messagesServ, localStorageService){
+moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messagesServ, localStorageService, forumServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
+		}
+		$scope.post = {
+			title: '',
+			category: '',
+			comment: ''
+		};
+		$scope.comment = {
+			fid: '',
+			comment: '',
+		};
+		$scope.posts = $scope.comments = [];
+		let fid = $routeParams.post;
+		if (!fid){
+			forumServ.getPosts($scope.posts.length, 20, function(data){
+				if (data == 'requestError'){
+					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				}
+				else{
+					if (data.status == 'success'){
+						data.arr = data.arr ? data.arr : [];
+						$scope.posts = data.arr;
+					}
+					else{
+						messagesServ.showMessages(data.status, data.msg);
+					}
+				}
+			});
+		}
+		else{
+			forumServ.getPost(fid, function(data){
+				if (data == 'requestError'){
+					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				}
+				else{
+					if (data.status == 'success'){
+						$scope.post.date = data.arr.created;
+						$scope.post.title = data.arr.title;
+						$scope.post.category = data.arr.category;
+						$scope.post.status = data.arr.status;
+						$scope.comments = data.arr.comments;
+					}
+					else{
+						messagesServ.showMessages(data.status, data.msg);
+					}
+				}
+			});
+		}
+	}
+	$scope.addPost = function(){
+		if (!$scope.post.title || !$scope.post.category || !$scope.post.comment){
+			messagesServ.showMessages('error', 'Помилка! Поля "Тема", "Категорія" та "Перший коментар" обов\'язкові для заповнення!');
+		}
+		else{
+			forumServ.addPost($scope.post, function(data){
+				if (data == 'requestError'){
+					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				}
+				else{
+					if (data.status == 'success'){
+						$scope.posts.push(data.arr);
+						$scope.post.title = $scope.post.category = $scope.post.comment = '';
+					}
+					messagesServ.showMessages(data.status, data.msg);
+				}
+            });
+		}
+	}
+	$scope.addComment = function(){
+		if (!$scope.comment){
+			messagesServ.showMessages('error', 'Помилка! Поле "Коментар" обов\'язкове для заповнення!');
+		}
+		else{
+			$scope.comment.fid = $routeParams.post;
+			forumServ.addComment($scope.comment, function(data){
+				if (data == 'requestError'){
+					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				}
+				else{
+					if (data.status == 'success'){
+						$scope.comments.push(data.arr);
+						$scope.comment.fid = $scope.comment.comment = '';
+					}
+					messagesServ.showMessages(data.status, data.msg);
+				}
+            });
 		}
 	}
 

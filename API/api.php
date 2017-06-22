@@ -36,6 +36,19 @@
 
 
 
+        case 'getCountUsers':
+            if (getAccess($db)){
+                $query = $db->prepare("SELECT COUNT(*) as `count` FROM `users` WHERE `confirm` = ?");
+                $query->execute(array('1'));
+                $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                $data['arr'] = $data['arr'][0];
+                $data['status'] = 'success';
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
         case 'signin':
             $email = trim($request->email);
             $password = trim($request->password);
@@ -131,6 +144,100 @@
                 $query->execute(array($confirm[0], $confirm[1]));
                 $data['status'] = 'success';
                 $data['msg']    = "Готово! Email успішно підтверджено.";
+            }
+        break;
+
+
+
+        case 'getPosts':
+        if (getAccess($db)){
+            $uid = getUID();
+            $from = trim($_GET['from']);
+            $count = trim($_GET['count']);
+            $query = $db->prepare("SELECT * FROM `forum` ORDER BY `updated` DESC");
+            $query->execute(array());
+            $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+            $data['status'] = 'success';
+        }
+        else{
+            $data['msg'] = 'Помилка! Немає доступу!';
+            $data['status'] = 'error';
+        }
+        break;
+        case 'getPost':
+            if (getAccess($db)){
+                $id = trim($_GET['id']);
+                $query = $db->prepare("SELECT * FROM `forum` WHERE `id` = ?");
+                $query->execute(array($id));
+                $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                $data['arr'] = $data['arr'][0];
+                $query = $db->prepare("SELECT * FROM `forum_comments` WHERE `fid` = ?");
+                $query->execute(array($id));
+                $data['arr']['comments'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                $data['status'] = 'success';
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
+        case 'addPost':
+            if (getAccess($db)){
+                $uid = getUID();
+                $title = trim($request->title);
+                $category = trim($request->category);
+                $comment = trim($request->comment);
+                if (!$title || !$category || !$comment){
+                    $data['status'] = 'error';
+                    $data['msg']    = 'Помилка! Поля "Тема", "Категорія" та "Перший коментар" обов\'язкові для заповнення!';
+                }
+                else{
+                    $query = $db->prepare("INSERT INTO `forum` (`uid`, `title`, `category`) VALUES(?, ?, ?)");
+                    $query->execute(array($uid, $title, $category));
+                    $fid = $db->lastInsertId();
+                    $query = $db->prepare("INSERT INTO `forum_comments` (`fid`, `uid`, `comment`) VALUES(?, ?, ?)");
+                    $query->execute(array($fid, $uid, $comment));
+                    $data['arr'] = array(
+                        id    => $fid,
+                        uid => $uid,
+                        title   => $title,
+                        category => $category,
+                        comment => $comment
+                    );
+                    $data['status'] = 'success';
+                    $data['msg']    = "Готово! Пост успішно доданий.";
+                }
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
+        case 'addComment':
+            if (getAccess($db)){
+                $uid = getUID();
+                $fid = trim($request->fid);
+                $comment = trim($request->comment);
+                if (!$comment){
+                    $data['status'] = 'error';
+                    $data['msg']    = 'Помилка! Поле "Коментар" обов\'язкове для заповнення!';
+                }
+                else{
+                    $query = $db->prepare("INSERT INTO `forum_comments` (`fid`, `uid`, `comment`) VALUES(?, ?, ?)");
+                    $query->execute(array($fid, $uid, $comment));
+                    $data['arr'] = array(
+                        id    => $db->lastInsertId(),
+                        uid => $uid,
+                        fid => $fid,
+                        comment => $comment
+                    );
+                    $data['status'] = 'success';
+                    $data['msg']    = "Готово! Коментар успішно доданий.";
+                }
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
             }
         break;
 

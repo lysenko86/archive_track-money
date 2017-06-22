@@ -45,6 +45,10 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
 		templateUrl: 'templates/forum.html',
 		controller: 'forumCtrl'
 	})
+    .when('/forum/:post', {
+		templateUrl: 'templates/post.html',
+		controller: 'forumCtrl'
+	})
     .when('/logout', {
 		templateUrl: 'templates/logout.html',
 		controller: 'logoutCtrl'

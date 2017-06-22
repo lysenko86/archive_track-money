@@ -1,8 +1,8 @@
 "use strict";
 
 var config = {
-    api: 'http://api.trackmoney/server.php'     // Development
-//    api: 'server.php'     // Production
+    api: 'http://api.trackmoney/api.php'     // Development
+//    api: 'api.php'     // Production
 }
 
 moneyApp.service('usersServ', function($http, localStorageService){
@@ -82,6 +82,57 @@ moneyApp.service('messagesServ', function($timeout){
             }
         }, delay ? delay : this.delay);
     }
+});
+
+
+
+moneyApp.service('forumServ', function($http, localStorageService){
+    var token = localStorageService.get('token');
+	this.getPosts = function(from, count, cb){
+        $http.get(config.api + '?action=getPosts&token=' + token + '&from=' + from + '&count=' + count)
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+    }
+    this.getPost = function(id, cb){
+        $http.get(config.api + '?action=getPost&token=' + token + '&id=' + id)
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+    }
+    this.addPost = function(post, cb){
+		$http.post(config.api + '?token=' + token, {
+			action: 'addPost',
+			title: post.title,
+			category: post.category,
+			comment: post.comment
+		})
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+	}
+    this.addComment = function(comment, cb){
+		$http.post(config.api + '?token=' + token, {
+			action: 'addComment',
+            fid: comment.fid,
+			comment: comment.comment
+		})
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+	}
 });
 
 

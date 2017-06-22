@@ -1,4 +1,43 @@
 <div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages">{{message.text}}</div>
 <div class="row">
-    <div class="col-xs-12">Тут скоро буде форум...</div>
+    <div class="col-xs-12">
+        <div class="panel panel-primary">
+			<div class="panel-heading">Додавання посту</div>
+			<div class="panel-body">
+				<form ng-submit="addPost()">
+                    <div class="form-group">
+                    	<label for="date">Тема:</label>
+                    	<input type="text" class="form-control" id="title" ng-model="post.title" placeholder="Тема" />
+                    </div>
+                    <div class="form-group">
+                    	<label for="type">Категорія:</label>
+                    	<select class="form-control" id="category" ng-model="post.category">
+                    		<option value=''>- Оберіть -</option>
+                    		<option value='public'>Паблік</option>
+                    		<option value='bug'>Помилка</option>
+                            <option value='feature'>Ідея</option>
+                            <option value='thank'>Подяка</option>
+                            <option value='question'>Питання</option>
+                            <option value='forAdmin'>Адміну</option>
+                    	</select>
+                    </div>
+                    <div class="form-group">
+                    	<label for="comment">Перший коментар:</label>
+                    	<textarea class="form-control" id="comment" ng-model="post.comment" placeholder="Коментар"></textarea>
+                    </div>
+					<button type="submit" class="btn btn-primary">Додати</button>
+				</form>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="list-group" ng-if="posts.length">
+            <a href="#/forum/{{item.id}}" class="list-group-item" ng-repeat="item in posts">
+                <h4 class="list-group-item-heading">{{item.title}}</h4>
+                <p class="list-group-item-text">{{item.id}} - {{item.category}} - {{item.status}}</p>
+            </a>
+		</div>
+	</div>
 </div>

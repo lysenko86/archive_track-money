@@ -1,0 +1,37 @@
+<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages">{{message.text}}</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-primary">
+			<div class="panel-heading">Додавання комменту</div>
+			<div class="panel-body">
+				<form ng-submit="addComment()">
+                    <div class="form-group">
+                    	<label for="date">Коментар:</label>
+                    	<textarea class="form-control" id="comment" ng-model="comment.comment" placeholder="Коментар"></textarea>
+                    </div>
+					<button type="submit" class="btn btn-primary">Додати</button>
+				</form>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="list-group">
+            <div class="list-group-item">
+                <h4 class="list-group-item-heading">{{post.title}}</h4>
+                <p class="list-group-item-text">{{post.date}} - {{post.category}} - {{post.status}}</p>
+            </div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="list-group" ng-if="comments.length">
+            <div class="list-group-item" ng-repeat="item in comments">
+                <h6 class="list-group-item-heading">{{item.comment}}</h6>
+                <p class="list-group-item-text">{{item.uid}}{{item.date ? ' - '+item.date : ''}}</p>
+            </div>
+		</div>
+	</div>
+</div>
