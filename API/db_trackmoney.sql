@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Июн 22 2017 г., 20:57
+-- Время создания: Июн 23 2017 г., 14:49
 -- Версия сервера: 5.6.34
 -- Версия PHP: 5.3.10-1ubuntu3.26
 
@@ -39,10 +39,10 @@ CREATE TABLE IF NOT EXISTS `accounts` (
 --
 
 INSERT INTO `accounts` (`id`, `uid`, `title`, `balance`) VALUES
-(3, 16, 'Готівка Саша', 128.00),
-(5, 16, 'Готівка Оля', 147.00),
+(3, 16, 'Готівка Саша', 288.00),
+(5, 16, 'Готівка Оля', 593.00),
 (11, 16, 'Карта Оліна', 0.00),
-(10, 16, 'Готівка Вдома', 7600.00),
+(10, 16, 'Готівка Вдома', 6900.00),
 (12, 16, 'Карта Р/Р', 14212.00),
 (13, 16, 'Карта Уні', 17.00),
 (16, 19, 'Нал', -200.00),
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `actions` (
   `sum` float(8,2) NOT NULL,
   `description` varchar(400) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=399 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=405 ;
 
 --
 -- Дамп данных таблицы `actions`
@@ -424,7 +424,13 @@ INSERT INTO `actions` (`id`, `uid`, `date`, `type`, `accountFrom_id`, `accountTo
 (395, 16, '2017-06-22', 'minus', 3, 0, 14, 20.00, ''),
 (396, 16, '2017-06-22', 'minus', 3, 0, 14, 56.00, ''),
 (397, 16, '2017-06-22', 'minus', 3, 0, 14, 18.00, ''),
-(398, 16, '2017-06-22', 'minus', 3, 0, 9, 9.00, '');
+(398, 16, '2017-06-22', 'minus', 3, 0, 9, 9.00, ''),
+(399, 16, '2017-06-22', 'minus', 3, 0, 9, 20.00, ''),
+(400, 16, '2017-06-22', 'plus', 5, 0, 7, 90.00, ''),
+(401, 16, '2017-06-21', 'minus', 5, 0, 9, 144.00, ''),
+(402, 16, '2017-06-22', 'move', 10, 3, 0, 200.00, ''),
+(403, 16, '2017-06-22', 'move', 10, 5, 0, 500.00, ''),
+(404, 16, '2017-06-23', 'minus', 3, 0, 14, 20.00, '');
 
 -- --------------------------------------------------------
 
@@ -570,11 +576,12 @@ INSERT INTO `categories` (`id`, `uid`, `title`, `type`) VALUES
 CREATE TABLE IF NOT EXISTS `forum` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(11) NOT NULL COMMENT 'User ID',
+  `uid_upd` int(11) NOT NULL COMMENT 'User ID updated',
   `title` varchar(700) NOT NULL,
   `category` enum('public','bug','feature','thank','question','forAdmin') NOT NULL,
-  `status` enum('created','viewed','fixing','closed') NOT NULL DEFAULT 'created',
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` enum('created','viewed','fixed','closed') NOT NULL DEFAULT 'created',
+  `created` timestamp NULL DEFAULT NULL,
+  `updated` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -588,7 +595,7 @@ CREATE TABLE IF NOT EXISTS `forum_comments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `fid` int(11) NOT NULL COMMENT 'Forum ID',
   `uid` int(11) NOT NULL COMMENT 'User ID',
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created` timestamp NULL DEFAULT NULL,
   `comment` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
