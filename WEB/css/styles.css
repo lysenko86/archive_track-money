@@ -153,6 +153,32 @@ nav.navbar{
             color: #999;
             font-size: 12px;
         }
+    .main .home-descr{
+        padding: 10px 20px;
+    }
+    .main .home-countUser{
+        padding: 20px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+        .main .home-countUser span{
+            color: #fff;
+            background-color: #00f;
+            border-radius: 4px;
+            font-size: 26px;
+            padding: 2px 5px 3px;
+            position: relative;
+            top: 2px;
+        }
+    .main .home-working{
+        padding-top: 10px;
+    }
+    .main .home-thank{
+        padding-top: 30px;
+        color: #0a0;
+        font-weight: bold;
+        text-align: right;
+    }
 
 
 
