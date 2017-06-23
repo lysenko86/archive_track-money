@@ -38,7 +38,7 @@
 
         case 'getCountUsers':
             if (getAccess($db)){
-                $query = $db->prepare("SELECT COUNT(*) as `count` FROM `users` WHERE `confirm` = ?");
+                $query = $db->prepare("SELECT COUNT(*) AS `count` FROM `users` WHERE `confirm` = ?");
                 $query->execute(array('1'));
                 $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
                 $data['arr'] = $data['arr'][0];
@@ -151,10 +151,22 @@
 
         case 'getPosts':
         if (getAccess($db)){
-            $uid = getUID();
             $from = trim($_GET['from']);
             $count = trim($_GET['count']);
-            $query = $db->prepare("SELECT * FROM `forum` ORDER BY `updated` DESC");
+            $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $query = $db->prepare("
+                SELECT
+                    `f`.*,
+                    DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
+                    DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
+                    `u`.`email`,
+                    `uu`.`email` AS `email_upd`,
+                    (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
+                FROM `forum` AS `f`
+                    LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
+                    LEFT JOIN `users` AS `uu` ON (`uu`.`id` = `f`.`uid_upd`)
+                ORDER BY `f`.`category` ASC, `f`.`updated` DESC
+            ");
             $query->execute(array());
             $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
             $data['status'] = 'success';
@@ -167,11 +179,31 @@
         case 'getPost':
             if (getAccess($db)){
                 $id = trim($_GET['id']);
-                $query = $db->prepare("SELECT * FROM `forum` WHERE `id` = ?");
+                $query = $db->prepare("
+                    SELECT
+                        `f`.*,
+                        DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
+                        DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
+                        `u`.`email`,
+                        `uu`.`email` AS `email_upd`,
+                        (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
+                    FROM `forum` AS `f`
+                        LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
+                        LEFT JOIN `users` AS `uu` ON (`uu`.`id` = `f`.`uid_upd`)
+                    WHERE `f`.`id` = ?
+                ");
                 $query->execute(array($id));
                 $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
                 $data['arr'] = $data['arr'][0];
-                $query = $db->prepare("SELECT * FROM `forum_comments` WHERE `fid` = ?");
+                $query = $db->prepare("
+                    SELECT
+                        `fc`.*,
+                        DATE_FORMAT(`fc`.`created`, '%d.%m.%Y') AS `created`,
+                        `u`.`email`
+                    FROM `forum_comments` AS `fc`
+                        LEFT JOIN `users` AS `u` ON (`u`.`id` = `fc`.`uid`)
+                    WHERE `fc`.`fid` = ?
+                ");
                 $query->execute(array($id));
                 $data['arr']['comments'] = $query->fetchAll(PDO::FETCH_ASSOC);
                 $data['status'] = 'success';
@@ -192,18 +224,31 @@
                     $data['msg']    = 'Помилка! Поля "Тема", "Категорія" та "Перший коментар" обов\'язкові для заповнення!';
                 }
                 else{
-                    $query = $db->prepare("INSERT INTO `forum` (`uid`, `title`, `category`) VALUES(?, ?, ?)");
-                    $query->execute(array($uid, $title, $category));
-                    $fid = $db->lastInsertId();
-                    $query = $db->prepare("INSERT INTO `forum_comments` (`fid`, `uid`, `comment`) VALUES(?, ?, ?)");
-                    $query->execute(array($fid, $uid, $comment));
-                    $data['arr'] = array(
-                        id    => $fid,
-                        uid => $uid,
-                        title   => $title,
-                        category => $category,
-                        comment => $comment
-                    );
+                    $date = date("Y-m-d H:i:s");
+                    $query = $db->prepare("INSERT INTO `forum` (`uid`, `uid_upd`, `title`, `category`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?)");
+                    $query->execute(array($uid, $uid, $title, $category, $date, $date));
+                    $id = $db->lastInsertId();
+                    $query = $db->prepare("INSERT INTO `forum_comments` (`fid`, `uid`, `created`, `comment`) VALUES(?, ?, ?, ?)");
+                    $query->execute(array($id, $uid, $date, $comment));
+                    $query = $db->prepare("
+                        SELECT
+                            `f`.*,
+                            DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
+                            DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
+                            `u`.`email`,
+                            `uu`.`email` AS `email_upd`,
+                            (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
+                        FROM `forum` AS `f`
+                            LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
+                            LEFT JOIN `users` AS `uu` ON (`uu`.`id` = `f`.`uid_upd`)
+                        WHERE `f`.`id` = ?
+                    ");
+                    $query->execute(array($id));
+                    $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $data['arr'] = $data['arr'][0];
+                    $subject = 'TrackMoney.com.ua - Нове повідомлення на форумі';
+                    $mail = 'Новий пост на форумі, для перегляду перейдіть за посиланням: http://trackmoney.com.ua/#/forum/'.$id;
+                    mail('lysenkoa86@gmail.com', $subject, $mail);
                     $data['status'] = 'success';
                     $data['msg']    = "Готово! Пост успішно доданий.";
                 }
@@ -223,14 +268,30 @@
                     $data['msg']    = 'Помилка! Поле "Коментар" обов\'язкове для заповнення!';
                 }
                 else{
-                    $query = $db->prepare("INSERT INTO `forum_comments` (`fid`, `uid`, `comment`) VALUES(?, ?, ?)");
-                    $query->execute(array($fid, $uid, $comment));
-                    $data['arr'] = array(
-                        id    => $db->lastInsertId(),
-                        uid => $uid,
-                        fid => $fid,
-                        comment => $comment
-                    );
+                    $date = date("Y-m-d H:i:s");
+                    $query = $db->prepare("INSERT INTO `forum_comments` (`fid`, `uid`, `created`, `comment`) VALUES(?, ?, ?, ?)");
+                    $query->execute(array($fid, $uid, $date, $comment));
+                    $id = $db->lastInsertId();
+                    $query = $db->prepare("UPDATE `forum` SET `uid_upd` = ?, `updated` = ? WHERE `id` = ?");
+                    $query->execute(array($uid, $date, $fid));
+                    $query = $db->prepare("
+                        SELECT
+                            `fc`.*,
+                            DATE_FORMAT(`fc`.`created`, '%d.%m.%Y') AS `created`,
+                            `u`.`email`,
+                            (SELECT `f`.`uid` FROM `forum` AS `f` WHERE `f`.`id` = `fc`.`fid`) AS `uid_created`,
+                            (SELECT `u`.`email` FROM `users` AS `u` WHERE `u`.`id` = `uid_created`) AS `email_created`
+                        FROM `forum_comments` AS `fc`
+                            LEFT JOIN `users` AS `u` ON (`u`.`id` = `fc`.`uid`)
+                        WHERE `fc`.`id` = ?
+                    ");
+                    $query->execute(array($id));
+                    $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $data['arr'] = $data['arr'][0];
+                    $subject = 'TrackMoney.com.ua - Нове повідомлення на форумі';
+                    $mail = 'Нове повідомлення на форумі, для перегляду перейдіть за посиланням: http://trackmoney.com.ua/#/forum/'.$fid;
+                    mail('lysenkoa86@gmail.com', $subject, $mail);
+                    mail($data['arr']['email_created'], $subject, $mail);
                     $data['status'] = 'success';
                     $data['msg']    = "Готово! Коментар успішно доданий.";
                 }
@@ -252,10 +313,10 @@
                 $query = $db->prepare("
                     SELECT
                         `a`.*,
-                        DATE_FORMAT(`a`.`date`, '%d.%m.%Y') as `date`,
-                        IFNULL(`a1`.`title`, 'Рахунок видалений') as `accountFrom_title`,
-                        IFNULL(`a2`.`title`, 'Рахунок видалений') as `accountTo_title`,
-                        IFNULL(`c`.`title`, 'Категорія видалена') as `category_title`
+                        DATE_FORMAT(`a`.`date`, '%d.%m.%Y') AS `date`,
+                        IFNULL(`a1`.`title`, 'Рахунок видалений') AS `accountFrom_title`,
+                        IFNULL(`a2`.`title`, 'Рахунок видалений') AS `accountTo_title`,
+                        IFNULL(`c`.`title`, 'Категорія видалена') AS `category_title`
                     FROM `actions` AS `a`
                         LEFT JOIN `accounts` AS `a1` ON (`a1`.`id` = `a`.`accountFrom_id`)
                         LEFT JOIN `accounts` AS `a2` ON (`a2`.`id` = `a`.`accountTo_id`)
@@ -770,7 +831,7 @@
                     SELECT
                         `b`.`id`,
                         `b`.`category_id`,
-                        IFNULL(`c`.`title`, 'Категорія видалена') as `category_title`,
+                        IFNULL(`c`.`title`, 'Категорія видалена') AS `category_title`,
                         `c`.`type`,
                         ROUND(`b`.`sum`) AS `plan`,
                         ROUND(IFNULL((SELECT SUM(`sum`) FROM `actions` WHERE `uid` = ? AND `category_id` = `b`.`category_id` AND MONTH(`date`) = ? AND YEAR(`date`) = ?), 0)) AS `fact`

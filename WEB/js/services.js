@@ -2,7 +2,7 @@
 
 var config = {
     api: 'http://api.trackmoney/api.php'     // Development
-//    api: 'api.php'     // Production
+    //api: 'api.php'     // Production
 }
 
 moneyApp.service('usersServ', function($http, localStorageService){
@@ -120,11 +120,11 @@ moneyApp.service('forumServ', function($http, localStorageService){
             cb('requestError');
         });
 	}
-    this.addComment = function(comment, cb){
+    this.addComment = function(fid, comment, cb){
 		$http.post(config.api + '?token=' + token, {
 			action: 'addComment',
-            fid: comment.fid,
-			comment: comment.comment
+            fid: fid,
+			comment: comment
 		})
 		.success(function(data){
             cb(data);

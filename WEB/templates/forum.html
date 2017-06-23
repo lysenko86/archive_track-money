@@ -31,13 +31,16 @@
 		</div>
     </div>
 </div>
-<div class="row">
+<div class="row forum-list">
 	<div class="col-xs-12">
-		<div class="list-group" ng-if="posts.length">
-            <a href="#/forum/{{item.id}}" class="list-group-item" ng-repeat="item in posts">
-                <h4 class="list-group-item-heading">{{item.title}}</h4>
-                <p class="list-group-item-text">{{item.id}} - {{item.category}} - {{item.status}}</p>
-            </a>
-		</div>
+        <div ng-repeat="(catKey, catTitle) in categories" ng-if="catKey != 'forAdmin'">
+            <h3><strong>{{catTitle}}</strong></h3>
+    		<div class="list-group">
+                <a href="#/forum/{{item.id}}" class="list-group-item" ng-repeat="item in posts" ng-if="item.category == catKey">
+                    <h4 class="list-group-item-heading">{{item.title}}<span class="label-status {{item.status}}">{{statuses[item.status]}}</span></h4>
+                    <p class="list-group-item-text">Створено: {{item.email}} ({{item.created}}), Оновлено: {{item.email_upd}} ({{item.updated}}), {{item.count}} коментарів</p>
+                </a>
+    		</div>
+        </div>
 	</div>
 </div>

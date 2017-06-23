@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Июн 20 2017 г., 16:19
+-- Время создания: Июн 22 2017 г., 20:57
 -- Версия сервера: 5.6.34
 -- Версия PHP: 5.3.10-1ubuntu3.26
 
@@ -28,23 +28,28 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `accounts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL COMMENT 'User ID',
   `title` varchar(200) NOT NULL,
   `balance` float(8,2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
 
 --
 -- Дамп данных таблицы `accounts`
 --
 
 INSERT INTO `accounts` (`id`, `uid`, `title`, `balance`) VALUES
-(3, 16, 'Готівка Саша', 628.00),
-(5, 16, 'Готівка Оля', 293.00),
+(3, 16, 'Готівка Саша', 128.00),
+(5, 16, 'Готівка Оля', 147.00),
 (11, 16, 'Карта Оліна', 0.00),
 (10, 16, 'Готівка Вдома', 7600.00),
 (12, 16, 'Карта Р/Р', 14212.00),
-(13, 16, 'Карта Уні', 17.00);
+(13, 16, 'Карта Уні', 17.00),
+(16, 19, 'Нал', -200.00),
+(17, 30, 'Test Acct', 3000.00),
+(18, 23, 'вет', 9000.00),
+(19, 23, 'фото', 6000.00),
+(20, 32, 'Готівка', 750.00);
 
 -- --------------------------------------------------------
 
@@ -54,7 +59,7 @@ INSERT INTO `accounts` (`id`, `uid`, `title`, `balance`) VALUES
 
 CREATE TABLE IF NOT EXISTS `actions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL COMMENT 'User ID',
   `date` date NOT NULL,
   `type` enum('plus','minus','move') NOT NULL,
   `accountFrom_id` int(11) NOT NULL,
@@ -63,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `actions` (
   `sum` float(8,2) NOT NULL,
   `description` varchar(400) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=380 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=399 ;
 
 --
 -- Дамп данных таблицы `actions`
@@ -400,7 +405,26 @@ INSERT INTO `actions` (`id`, `uid`, `date`, `type`, `accountFrom_id`, `accountTo
 (373, 16, '2017-06-18', 'move', 10, 3, 0, 500.00, ''),
 (374, 16, '2017-06-18', 'minus', 3, 0, 9, 10.00, ''),
 (375, 16, '2017-06-19', 'minus', 3, 0, 14, 69.00, ''),
-(376, 16, '2017-06-19', 'minus', 3, 0, 14, 45.00, '');
+(376, 16, '2017-06-19', 'minus', 3, 0, 14, 45.00, ''),
+(380, 19, '2017-06-20', 'minus', 16, 0, 35, 300.00, ''),
+(381, 16, '2017-06-20', 'minus', 3, 0, 14, 73.00, ''),
+(382, 16, '2017-06-20', 'minus', 3, 0, 14, 18.00, ''),
+(383, 16, '2017-06-20', 'plus', 5, 0, 7, 20.00, 'Чайові'),
+(384, 16, '2017-06-20', 'minus', 3, 0, 14, 8.00, ''),
+(385, 16, '2017-06-19', 'minus', 5, 0, 9, 166.00, ''),
+(386, 16, '2017-06-20', 'minus', 3, 0, 9, 97.00, ''),
+(387, 16, '2017-06-20', 'minus', 3, 0, 9, 14.00, ''),
+(388, 16, '2017-06-21', 'minus', 3, 0, 14, 5.00, ''),
+(389, 30, '2017-06-21', 'plus', 17, 0, 39, 3000.00, 'test'),
+(390, 16, '2017-06-21', 'minus', 3, 0, 14, 56.00, ''),
+(391, 23, '2017-06-21', 'move', 18, 19, 0, 1000.00, 'надо так'),
+(392, 32, '2017-06-21', 'minus', 20, 0, 44, 50.00, 'тест'),
+(393, 16, '2017-06-21', 'minus', 3, 0, 9, 86.00, ''),
+(394, 16, '2017-06-21', 'minus', 3, 0, 25, 40.00, 'Вистава'),
+(395, 16, '2017-06-22', 'minus', 3, 0, 14, 20.00, ''),
+(396, 16, '2017-06-22', 'minus', 3, 0, 14, 56.00, ''),
+(397, 16, '2017-06-22', 'minus', 3, 0, 14, 18.00, ''),
+(398, 16, '2017-06-22', 'minus', 3, 0, 9, 9.00, '');
 
 -- --------------------------------------------------------
 
@@ -410,14 +434,14 @@ INSERT INTO `actions` (`id`, `uid`, `date`, `type`, `accountFrom_id`, `accountTo
 
 CREATE TABLE IF NOT EXISTS `budgets` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL COMMENT 'User ID',
   `month` tinyint(4) NOT NULL,
   `year` int(11) NOT NULL,
   `category_id` int(11) NOT NULL,
   `sum` float(8,2) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid_month_year_category` (`uid`,`month`,`year`,`category_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=65 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=67 ;
 
 --
 -- Дамп данных таблицы `budgets`
@@ -476,7 +500,9 @@ INSERT INTO `budgets` (`id`, `uid`, `month`, `year`, `category_id`, `sum`) VALUE
 (60, 16, 6, 2017, 24, 1500.00),
 (61, 16, 6, 2017, 26, 2000.00),
 (62, 16, 6, 2017, 22, 500.00),
-(63, 16, 6, 2017, 16, 12564.00);
+(63, 16, 6, 2017, 16, 12564.00),
+(65, 30, 6, 2017, 39, 1000.00),
+(66, 23, 4, 2017, 43, 1500.00);
 
 -- --------------------------------------------------------
 
@@ -486,11 +512,11 @@ INSERT INTO `budgets` (`id`, `uid`, `month`, `year`, `category_id`, `sum`) VALUE
 
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL COMMENT 'User ID',
   `title` varchar(400) NOT NULL,
   `type` enum('plus','minus') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=35 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=45 ;
 
 --
 -- Дамп данных таблицы `categories`
@@ -525,7 +551,47 @@ INSERT INTO `categories` (`id`, `uid`, `title`, `type`) VALUES
 (29, 16, 'На квартиру', 'minus'),
 (30, 16, 'На відпочинок', 'minus'),
 (31, 16, 'Кредит', 'minus'),
-(32, 16, 'Заощадження', 'minus');
+(32, 16, 'Заощадження', 'minus'),
+(35, 19, 'Питание', 'minus'),
+(36, 19, 'Зарплата', 'plus'),
+(37, 22, 'ЗП', 'plus'),
+(42, 23, 'авто', 'minus'),
+(39, 30, 'test cat', 'plus'),
+(40, 30, 'test cat', 'minus'),
+(43, 23, 'вет', 'plus'),
+(44, 32, 'їжа', 'minus');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `forum`
+--
+
+CREATE TABLE IF NOT EXISTS `forum` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL COMMENT 'User ID',
+  `title` varchar(700) NOT NULL,
+  `category` enum('public','bug','feature','thank','question','forAdmin') NOT NULL,
+  `status` enum('created','viewed','fixing','closed') NOT NULL DEFAULT 'created',
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `forum_comments`
+--
+
+CREATE TABLE IF NOT EXISTS `forum_comments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fid` int(11) NOT NULL COMMENT 'Forum ID',
+  `uid` int(11) NOT NULL COMMENT 'User ID',
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `comment` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -541,7 +607,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `token` varchar(32) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=36 ;
 
 --
 -- Дамп данных таблицы `users`
@@ -552,9 +618,25 @@ INSERT INTO `users` (`id`, `email`, `password`, `confirm`, `token`) VALUES
 (5, 's@s', '15565ce78d9d827f3d559234d8065860', 0, ''),
 (6, 'w@w', '6acf7b15b7e14250520852331ea8cd0b', 0, ''),
 (7, 'y@y', '64fe13fa4813991ae75a60a59ea70358', 0, ''),
-(8, 'q@q', '64fe13fa4813991ae75a60a59ea70358', 1, ''),
-(16, 'lysenkoa86@gmail.com', '4e339a85b8aad4c40c5f2f07673e9c52', 1, '3e045f095f7c488d1b97ff110eed8529'),
-(18, 'lysenko86@i.ua', '64fe13fa4813991ae75a60a59ea70358', 1, '');
+(30, 'mkoval.ua@gmail.com', '1a81c7f64c2410b054ab46b26fbf5999', 1, 'b345197b37484154352ee18af6a49501'),
+(16, 'lysenkoa86@gmail.com', '4e339a85b8aad4c40c5f2f07673e9c52', 1, '2fd4f41ee02d70ecaf9f8b78addabc03'),
+(18, 'lysenko86@i.ua', '64fe13fa4813991ae75a60a59ea70358', 1, '4e2e0d4f75acb70630ece379da502643'),
+(19, 'atmamont@gmail.com', 'edd54b7e7a61d116b1c6f0ab065eced1', 1, '37fa450793c5d7f3b3de850bba7bf401'),
+(20, 'leo-tv@yandex.ru', '998465011b8d3c44b01ccd0efb6dbb42', 1, '6194e25dd6671f3d5a7045c907f61d59'),
+(21, 'alex.filippovich@gmail.com', 'e9e8d7ed64bcd522c1b3561d5b164889', 0, ''),
+(22, 'indigo86@i.ua', 'd3df8a5d5246ca8fb1c4e07638827fb0', 1, '07ff037ba98ebb14e471dce3c0901987'),
+(23, 'willy00ray@gmail.com', 'c5b9227a9b1b9f696f695b5fa00713f0', 1, 'a16a3532bfebfa6c9b3d77f873c3a088'),
+(24, 'test@test.com', '66223a33fb9a7679a9e110211d51ca9b', 0, ''),
+(25, 'minsk2000@gmail.com', 'ee25e77fa1d221a560b4b673d03b781f', 1, 'ef6a884008a4beaa20250238412caa27'),
+(26, 'viktor.chmel@gmail.com', 'c0dd0683eed65297a2a384e1cf42bf58', 1, 'b325ad1a4f80df101412b2f55c87de3d'),
+(27, 'marysia79@ukr.net', '067b28deaca89350791243752ae23561', 0, ''),
+(28, 'LenaLesch@i.ua', 'bcc8ed72db9ff4086668101e92dce153', 0, ''),
+(29, 'malenka9237@mail.ru', '376e3b6dab225c326bede6130711d85f', 0, ''),
+(31, 'Karpenter@i.ua', '2ed8747e0b19612e691c3716d9b1179c', 1, ''),
+(32, 'arthurtesl@gmail.com', 'b86544714ac0366d5eebfb3ff1c5b30e', 1, 'b85a59dcdee08f8198d9a31acc3d0681'),
+(33, 'flexy777@gmail.com', '5dc63a1e89025302c654dea1f3a13f23', 1, '9333b71092f80aca9e9f38db1d8ef4a9'),
+(34, 'natagnot@fmail.com', 'a874b5e3732706c005014e5be6b56293', 0, ''),
+(35, 'natagnot@gmail.com', 'a874b5e3732706c005014e5be6b56293', 0, '');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

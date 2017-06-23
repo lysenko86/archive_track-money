@@ -7,7 +7,7 @@
 				<form ng-submit="addComment()">
                     <div class="form-group">
                     	<label for="date">Коментар:</label>
-                    	<textarea class="form-control" id="comment" ng-model="comment.comment" placeholder="Коментар"></textarea>
+                    	<textarea class="form-control" id="comment" ng-model="comment" placeholder="Коментар"></textarea>
                     </div>
 					<button type="submit" class="btn btn-primary">Додати</button>
 				</form>
@@ -17,20 +17,20 @@
 </div>
 <div class="row">
 	<div class="col-xs-12">
-		<div class="list-group">
+		<div class="list-group forum-list">
             <div class="list-group-item">
-                <h4 class="list-group-item-heading">{{post.title}}</h4>
-                <p class="list-group-item-text">{{post.date}} - {{post.category}} - {{post.status}}</p>
+                <h3 class="list-group-item-heading">{{post.title}}<span class="label-status {{post.status}}">{{statuses[post.status]}}</span></h3>
+                <p class="list-group-item-text">Створено: {{post.email}} ({{post.created}}), Оновлено: {{post.email_upd}} ({{post.updated}}), {{post.count}} коментарів</p>
             </div>
 		</div>
 	</div>
 </div>
-<div class="row">
+<div class="row comments-list">
 	<div class="col-xs-12">
 		<div class="list-group" ng-if="comments.length">
             <div class="list-group-item" ng-repeat="item in comments">
-                <h6 class="list-group-item-heading">{{item.comment}}</h6>
-                <p class="list-group-item-text">{{item.uid}}{{item.date ? ' - '+item.date : ''}}</p>
+                <h5 class="list-group-item-heading">{{item.comment}}</h5>
+                <p class="list-group-item-text">{{item.email}} ({{item.created}})</p>
             </div>
 		</div>
 	</div>

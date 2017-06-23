@@ -123,6 +123,36 @@ nav.navbar{
     .main blockquote{
         margin-top: 50px;
     }
+    .main .forum-list{}
+        .main .forum-list .list-group-item-text{
+            color: #999;
+            font-size: 12px;
+        }
+        .main .forum-list .label-status{
+            font-size: 14px;
+            color: #fff;
+            font-weight: bold;
+            margin-left: 15px;
+            border-radius: 5px;
+            padding: 0px 4px 1px;
+        }
+            .main .forum-list .label-status.created{
+                background-color: #ff7777;
+            }
+            .main .forum-list .label-status.viewed{
+                background-color: #6666ff;
+            }
+            .main .forum-list .label-status.fixed{
+                background-color: #44cc44;
+            }
+            .main .forum-list .label-status.closed{
+                background-color: #aaaaaa;
+            }
+    .main .comments-list{}
+        .main .comments-list .list-group-item-text{
+            color: #999;
+            font-size: 12px;
+        }
 
 
 
