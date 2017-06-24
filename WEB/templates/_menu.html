@@ -10,10 +10,10 @@
             <a class="navbar-brand" href="/"><img src="images/logo.png"></a>
         </div>
         <div class="collapse navbar-collapse" id="navbar-content">
-            <ul class="nav navbar-nav navbar-right" ng-click="hideMenu()">
-                <li ng-class="setActive('/home')"><a href="#/home">Головна</a></li>
+            <ul class="nav navbar-nav navbar-right">
                 <li ng-class="setActive('/signin')" ng-hide="isAuth"><a href="#/signin">Вхід</a></li>
                 <li ng-class="setActive('/signup')" ng-hide="isAuth"><a href="#/signup">Реєстрація</a></li>
+                <li ng-class="setActive('/profile')" ng-show="isAuth"><a href="#/profile">Профіль</a></li>
                 <li ng-class="setActive('/actions')" ng-show="isAuth"><a href="#/actions">Транзакції</a></li>
                 <li ng-class="setActive('/categories')" ng-show="isAuth"><a href="#/categories">Категорії</a></li>
                 <li ng-class="setActive('/accounts')" ng-show="isAuth"><a href="#/accounts">Рахунки</a></li>

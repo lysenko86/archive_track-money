@@ -61,6 +61,15 @@ moneyApp.service('usersServ', function($http, localStorageService){
             cb('requestError');
         });
     }
+    this.getProfile = function(cb){
+        $http.get(config.api + '?action=getProfile&token=' + token)
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+    }
 });
 
 

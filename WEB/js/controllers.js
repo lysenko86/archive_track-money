@@ -5,14 +5,14 @@
 moneyApp.controller('menuCtrl', function($location, $scope, localStorageService){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
+		angular.element('nav.navbar li a:not(.dropdown-toggle)').click(function(){
+			if (angular.element('nav.navbar .navbar-collapse.collapse').hasClass('in')){
+				angular.element('nav.navbar .navbar-header button.navbar-toggle').click();
+			}
+		});
 	}
 	$scope.setActive = function(path){
 		return ($location.path().substr(0, path.length) === path) ? 'active' : '';
-	}
-	$scope.hideMenu = function(){
-		if (angular.element('nav.navbar .navbar-collapse.collapse').hasClass('in')){
-			angular.element('nav.navbar .navbar-header button.navbar-toggle').click();
-		}
 	}
 
 	this.init();
@@ -204,6 +204,36 @@ moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routePa
 						$location.url('home');
 					}
 				});
+			}
+		});
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('profileCtrl', function($location, $scope, messagesServ, localStorageService, usersServ){
+	this.init = function(){
+		$scope.messages = messagesServ.messages;
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
+		$scope.email = '';
+
+		usersServ.getProfile(function(data){
+			if (data == 'requestError'){
+				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			}
+			else{
+				if (data.status == 'success'){
+					$scope.email = data.arr.email;
+					$scope.created = data.arr.created;
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
 			}
 		});
 	}

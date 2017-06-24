@@ -66,6 +66,7 @@ nav.navbar{
             }
             nav.navbar .navbar-collapse ul.navbar-nav li a:hover{
                 color: #e5dd8f;
+                background-color: #678c40;
             }
                 nav.navbar .navbar-collapse ul.navbar-nav li.active a, nav.navbar .navbar-collapse ul.navbar-nav li.active a:hover, nav.navbar .navbar-collapse ul.navbar-nav li.active a:focus{
                     background-color: #e5dd8f;

@@ -25,6 +25,10 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
 		templateUrl: 'templates/confirm.html',
 		controller: 'confirmCtrl'
 	})
+    .when('/profile', {
+		templateUrl: 'templates/profile.html',
+		controller: 'profileCtrl'
+	})
     .when('/actions', {
 		templateUrl: 'templates/actions.html',
 		controller: 'actionsCtrl'

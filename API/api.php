@@ -140,6 +140,20 @@
                 $data['msg']    = "Готово! Email успішно підтверджено.";
             }
         break;
+        case 'getProfile':
+            if (getAccess($db)){
+                $uid = getUID();
+                $query = $db->prepare("SELECT *, DATE_FORMAT(`created`, '%d.%m.%Y') AS `created` FROM `users` WHERE `id` = ?");
+                $query->execute(array($uid));
+                $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                $data['arr'] = $data['arr'][0];
+                $data['status'] = 'success';
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
 
 
 
