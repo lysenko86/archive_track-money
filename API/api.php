@@ -105,9 +105,10 @@
                     $data['msg']    = "Помилка! Даний Email вже зайнятий, оберіть інший.";
                 }
                 else{
+                    $date = date("Y-m-d H:i:s");
                     $hash = md5($salt . md5($password) . $salt);
-                    $query = $db->prepare("INSERT INTO `users` (`email`, `password`) VALUES(?, ?)");
-                    $query->execute(array($email, $hash));
+                    $query = $db->prepare("INSERT INTO `users` (`email`, `password`, `created`) VALUES(?, ?, ?)");
+                    $query->execute(array($email, $hash, $date));
                     $id = $db->lastInsertId();
                     $subject = 'TrackMoney.com.ua - Підтвердження Email';
                     $mail = 'Для підтвердження Email перейдіть будь ласка за посиланням: http://trackmoney.com.ua/#/confirm/'.$id.'.'.$hash;

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Июн 23 2017 г., 14:49
+-- Время создания: Июн 24 2017 г., 22:14
 -- Версия сервера: 5.6.34
 -- Версия PHP: 5.3.10-1ubuntu3.26
 
@@ -39,11 +39,11 @@ CREATE TABLE IF NOT EXISTS `accounts` (
 --
 
 INSERT INTO `accounts` (`id`, `uid`, `title`, `balance`) VALUES
-(3, 16, 'Готівка Саша', 288.00),
-(5, 16, 'Готівка Оля', 593.00),
+(3, 16, 'Готівка Саша', 149.00),
+(5, 16, 'Готівка Оля', 384.00),
 (11, 16, 'Карта Оліна', 0.00),
-(10, 16, 'Готівка Вдома', 6900.00),
-(12, 16, 'Карта Р/Р', 14212.00),
+(10, 16, 'Готівка Вдома', 6000.00),
+(12, 16, 'Карта Р/Р', 13451.00),
 (13, 16, 'Карта Уні', 17.00),
 (16, 19, 'Нал', -200.00),
 (17, 30, 'Test Acct', 3000.00),
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `actions` (
   `sum` float(8,2) NOT NULL,
   `description` varchar(400) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=405 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=419 ;
 
 --
 -- Дамп данных таблицы `actions`
@@ -430,7 +430,21 @@ INSERT INTO `actions` (`id`, `uid`, `date`, `type`, `accountFrom_id`, `accountTo
 (401, 16, '2017-06-21', 'minus', 5, 0, 9, 144.00, ''),
 (402, 16, '2017-06-22', 'move', 10, 3, 0, 200.00, ''),
 (403, 16, '2017-06-22', 'move', 10, 5, 0, 500.00, ''),
-(404, 16, '2017-06-23', 'minus', 3, 0, 14, 20.00, '');
+(404, 16, '2017-06-23', 'minus', 3, 0, 14, 20.00, ''),
+(405, 16, '2017-06-23', 'minus', 3, 0, 14, 56.00, ''),
+(406, 16, '2017-06-23', 'minus', 5, 0, 20, 376.00, ''),
+(407, 16, '2017-06-23', 'minus', 5, 0, 23, 350.00, ''),
+(408, 16, '2017-06-23', 'move', 10, 5, 0, 200.00, ''),
+(409, 16, '2017-06-23', 'minus', 3, 0, 9, 132.00, ''),
+(410, 16, '2017-06-24', 'move', 12, 3, 0, 500.00, ''),
+(411, 16, '2017-06-24', 'minus', 3, 0, 9, 27.00, ''),
+(412, 16, '2017-06-24', 'minus', 12, 0, 9, 261.00, ''),
+(413, 16, '2017-06-24', 'minus', 3, 0, 26, 25.00, 'діти атракціони'),
+(414, 16, '2017-06-24', 'minus', 3, 0, 26, 399.00, 'Суші'),
+(415, 16, '2017-06-23', 'minus', 5, 0, 15, 70.00, ''),
+(416, 16, '2017-06-24', 'move', 10, 5, 0, 400.00, ''),
+(417, 16, '2017-06-24', 'minus', 5, 0, 9, 313.00, ''),
+(418, 16, '2017-06-24', 'move', 10, 5, 0, 300.00, '');
 
 -- --------------------------------------------------------
 
@@ -583,7 +597,14 @@ CREATE TABLE IF NOT EXISTS `forum` (
   `created` timestamp NULL DEFAULT NULL,
   `updated` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+--
+-- Дамп данных таблицы `forum`
+--
+
+INSERT INTO `forum` (`id`, `uid`, `uid_upd`, `title`, `category`, `status`, `created`, `updated`) VALUES
+(1, 16, 18, 'Дякую!', 'thank', 'created', '2017-06-23 11:55:05', '2017-06-23 11:56:41');
 
 -- --------------------------------------------------------
 
@@ -598,7 +619,15 @@ CREATE TABLE IF NOT EXISTS `forum_comments` (
   `created` timestamp NULL DEFAULT NULL,
   `comment` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+
+--
+-- Дамп данных таблицы `forum_comments`
+--
+
+INSERT INTO `forum_comments` (`id`, `fid`, `uid`, `created`, `comment`) VALUES
+(1, 1, 16, '2017-06-23 11:55:05', 'Дякую, що створили такий сервіс!'),
+(2, 1, 18, '2017-06-23 11:56:41', 'Я також дякую!');
 
 -- --------------------------------------------------------
 
@@ -610,40 +639,43 @@ CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(200) NOT NULL,
   `password` varchar(32) NOT NULL,
-  `confirm` tinyint(4) NOT NULL,
-  `token` varchar(32) NOT NULL,
+  `confirm` tinyint(4) NOT NULL DEFAULT '0',
+  `token` varchar(32) NOT NULL DEFAULT '',
+  `created` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=36 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=38 ;
 
 --
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`id`, `email`, `password`, `confirm`, `token`) VALUES
-(4, 't@t', '64fe13fa4813991ae75a60a59ea70358', 0, 'ba8e1eb4aef621536905f77583ae34da'),
-(5, 's@s', '15565ce78d9d827f3d559234d8065860', 0, ''),
-(6, 'w@w', '6acf7b15b7e14250520852331ea8cd0b', 0, ''),
-(7, 'y@y', '64fe13fa4813991ae75a60a59ea70358', 0, ''),
-(30, 'mkoval.ua@gmail.com', '1a81c7f64c2410b054ab46b26fbf5999', 1, 'b345197b37484154352ee18af6a49501'),
-(16, 'lysenkoa86@gmail.com', '4e339a85b8aad4c40c5f2f07673e9c52', 1, '2fd4f41ee02d70ecaf9f8b78addabc03'),
-(18, 'lysenko86@i.ua', '64fe13fa4813991ae75a60a59ea70358', 1, '4e2e0d4f75acb70630ece379da502643'),
-(19, 'atmamont@gmail.com', 'edd54b7e7a61d116b1c6f0ab065eced1', 1, '37fa450793c5d7f3b3de850bba7bf401'),
-(20, 'leo-tv@yandex.ru', '998465011b8d3c44b01ccd0efb6dbb42', 1, '6194e25dd6671f3d5a7045c907f61d59'),
-(21, 'alex.filippovich@gmail.com', 'e9e8d7ed64bcd522c1b3561d5b164889', 0, ''),
-(22, 'indigo86@i.ua', 'd3df8a5d5246ca8fb1c4e07638827fb0', 1, '07ff037ba98ebb14e471dce3c0901987'),
-(23, 'willy00ray@gmail.com', 'c5b9227a9b1b9f696f695b5fa00713f0', 1, 'a16a3532bfebfa6c9b3d77f873c3a088'),
-(24, 'test@test.com', '66223a33fb9a7679a9e110211d51ca9b', 0, ''),
-(25, 'minsk2000@gmail.com', 'ee25e77fa1d221a560b4b673d03b781f', 1, 'ef6a884008a4beaa20250238412caa27'),
-(26, 'viktor.chmel@gmail.com', 'c0dd0683eed65297a2a384e1cf42bf58', 1, 'b325ad1a4f80df101412b2f55c87de3d'),
-(27, 'marysia79@ukr.net', '067b28deaca89350791243752ae23561', 0, ''),
-(28, 'LenaLesch@i.ua', 'bcc8ed72db9ff4086668101e92dce153', 0, ''),
-(29, 'malenka9237@mail.ru', '376e3b6dab225c326bede6130711d85f', 0, ''),
-(31, 'Karpenter@i.ua', '2ed8747e0b19612e691c3716d9b1179c', 1, ''),
-(32, 'arthurtesl@gmail.com', 'b86544714ac0366d5eebfb3ff1c5b30e', 1, 'b85a59dcdee08f8198d9a31acc3d0681'),
-(33, 'flexy777@gmail.com', '5dc63a1e89025302c654dea1f3a13f23', 1, '9333b71092f80aca9e9f38db1d8ef4a9'),
-(34, 'natagnot@fmail.com', 'a874b5e3732706c005014e5be6b56293', 0, ''),
-(35, 'natagnot@gmail.com', 'a874b5e3732706c005014e5be6b56293', 0, '');
+INSERT INTO `users` (`id`, `email`, `password`, `confirm`, `token`, `created`) VALUES
+(4, 't@t', '64fe13fa4813991ae75a60a59ea70358', 0, 'ba8e1eb4aef621536905f77583ae34da', '2017-06-24 18:53:29'),
+(5, 's@s', '15565ce78d9d827f3d559234d8065860', 0, '', '2017-06-24 18:53:29'),
+(6, 'w@w', '6acf7b15b7e14250520852331ea8cd0b', 0, '', '2017-06-24 18:53:29'),
+(7, 'y@y', '64fe13fa4813991ae75a60a59ea70358', 0, '', '2017-06-24 18:53:29'),
+(30, 'mkoval.ua@gmail.com', '1a81c7f64c2410b054ab46b26fbf5999', 1, 'b345197b37484154352ee18af6a49501', '2017-06-24 18:53:29'),
+(16, 'lysenkoa86@gmail.com', '4e339a85b8aad4c40c5f2f07673e9c52', 1, '49e02db6f26a983b838461e7aac78e9a', '2017-06-24 18:53:29'),
+(18, 'lysenko86@i.ua', '64fe13fa4813991ae75a60a59ea70358', 1, 'a93a943e1649e0e27934a2c0c3bd369e', '2017-06-24 18:53:29'),
+(19, 'atmamont@gmail.com', 'edd54b7e7a61d116b1c6f0ab065eced1', 1, '37fa450793c5d7f3b3de850bba7bf401', '2017-06-24 18:53:29'),
+(20, 'leo-tv@yandex.ru', '998465011b8d3c44b01ccd0efb6dbb42', 1, '6194e25dd6671f3d5a7045c907f61d59', '2017-06-24 18:53:29'),
+(21, 'alex.filippovich@gmail.com', 'e9e8d7ed64bcd522c1b3561d5b164889', 0, '', '2017-06-24 18:53:29'),
+(22, 'indigo86@i.ua', 'd3df8a5d5246ca8fb1c4e07638827fb0', 1, '07ff037ba98ebb14e471dce3c0901987', '2017-06-24 18:53:29'),
+(23, 'willy00ray@gmail.com', 'c5b9227a9b1b9f696f695b5fa00713f0', 1, 'a16a3532bfebfa6c9b3d77f873c3a088', '2017-06-24 18:53:29'),
+(24, 'test@test.com', '66223a33fb9a7679a9e110211d51ca9b', 0, '', '2017-06-24 18:53:29'),
+(25, 'minsk2000@gmail.com', 'ee25e77fa1d221a560b4b673d03b781f', 1, 'ef6a884008a4beaa20250238412caa27', '2017-06-24 18:53:29'),
+(26, 'viktor.chmel@gmail.com', 'c0dd0683eed65297a2a384e1cf42bf58', 1, 'b325ad1a4f80df101412b2f55c87de3d', '2017-06-24 18:53:29'),
+(27, 'marysia79@ukr.net', '067b28deaca89350791243752ae23561', 0, '', '2017-06-24 18:53:29'),
+(28, 'LenaLesch@i.ua', 'bcc8ed72db9ff4086668101e92dce153', 0, '', '2017-06-24 18:53:29'),
+(29, 'malenka9237@mail.ru', '376e3b6dab225c326bede6130711d85f', 0, '', '2017-06-24 18:53:29'),
+(31, 'Karpenter@i.ua', '2ed8747e0b19612e691c3716d9b1179c', 1, '', '2017-06-24 18:53:29'),
+(32, 'arthurtesl@gmail.com', 'b86544714ac0366d5eebfb3ff1c5b30e', 1, 'b85a59dcdee08f8198d9a31acc3d0681', '2017-06-24 18:53:29'),
+(33, 'flexy777@gmail.com', '5dc63a1e89025302c654dea1f3a13f23', 1, '9333b71092f80aca9e9f38db1d8ef4a9', '2017-06-24 18:53:29'),
+(34, 'natagnot@fmail.com', 'a874b5e3732706c005014e5be6b56293', 0, '', '2017-06-24 18:53:29'),
+(35, 'natagnot@gmail.com', 'a874b5e3732706c005014e5be6b56293', 0, '', '2017-06-24 18:53:29'),
+(36, 'svyat.kuznyetsov@gmail.com', 'ca373221207df9dbb1180f18f07f6038', 1, '3225b6eaa0e1329be065148fd726656e', '2017-06-24 18:53:29'),
+(37, 'etroff@etroff.net', '1a3fdc804d73ada3f99277f9fac01cfe', 1, '5824aa46c07a9f7a0d485b64f5d8be6e', '2017-06-24 18:53:29');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
