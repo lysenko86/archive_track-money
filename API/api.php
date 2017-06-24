@@ -159,31 +159,31 @@
 
 
         case 'getPosts':
-        if (getAccess($db)){
-            $from = trim($_GET['from']);
-            $count = trim($_GET['count']);
-            $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-            $query = $db->prepare("
-                SELECT
-                    `f`.*,
-                    DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
-                    DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
-                    `u`.`email`,
-                    `uu`.`email` AS `email_upd`,
-                    (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
-                FROM `forum` AS `f`
-                    LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
-                    LEFT JOIN `users` AS `uu` ON (`uu`.`id` = `f`.`uid_upd`)
-                ORDER BY `f`.`category` ASC, `f`.`updated` DESC
-            ");
-            $query->execute(array());
-            $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
-            $data['status'] = 'success';
-        }
-        else{
-            $data['msg'] = 'Помилка! Немає доступу!';
-            $data['status'] = 'error';
-        }
+            if (getAccess($db)){
+                $from = trim($_GET['from']);
+                $count = trim($_GET['count']);
+                $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+                $query = $db->prepare("
+                    SELECT
+                        `f`.*,
+                        DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
+                        DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
+                        `u`.`email`,
+                        `uu`.`email` AS `email_upd`,
+                        (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
+                    FROM `forum` AS `f`
+                        LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
+                        LEFT JOIN `users` AS `uu` ON (`uu`.`id` = `f`.`uid_upd`)
+                    ORDER BY `f`.`category` ASC, `f`.`updated` DESC
+                ");
+                $query->execute(array());
+                $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                $data['status'] = 'success';
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
         break;
         case 'getPost':
             if (getAccess($db)){
