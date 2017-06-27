@@ -174,8 +174,14 @@ nav.navbar{
     .main .home-working{
         padding-top: 10px;
     }
-    .main .home-thank{
+    .main .home-worked{
         padding-top: 30px;
+    }
+        .main .home-worked .well{
+            margin-top: 20px;
+        }
+    .main .home-thank{
+        padding-top: 40px;
         color: #0a0;
         font-weight: bold;
         text-align: right;
