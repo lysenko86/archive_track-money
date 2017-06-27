@@ -137,7 +137,7 @@ moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, loca
 			messagesServ.showMessages('error', 'Помилка! Значення поля "Email" має бути наступного формату: email@email.com!');
 		}
 		else if (!$scope.user.agree){
-			messagesServ.showMessages('error', 'Помилка! Ви повинні прийняти умови користувацької угоди!');
+			messagesServ.showMessages('error', 'Помилка! Ви повинні прийняти умови користувацької угоди, повірте, це важливо, там не багато читати :)');
 		}
 		else{
 			usersServ.signup($scope.user, function(data){
