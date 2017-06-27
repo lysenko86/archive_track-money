@@ -155,6 +155,64 @@
                 $data['status'] = 'error';
             }
         break;
+        case 'editPassword':
+            if (getAccess($db)){
+                $uid = getUID();
+                $password = trim($request->password);
+                $newPassword = trim($request->newPassword);
+                $confirmPassword = trim($request->confirmPassword);
+                if (!$password || !$newPassword || !$confirmPassword){
+                    $data['status'] = 'error';
+                    $data['msg']    = 'Помилка! Поля "Актуальний пароль", "Новий пароль" та "Повтор нового паролю" обов\'язкові для заповнення!';
+                }
+                elseif ($newPassword != $confirmPassword){
+                    $data['status'] = 'error';
+                    $data['msg']    = 'Помилка! Значення поля "Новий пароль" та "Повтор нового паролю" мають бути однаковими!';
+                }
+                else{
+                    $password = md5($salt . md5($password) . $salt);
+                    $newPassword = md5($salt . md5($newPassword) . $salt);
+    				$query = $db->prepare("SELECT `id` FROM `users` WHERE `id` = ? AND `password` = ?");
+    				$query->execute(array($uid, $password));
+                    $isUser = $query->fetchAll(PDO::FETCH_ASSOC);
+                    if (!$isUser){
+                        $data['status'] = 'error';
+                        $data['msg']    = "Помилка! Невірний актуальний пароль.";
+                    }
+                    else{
+                        $query = $db->prepare("UPDATE `users` SET `password` = ? WHERE `id` = ?");
+        				$query->execute(array($newPassword, $uid));
+                        $data['status'] = 'success';
+                        $data['msg']    = "Готово! Пароль успішно змінено, наступний раз при авторизації вводьте новий пароль.";
+                    }
+                }
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
+        case 'removeAccount':
+            if (getAccess($db)){
+                $uid = getUID();
+                $query = $db->prepare("DELETE FROM `accounts` WHERE `uid` = ?");
+                $query->execute(array($uid));
+                $query = $db->prepare("DELETE FROM `actions` WHERE `uid` = ?");
+                $query->execute(array($uid));
+                $query = $db->prepare("DELETE FROM `budgets` WHERE `uid` = ?");
+                $query->execute(array($uid));
+                $query = $db->prepare("DELETE FROM `categories` WHERE `uid` = ?");
+                $query->execute(array($uid));
+                $query = $db->prepare("DELETE FROM `users` WHERE `id` = ?");
+                $query->execute(array($uid));
+                $data['status'] = 'success';
+                $data['msg']    = "Готово! Ваш акаунт успішно видалений, дякуємо, що користувались сервісом.";
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
 
 
 
@@ -168,8 +226,8 @@
                         `f`.*,
                         DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
                         DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
-                        `u`.`email`,
-                        `uu`.`email` AS `email_upd`,
+                        IFNULL(`u`.`email`, 'Користувач видалений') AS `email`,
+                        IFNULL(`uu`.`email`, 'Користувач видалений') AS `email_upd`,
                         (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
                     FROM `forum` AS `f`
                         LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
@@ -193,8 +251,8 @@
                         `f`.*,
                         DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
                         DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
-                        `u`.`email`,
-                        `uu`.`email` AS `email_upd`,
+                        IFNULL(`u`.`email`, 'Користувач видалений') AS `email`,
+                        IFNULL(`uu`.`email`, 'Користувач видалений') AS `email_upd`,
                         (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
                     FROM `forum` AS `f`
                         LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
@@ -208,7 +266,7 @@
                     SELECT
                         `fc`.*,
                         DATE_FORMAT(`fc`.`created`, '%d.%m.%Y') AS `created`,
-                        `u`.`email`
+                        IFNULL(`u`.`email`, 'Користувач видалений') AS `email`
                     FROM `forum_comments` AS `fc`
                         LEFT JOIN `users` AS `u` ON (`u`.`id` = `fc`.`uid`)
                     WHERE `fc`.`fid` = ?

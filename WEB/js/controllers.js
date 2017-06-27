@@ -213,7 +213,7 @@ moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routePa
 
 
 
-moneyApp.controller('profileCtrl', function($location, $scope, messagesServ, localStorageService, usersServ){
+moneyApp.controller('profileCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
@@ -221,6 +221,11 @@ moneyApp.controller('profileCtrl', function($location, $scope, messagesServ, loc
 			$location.url('home');
 		}
 		$scope.email = '';
+		$scope.chPassword = {
+			password: '',
+			newPassword: '',
+			confirmPassword: ''
+		};
 
 		usersServ.getProfile(function(data){
 			if (data == 'requestError'){
@@ -236,6 +241,44 @@ moneyApp.controller('profileCtrl', function($location, $scope, messagesServ, loc
 				}
 			}
 		});
+	}
+	$scope.editPassword = function(){
+		if (!$scope.chPassword.password || !$scope.chPassword.newPassword || !$scope.chPassword.confirmPassword){
+			messagesServ.showMessages('error', 'Помилка! Поля "Актуальний пароль", "Новий пароль" та "Повтор нового паролю" обов\'язкові для заповнення!');
+		}
+		else if ($scope.chPassword.newPassword != $scope.chPassword.confirmPassword){
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Новий пароль" та "Повтор нового паролю" мають бути однаковими!');
+		}
+		else{
+			usersServ.editPassword($scope.chPassword, function(data){
+				if (data == 'requestError'){
+					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				}
+				else{
+					if (data.status == 'success'){
+						$scope.chPassword.password = $scope.chPassword.newPassword = $scope.chPassword.confirmPassword = '';
+					}
+					messagesServ.showMessages(data.status, data.msg);
+				}
+            });
+		}
+	}
+	$scope.removeAccount = function(){
+		if (confirm('Ви дійсно хочете видалити всю інформацію (транзакції, категорії, рахунки, бюджети) а також сам акаунт без можливості відновлення?')){
+			usersServ.removeAccount(function(data){
+				if (data == 'requestError'){
+					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg, false, function(){
+						if (data.status == 'success'){
+							localStorageService.remove('token');
+							$window.location.href = '/';
+						}
+					});
+				}
+			});
+		}
 	}
 
 	this.init();

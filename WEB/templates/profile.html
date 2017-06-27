@@ -1,9 +1,43 @@
 <div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages">{{message.text}}</div>
 <div class="row">
-    <div class="col-xs-12">
-        Ваш Email: {{email}}
-        <br/>Дата реєстрації: {{created}}
-        <br/><br/>
-        <button class="btn btn-primary">Змінити пароль</button> <button class="btn btn-danger">Видалити акаунт</button>
+    <div class="col-xs-6">
+        <div class="panel panel-primary">
+			<div class="panel-heading">Особиста інформація</div>
+			<div class="panel-body">
+                <div><strong>Ваш Email:</strong> {{email}}</div>
+                <div><strong>Дата реєстрації:</strong> {{created}}</div>
+			</div>
+		</div>
+    </div>
+    <div class="col-xs-6">
+        <div class="panel panel-primary">
+			<div class="panel-heading">Змінити пароль</div>
+			<div class="panel-body">
+                <form class="form-inline" ng-submit="editPassword()">
+                    <div class="form-group">
+                    	<label for="password">Актуальний пароль:</label>
+                    	<input type="password" class="form-control" id="password" ng-model="chPassword.password" />
+                    </div>
+                    <div class="form-group">
+                    	<label for="newPassword">Новий пароль:</label>
+                    	<input type="password" class="form-control" id="newPassword" ng-model="chPassword.newPassword" />
+                    </div>
+                    <div class="form-group">
+                    	<label for="confirmPassword">Повторіть новий пароль:</label>
+                    	<input type="password" class="form-control" id="confirmPassword" ng-model="chPassword.confirmPassword" />
+                    </div>
+                    <div class="text-center">
+                        <br/>
+                        <button type="submit" class="btn btn-primary">Змінити пароль</button>
+                    </div>
+				</form>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 text-center">
+        <br/>
+        <button class="btn btn-danger" ng-click="removeAccount()">Видалити акаунт</button>
     </div>
 </div>

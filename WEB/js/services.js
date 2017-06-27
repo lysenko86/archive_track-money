@@ -70,6 +70,31 @@ moneyApp.service('usersServ', function($http, localStorageService){
             cb('requestError');
         });
     }
+    this.editPassword = function(chPassword, cb){
+        $http.post(config.api + '?token=' + token, {
+			action: 'editPassword',
+			password: chPassword.password,
+			newPassword: chPassword.newPassword,
+            confirmPassword: chPassword.confirmPassword
+		})
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+    }
+    this.removeAccount = function(cb){
+        $http.post(config.api + '?token=' + token, {
+			action: 'removeAccount'
+		})
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+    }
 });
 
 
