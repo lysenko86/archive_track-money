@@ -88,9 +88,15 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 			email: '',
 			password: ''
 		};
+		$scope.auth = {
+			notConfirmed: false,
+			email: ''
+		};
 	}
 	$scope.signin = function(){
 		if (!$scope.user.email || !$scope.user.password){
+			$scope.auth.notConfirmed = false;
+			$scope.auth.email = '';
 			messagesServ.showMessages('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
 		}
 		else{
@@ -100,6 +106,8 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 				}
 				else{
 					$scope.user.email = $scope.user.password = '';
+					$scope.auth.notConfirmed = data.notConfirmed;
+					$scope.auth.email = data.email;
 					messagesServ.showMessages(data.status, data.msg, 2000, function(){
 						if (data.status == 'success'){
 							localStorageService.set('token', data.arr.token);
@@ -109,6 +117,18 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 				}
             });
 		}
+	}
+	$scope.sendConfirmMail = function(){
+		usersServ.sendConfirmMail($scope.auth.email, function(data){
+			if (data == 'requestError'){
+				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			}
+			else{
+				$scope.auth.notConfirmed = false;
+				$scope.auth.email = '';
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
 	}
 
 	this.init();

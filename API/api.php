@@ -52,7 +52,7 @@
             }
             else{
                 $password = md5($salt . md5($password) . $salt);
-				$query = $db->prepare("SELECT `id`, `token`, `confirm` FROM `users` WHERE `email` = ? AND `password` = ?");
+				$query = $db->prepare("SELECT `id`, `token`, `email`, `confirm` FROM `users` WHERE `email` = ? AND `password` = ?");
 				$query->execute(array($email, $password));
                 $isUser = $query->fetchAll(PDO::FETCH_ASSOC);
                 if (!$isUser){
@@ -61,6 +61,8 @@
                     $data['msg']    = "Помилка! Невірний логін або пароль.";
                 }
                 elseif (!$isUser[0]['confirm']){
+                    $data['notConfirmed'] = true;
+                    $data['email'] = $isUser[0]['email'];
                     $data['token'] = false;
                     $data['status'] = 'error';
                     $data['msg']    = "Помилка! Ваш Email не підтверджено.";
@@ -79,6 +81,18 @@
     				$data['msg']    = "Готово! Авторизація пройшла успішно.";
                 }
              }
+        break;
+        case 'sendConfirmMail':
+            $email = trim($request->email);
+            $query = $db->prepare("SELECT `id`, `password` FROM `users` WHERE `email` = ?");
+            $query->execute(array($email));
+            $user = $query->fetchAll(PDO::FETCH_ASSOC);
+            $user = $user[0];
+            $subject = 'TrackMoney.com.ua - Підтвердження Email';
+            $mail = 'Для підтвердження Email перейдіть будь ласка за посиланням: http://trackmoney.com.ua/#/confirm/'.$user['id'].'.'.$user['password'];
+            mail($email, $subject, $mail);
+            $data['status'] = 'success';
+            $data['msg']    = "Готово! На вказану вами пошту вислано листа, для підтвердження Email - перейдіть по посиланню.";
         break;
         case 'signup':
             $email = trim($request->email);

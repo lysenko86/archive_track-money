@@ -61,6 +61,18 @@ moneyApp.service('usersServ', function($http, localStorageService){
             cb('requestError');
         });
     }
+    this.sendConfirmMail = function(email, cb){
+        $http.post(config.api, {
+			action: 'sendConfirmMail',
+			email: email
+		})
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+    }
     this.getProfile = function(cb){
         $http.get(config.api + '?action=getProfile&token=' + token)
 		.success(function(data){
