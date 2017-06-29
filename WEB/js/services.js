@@ -1,8 +1,9 @@
 "use strict";
 
+var isDev = location.href.indexOf('/web.trackmoney/') > -1;
 var config = {
-    api: 'http://api.trackmoney/api.php'     // Development
-    //api: 'api.php'     // Production
+    isDev : isDev,
+    api: isDev ? 'http://api.trackmoney/api.php' : 'api.php'
 }
 
 moneyApp.service('usersServ', function($http, localStorageService){
