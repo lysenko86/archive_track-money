@@ -13,6 +13,9 @@
                         <label for="text">Пароль:</label>
                         <input type="password" class="form-control" id="password" ng-model="user.password" />
                     </div>
+                    <div class="form-group">
+                        <a href="#/password" class="btn btn-link">Скинути пароль</a>
+                    </div>
                     <div class="form-group" ng-show="auth.notConfirmed">
                         <button type="button" class="btn btn-link" ng-click="sendConfirmMail()">Послати листа, для підтвердження Email щє раз</button>
                     </div>

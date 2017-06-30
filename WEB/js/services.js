@@ -62,9 +62,30 @@ moneyApp.service('usersServ', function($http, localStorageService){
             cb('requestError');
         });
     }
+    this.reset = function(reset, cb){
+        $http.get(config.api + '?action=resetPassword&reset='+reset[0]+'.'+reset[1])
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+    }
     this.sendConfirmMail = function(email, cb){
         $http.post(config.api, {
 			action: 'sendConfirmMail',
+			email: email
+		})
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+    }
+    this.sendPasswordMail = function(email, cb){
+        $http.post(config.api, {
+			action: 'sendPasswordMail',
 			email: email
 		})
 		.success(function(data){

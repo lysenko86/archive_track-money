@@ -3,6 +3,7 @@
     $db = new PDO("mysql:host=localhost;dbname=$dbName", $dbUser, $dbPass);
     $db->exec("set names utf8");
     $salt = 'mySUPERsalt';
+    $defaultPassword = '123456';
 
     $request = json_decode(file_get_contents('php://input'));
     $action = $_GET['action'] ? $_GET['action'] : ($request->action ? $request->action : 'none');
@@ -49,14 +50,36 @@
             if (!$email || !$password){
                 $data['status'] = 'error';
                 $data['msg']    = 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!';
+        case 'sendPasswordMail':
+            if (!getAccess($db)){
+                $email = trim($request->email);
+                if (!$email){
+                    $data['status'] = 'error';
+                    $data['msg']    = 'Помилка! Поле "Email" обов\'язкове для заповнення!';
+                }
+                else{
+                    $query = $db->prepare("SELECT `id`, `password` FROM `users` WHERE `email` = ?");
+                    $query->execute(array($email));
+                    $user = $query->fetchAll(PDO::FETCH_ASSOC);
+                    if (!$user){
+                        $data['status'] = 'error';
+                        $data['msg']    = "Помилка! Такого Email не зареєстровано.";
+                    }
+                    else{
+                        $user = $user[0];
+                        $subject = 'TrackMoney.com.ua - Скидування паролю';
+                        $mail = 'Для скидування паролю перейдіть будь ласка за посиланням: http://trackmoney.com.ua/#/reset/'.$user['id'].'.'.$user['password'];
+                        mail($email, $subject, $mail);
+                        $data['status'] = 'success';
+                        $data['msg']    = "Готово! На вказану вами пошту вислано листа, для скидування паролю - перейдіть по посиланню.";
+                    }
+                }
             }
             else{
-                $password = md5($salt . md5($password) . $salt);
-				$query = $db->prepare("SELECT `id`, `token`, `email`, `confirm` FROM `users` WHERE `email` = ? AND `password` = ?");
-				$query->execute(array($email, $password));
-                $isUser = $query->fetchAll(PDO::FETCH_ASSOC);
-                if (!$isUser){
-                    $data['token'] = false;
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
                     $data['status'] = 'error';
                     $data['msg']    = "Помилка! Невірний логін або пароль.";
                 }
@@ -147,12 +170,31 @@
             if (!$isUser){
                 $data['status'] = 'error';
                 $data['msg']    = "Помилка! Такого користувача не знайдено.";
+        case 'resetPassword':
+            if (!getAccess($db)){
+                $reset = explode('.', trim($_GET['reset']));
+                $query = $db->prepare("SELECT `id`, `email` FROM `users` WHERE `id` = ? AND `password` = ?");
+                $query->execute(array($reset[0], $reset[1]));
+                $isUser = $query->fetchAll(PDO::FETCH_ASSOC);
+                if (!$isUser){
+                    $data['status'] = 'error';
+                    $data['msg']    = "Помилка! Такого користувача не знайдено.";
+                }
+                else{
+                    $isUser = $isUser[0];
+                    $password = md5($salt . md5($defaultPassword) . $salt);
+                    $query = $db->prepare("UPDATE `users` SET `password` = ? WHERE `id` = ? AND `password` = ?");
+                    $query->execute(array($password, $reset[0], $reset[1]));
+                    $subject = 'TrackMoney.com.ua - Ваш пароль змінено';
+                    $mail = "Ваш новий пароль:\n".$defaultPassword."\n Будь ласка, зразу змініть його, як тільки авторизуєтесь, оскільки це дуже не надійний пароль.";
+                    mail($isUser['email'], $subject, $mail);
+                    $data['status'] = 'success';
+                    $data['msg']    = "Готово! Email успішно підтверджено.";
+                }
             }
             else{
-                $query = $db->prepare("UPDATE `users` SET `confirm` = '1' WHERE `id` = ? AND `password` = ?");
-                $query->execute(array($confirm[0], $confirm[1]));
-                $data['status'] = 'success';
-                $data['msg']    = "Готово! Email успішно підтверджено.";
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
             }
         break;
         case 'getProfile':

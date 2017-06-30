@@ -233,6 +233,66 @@ moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routePa
 
 
 
+moneyApp.controller('passwordCtrl', function($location, $window, $scope, $routeParams, localStorageService, messagesServ, usersServ){
+	this.init = function(){
+		$scope.messages = messagesServ.messages;
+		$scope.isAuth = localStorageService.get('token');
+		if ($scope.isAuth){
+			$location.url('home');
+		}
+		$scope.email = ''
+	}
+	$scope.resetPassword = function(){
+		if (!$scope.email){
+			messagesServ.showMessages('error', 'Помилка! Поле "Email" обов\'язкове для заповнення!');
+		}
+		else{
+			usersServ.sendPasswordMail($scope.email, function(data){
+				if (data == 'requestError'){
+					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				}
+				else{
+					if (data.status == 'success'){
+						$scope.email = '';
+					}
+					messagesServ.showMessages(data.status, data.msg);
+				}
+            });
+		}
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('resetCtrl', function($location, $window, $scope, $routeParams, localStorageService, messagesServ, usersServ){
+	this.init = function(){
+		$scope.messages = messagesServ.messages;
+		$scope.isAuth = localStorageService.get('token');
+		if ($scope.isAuth){
+			$location.url('home');
+		}
+		let reset = $routeParams.confirm.split('.');
+		usersServ.reset(reset, function(data){
+			if (data == 'requestError'){
+				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			}
+			else{
+				messagesServ.showMessages(data.status, data.msg, false, function(){
+					if (data.status == 'success'){
+						$location.url('home');
+					}
+				});
+			}
+		});
+	}
+
+	this.init();
+});
+
+
+
 moneyApp.controller('profileCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
