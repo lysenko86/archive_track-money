@@ -210,9 +210,13 @@ moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesS
 
 
 
-moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routeParams, messagesServ, usersServ){
+moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routeParams, localStorageService, messagesServ, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
+		$scope.isAuth = localStorageService.get('token');
+		if ($scope.isAuth){
+			$location.url('home');
+		}
 		let confirm = $routeParams.confirm.split('.');
 		usersServ.confirm(confirm, function(data){
 			if (data == 'requestError'){
