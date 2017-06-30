@@ -277,7 +277,7 @@ moneyApp.controller('resetCtrl', function($location, $window, $scope, $routePara
 		if ($scope.isAuth){
 			$location.url('home');
 		}
-		let reset = $routeParams.confirm.split('.');
+		let reset = $routeParams.password.split('.');
 		usersServ.reset(reset, function(data){
 			if (data == 'requestError'){
 				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
