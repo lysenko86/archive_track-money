@@ -1,5 +1,5 @@
 <div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages">{{message.text}}</div>
-<div class="row">
+<div class="row" ng-show="post.category">
     <div class="col-xs-12">
         <div class="panel panel-primary">
 			<div class="panel-heading">Додавання комменту</div>
@@ -15,7 +15,7 @@
 		</div>
     </div>
 </div>
-<div class="row">
+<div class="row" ng-show="post.category">
 	<div class="col-xs-12">
 		<div class="list-group forum-list">
             <div class="list-group-item">

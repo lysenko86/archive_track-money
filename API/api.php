@@ -334,6 +334,7 @@
                     FROM `forum` AS `f`
                         LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
                         LEFT JOIN `users` AS `uu` ON (`uu`.`id` = `f`.`uid_upd`)
+                    WHERE `f`.`category` <> 'forAdmin'
                     ORDER BY `f`.`category` ASC, `f`.`updated` DESC
                 ");
                 $query->execute(array());
@@ -359,23 +360,29 @@
                     FROM `forum` AS `f`
                         LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
                         LEFT JOIN `users` AS `uu` ON (`uu`.`id` = `f`.`uid_upd`)
-                    WHERE `f`.`id` = ?
+                    WHERE `f`.`category` <> 'forAdmin' AND `f`.`id` = ?
                 ");
                 $query->execute(array($id));
                 $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
-                $data['arr'] = $data['arr'][0];
-                $query = $db->prepare("
-                    SELECT
-                        `fc`.*,
-                        DATE_FORMAT(`fc`.`created`, '%d.%m.%Y') AS `created`,
-                        IFNULL(`u`.`email`, 'Користувач видалений') AS `email`
-                    FROM `forum_comments` AS `fc`
-                        LEFT JOIN `users` AS `u` ON (`u`.`id` = `fc`.`uid`)
-                    WHERE `fc`.`fid` = ?
-                ");
-                $query->execute(array($id));
-                $data['arr']['comments'] = $query->fetchAll(PDO::FETCH_ASSOC);
-                $data['status'] = 'success';
+                if (!$data['arr']){
+                    $data['msg'] = 'Помилка! Такого посту немає!';
+                    $data['status'] = 'error';
+                }
+                else{
+                    $data['arr'] = $data['arr'][0];
+                    $query = $db->prepare("
+                        SELECT
+                            `fc`.*,
+                            DATE_FORMAT(`fc`.`created`, '%d.%m.%Y') AS `created`,
+                            IFNULL(`u`.`email`, 'Користувач видалений') AS `email`
+                        FROM `forum_comments` AS `fc`
+                            LEFT JOIN `users` AS `u` ON (`u`.`id` = `fc`.`uid`)
+                        WHERE `fc`.`fid` = ?
+                    ");
+                    $query->execute(array($id));
+                    $data['arr']['comments'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $data['status'] = 'success';
+                }
             }
             else{
                 $data['msg'] = 'Помилка! Немає доступу!';
