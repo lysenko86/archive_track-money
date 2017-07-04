@@ -5,14 +5,14 @@
 moneyApp.controller('menuCtrl', function($location, $scope, localStorageService){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
+		angular.element('nav.navbar li a:not(.dropdown-toggle)').click(function(){
+			if (angular.element('nav.navbar .navbar-collapse.collapse').hasClass('in')){
+				angular.element('nav.navbar .navbar-header button.navbar-toggle').click();
+			}
+		});
 	}
 	$scope.setActive = function(path){
 		return ($location.path().substr(0, path.length) === path) ? 'active' : '';
-	}
-	$scope.hideMenu = function(){
-		if (angular.element('nav.navbar .navbar-collapse.collapse').hasClass('in')){
-			angular.element('nav.navbar .navbar-header button.navbar-toggle').click();
-		}
 	}
 
 	this.init();
@@ -20,57 +20,8 @@ moneyApp.controller('menuCtrl', function($location, $scope, localStorageService)
 
 
 
-moneyApp.controller('homeCtrl', function($scope, messagesServ, localStorageService, usersServ){
-	this.init = function(){
-		$scope.isAuth = localStorageService.get('token');
-		this.phrases = [
-			{text:"Дешева рибка - погана юшка.", author:"Українське прислів'я"},
-			{text:"Борги схожі на всяку іншу пастку: потрапити в них вельми легко, але вибратися досить важко.", author:"Джордж Бернард Шоу"},
-			{text:"Якщо умієш щось, не роби цього безкоштовно.", author:"The Dark Knight"},
-			{text:"Не в грошах щастя, а в покупках.", author:"Мерілін Монро"},
-			{text:"Гроші не можуть змінити людей, вони можуть лише допомогти їм стати тими, ким вони є насправді.", author:"Сімпсони (The Simpsons)"},
-			{text:"Накопичувати гроші – річ корисна, особливо якщо це вже зробили ваші батьки.", author:"Вінстон Черчилль"},
-			{text:"Всім відомо, що за гроші можна купити туфлі, але не щастя, їжу, але не апетит, ліжко, але не сон, ліки, але не здоров'я, слуг, але не друзів, розваги, але не радість, вчителів, але не розум.", author:"Сократ"},
-			{text:"Брак грошей компенсує надлишок смутку.", author:"Георгій Олександров"},
-			{text:"Був час, коли гроші розлучалися з дурнем дуже скоро. Тепер для цього не обов’язково бути дурнем.", author:"Едлай Стівенсон"},
-			{text:"Ви засліплені золотом, що виблискує в будинку багатих; ви, звичайно, бачите, що вони мають, але ви не бачите, чого їм бракує.", author:"Аврелій Августин"},
-			{text:"Витрачай на один пенс менше, ніж заробляєш.", author:"Бенджамин Франклін"},
-			{text:"Грошей на його банківському рахунку було мало, але рахунки у нього були у всіх банках.", author:"Валерій Афонченко"},
-			{text:"Лінь є дочка багатства і мати бідності.", author:"Поль Декурсель"},
-			{text:"Люди не хочуть бути багатими; люди хочуть бути багатше за інших.", author:"Джон Стюарт Мілль"},
-			{text:"Мільйона багато – поки немає мільйона.", author:"Гарун Агацарський"},
-			{text:"Найдорожчий скарб – втрачене.", author:"Олексій Нагель"},
-			{text:"Краще голий та правдивий, нiж багатий та беззаконний.", author:"Григорій Сковорода"},
-			{text:"Щоб заробити на життя, потрібно працювати. Але щоб розбагатіти, потрібно придумати щось інше.", author:"Альфонс КАРР"},
-			{text:"Неважливо, скільки отримуєш в місяць, важливіше, скільки витрачаєш в день.", author:"Веселін Георгіев"},
-			{text:"Поклопочися про пенс, а вже фунт поклопочеться про себе сам.", author:"Пилип Дормер Стенхоп Честерфілд"},
-			{text:"Помилка скупих полягає в тому, що вони вважають золото і срібло благами, тоді як це тільки засоби для придбання благ.", author:"Франсуа де Ларошфуко"},
-			{text:"Придбання грошей вимагає доблесть; збереження грошей вимагає розсудливості; витрата грошей вимагає мистецтва.", author:"Авербах Бертольд"},
-			{text:"Гроші для розумних людей є засобом, для дурнів - метою.", author:"Адріан Декурсель"},
-			{text:"Гроші потрібні навіть для того, щоби без них обходитись.", author:"Оноре де Бальзак"},
-			{text:"Зневага до грошей буває нерідко,- особливо серед тих, у кого їх нема.", author:"Жорж Куртелін"},
-			{text:"Не слід розмовляти про гроші з людьми, у яких їх набагато більше ніж у тебе, чи набагато менше.", author:"Кетрін Уайт Хорн"},
-			{text:"Той, хто шукає мільйони, досить рідко їх знаходить, проте той, хто їх не шукає,- не знаходить ніколи!", author:"Оноре де Бальзак"},
-			{text:"Той, хто часто набуває непотрібне, рано чи пізно розлучається з насущним.", author:"Бенджамін Франклін"},
-			{text:"У моїх можливостях дати звіт за кожен мій мільйон, за винятком самого першого.", author:"Рокфеллер"},
-			{text:"Працюйте так, немов гроші не мають для Вас жодного значення.",author:"Марк Твен"}
-		];
-		let index = Math.round(Math.random() * (this.phrases.length-1));
-		$scope.phrase = this.phrases[index];
-		usersServ.getCount(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-			}
-			else{
-				if (data.status == 'success'){
-					$scope.countUsers = data.arr.count;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
-			}
-		});
-	}
+moneyApp.controller('homeCtrl', function($scope){
+	this.init = function(){}
 
 	this.init();
 });

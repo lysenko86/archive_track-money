@@ -1,15 +1,16 @@
 "use strict";
 
+var isDev = location.href.indexOf('/adminka.trackmoney/') > -1;
 var config = {
-    api: 'http://apiADMIN.trackmoney/api.php'     // Development
-    //api: 'api.php'     // Production
+    isDev : isDev,
+    api: isDev ? 'http://api.trackmoney/api.php' : 'api.php'
 }
 
 moneyApp.service('usersServ', function($http, localStorageService){
     var token = localStorageService.get('token');
     this.signin = function(user, cb){
         $http.post(config.api, {
-			action: 'signin',
+			action: 'admin_signin',
 			email: user.email,
 			password: user.password
 		})
@@ -21,7 +22,7 @@ moneyApp.service('usersServ', function($http, localStorageService){
         });
     }
     this.logout = function(cb){
-        $http.get(config.api + '?action=logout&token=' + token)
+        $http.get(config.api + '?action=admin_logout&token=' + token)
 		.success(function(data){
             cb(data);
         })
@@ -178,7 +179,7 @@ moneyApp.service('mailingServ', function($http, localStorageService){
 
 
 
-moneyApp.service('usersServ', function($http, localStorageService){
+moneyApp.service('categoriesServ', function($http, localStorageService){
     var token = localStorageService.get('token');
     this.getCategories = function(cb){
         $http.get(config.api + '?action=getCategories&token=' + token)

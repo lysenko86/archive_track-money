@@ -14,6 +14,10 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
 		templateUrl: 'templates/signin.html',
 		controller: 'signinCtrl'
 	})
+    .when('/logout', {
+		templateUrl: 'templates/logout.html',
+		controller: 'logoutCtrl'
+	})
     .when('/mailing', {
 		templateUrl: 'templates/mailing.html',
 		controller: 'mailingCtrl'
@@ -25,10 +29,6 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
     .when('/forum', {
 		templateUrl: 'templates/forum.html',
 		controller: 'forumCtrl'
-	})
-    .when('/logout', {
-		templateUrl: 'templates/logout.html',
-		controller: 'logoutCtrl'
 	})
 	.otherwise({
 		redirectTo: '/home'

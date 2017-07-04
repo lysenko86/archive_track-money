@@ -4,6 +4,9 @@
     $db->exec("set names utf8");
     $salt = 'mySUPERsalt';
     $defaultPassword = '123456';
+    $adminEmail = 'a@a';
+    $adminPassword = 'tm_admin';
+    $adminToken = 'bAYOBNDFC1oiI46TkEOfyafJQymccGHJGThEl6dp0moFK3ksZNg220HHosl3rukt';
 
     $request = json_decode(file_get_contents('php://input'));
     $action = $_GET['action'] ? $_GET['action'] : ($request->action ? $request->action : 'none');
@@ -12,6 +15,9 @@
         'msg'    => '',   // status message
         'arr'    => array()   // JSON
     );
+    function getAdminAccess($token){
+        return $_GET['token'] == $token;
+    }
     function getAccess($db){
         $token = explode('.', trim($_GET['token']));
         $query = $db->prepare("SELECT `id` FROM `users` WHERE `id` = ? AND `token` = ?");
@@ -33,6 +39,45 @@
             $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
             $data['arr'] = $data['arr'][0];
             $data['status'] = 'success';
+        break;
+
+
+
+        case 'admin_signin':
+            if (!getAdminAccess($adminToken)){
+                $email = trim($request->email);
+                $password = trim($request->password);
+                if (!$email || !$password){
+                    $data['status'] = 'error';
+                    $data['msg']    = 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!';
+                }
+                else{
+                    if ($email != $adminEmail || $password != $adminPassword){
+                        $data['token'] = false;
+                        $data['status'] = 'error';
+                        $data['msg']    = "Помилка! Невірний логін або пароль.";
+                    }
+                    else{
+                        $data['arr']['token'] = $adminToken;
+        				$data['status'] = 'success';
+        				$data['msg']    = "Готово! Авторизація пройшла успішно.";
+                    }
+                 }
+             }
+             else{
+                 $data['msg'] = 'Помилка! Немає доступу!';
+                 $data['status'] = 'error';
+             }
+        break;
+        case 'admin_logout':
+            if (getAdminAccess($adminToken)){
+                $data['status'] = 'success';
+                $data['msg']    = "Готово! Ви успішно вийшли зі свого аккаунту.";
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
         break;
 
 
