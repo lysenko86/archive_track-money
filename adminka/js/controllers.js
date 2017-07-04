@@ -97,7 +97,7 @@ moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesS
 
 
 moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messagesServ, localStorageService, forumServ){
-	this.init = function(){
+	/*this.init = function(){
 		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
@@ -208,13 +208,13 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 		}
 	}
 
-	this.init();
+	this.init();*/
 });
 
 
 
 moneyApp.controller('mailingCtrl', function($location, $scope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
-	this.init = function(){
+	/*this.init = function(){
 		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
@@ -421,13 +421,13 @@ moneyApp.controller('mailingCtrl', function($location, $scope, messagesServ, act
 		}
 	}
 
-	this.init();
+	this.init();*/
 });
 
 
 
 moneyApp.controller('usersCtrl', function($location, $scope, messagesServ, categoriesServ, localStorageService){
-	this.init = function(){
+	/*this.init = function(){
 		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
@@ -547,5 +547,5 @@ moneyApp.controller('usersCtrl', function($location, $scope, messagesServ, categ
 		}
 	}
 
-	this.init();
+	this.init();*/
 });

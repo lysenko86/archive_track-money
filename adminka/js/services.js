@@ -55,7 +55,7 @@ moneyApp.service('messagesServ', function($timeout){
 
 
 
-moneyApp.service('forumServ', function($http, localStorageService){
+/*moneyApp.service('forumServ', function($http, localStorageService){
     var token = localStorageService.get('token');
 	this.getPosts = function(from, count, cb){
         $http.get(config.api + '?action=getPosts&token=' + token + '&from=' + from + '&count=' + count)
@@ -238,4 +238,4 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
             cb('requestError');
         });
     }
-});
+});*/
