@@ -28,5 +28,5 @@ APP/package-lock.json
 
 
 
-site/access.log
-site/error.log
+adminka/access.log
+adminka/error.log
