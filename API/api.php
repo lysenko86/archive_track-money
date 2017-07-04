@@ -1111,7 +1111,7 @@
                 }
                 else{
                     $query = $db->prepare("UPDATE `budgets` SET `month` = ?, `year` = ?, `category_id` = ?, `sum` = ? WHERE `id` = ? AND `uid` = ?");
-                    $query->execute(array($month, $year, $category_id, $sum, $id));
+                    $query->execute(array($month, $year, $category_id, $sum, $id, $uid));
                     $data['arr'] = array(
                         id    => $id,
                         uid   => $uid,
