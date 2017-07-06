@@ -201,6 +201,19 @@ moneyApp.service('forumServ', function($http, localStorageService){
             cb('requestError');
         });
 	}
+    this.setPostStatus = function(id, status, cb){
+		$http.post(config.api + '?token=' + token, {
+			action: 'setPostStatus',
+			id: id,
+			status: status
+		})
+		.success(function(data){
+            cb(data);
+        })
+        .error(function(error, status){
+            cb('requestError');
+        });
+	}
 });
 
 

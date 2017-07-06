@@ -388,7 +388,7 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 		$scope.statuses = {
 			created: 'Створено',
 			viewed: 'Переглянуто',
-			fixed: 'Вирішено',
+			fixed: 'Виправлено',
 			closed: 'Закрито'
 		};
 		$scope.post = {
@@ -399,6 +399,7 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 		$scope.comment = '';
 		$scope.posts = $scope.comments = [];
 		$scope.fid = $routeParams.post;
+		$scope.isAdmin = false;
 		if (!$scope.fid){
 			forumServ.getPosts($scope.posts.length, 20, function(data){
 				if (data == 'requestError'){
@@ -408,6 +409,7 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 					if (data.status == 'success'){
 						data.arr = data.arr ? data.arr : [];
 						$scope.posts = data.arr;
+						$scope.isAdmin = data.isAdmin;
 					}
 					else{
 						messagesServ.showMessages(data.status, data.msg);
@@ -422,15 +424,19 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 				}
 				else{
 					if (data.status == 'success'){
+						$scope.post.id = data.arr.id;
 						$scope.post.title = data.arr.title;
 						$scope.post.category = data.arr.category;
 						$scope.post.status = data.arr.status;
 						$scope.post.created = data.arr.created;
 						$scope.post.updated = data.arr.updated;
 						$scope.post.email = data.arr.email;
+						$scope.post.admin = data.arr.admin;
 						$scope.post.email_upd = data.arr.email_upd;
+						$scope.post.admin_upd = data.arr.admin_upd;
 						$scope.post.count = data.arr.count;
 						$scope.comments = data.arr.comments;
+						$scope.isAdmin = data.isAdmin;
 					}
 					else{
 						messagesServ.showMessages(data.status, data.msg);
@@ -480,6 +486,21 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 				}
             });
 		}
+	}
+	$scope.setPostStatus = function(id, status){
+		forumServ.setPostStatus(id, status, function(data){
+			if (data == 'requestError'){
+				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			}
+			else{
+				if (data.status == 'success'){
+					$scope.post.status = data.arr.status;
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
+			}
+        });
 	}
 
 	this.init();

@@ -25,10 +25,6 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
     .when('/users', {
 		templateUrl: 'templates/users.html',
 		controller: 'usersCtrl'
-	})
-    .when('/forum', {
-		templateUrl: 'templates/forum.html',
-		controller: 'forumCtrl'
 	})*/
 	.otherwise({
 		redirectTo: '/home'

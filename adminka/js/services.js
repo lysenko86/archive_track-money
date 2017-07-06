@@ -55,58 +55,7 @@ moneyApp.service('messagesServ', function($timeout){
 
 
 
-/*moneyApp.service('forumServ', function($http, localStorageService){
-    var token = localStorageService.get('token');
-	this.getPosts = function(from, count, cb){
-        $http.get(config.api + '?action=getPosts&token=' + token + '&from=' + from + '&count=' + count)
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
-    }
-    this.getPost = function(id, cb){
-        $http.get(config.api + '?action=getPost&token=' + token + '&id=' + id)
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
-    }
-    this.addPost = function(post, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'addPost',
-			title: post.title,
-			category: post.category,
-			comment: post.comment
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
-	}
-    this.addComment = function(fid, comment, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'addComment',
-            fid: fid,
-			comment: comment
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
-	}
-});
-
-
-
-moneyApp.service('mailingServ', function($http, localStorageService){
+/*moneyApp.service('mailingServ', function($http, localStorageService){
     var token = localStorageService.get('token');
 	this.getActions = function(from, count, cb){
         $http.get(config.api + '?action=getActions&token=' + token + '&from=' + from + '&count=' + count)

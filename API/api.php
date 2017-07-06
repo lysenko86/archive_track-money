@@ -29,6 +29,12 @@
         $token = explode('.', trim($_GET['token']));
         return $token[0];
     }
+    function isAdmin($db, $id){
+        $query = $db->prepare("SELECT `admin` FROM `users` WHERE `id` = ?");
+        $query->execute(array($id));
+        $res = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $res[0]['admin'] ? true : false;
+    }
     switch ($action){
 
 
@@ -374,16 +380,18 @@
                         DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
                         DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
                         IFNULL(`u`.`email`, 'Користувач видалений') AS `email`,
+                        `u`.`admin`,
                         IFNULL(`uu`.`email`, 'Користувач видалений') AS `email_upd`,
+                        `uu`.`admin` AS `admin_upd`,
                         (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
                     FROM `forum` AS `f`
                         LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
                         LEFT JOIN `users` AS `uu` ON (`uu`.`id` = `f`.`uid_upd`)
-                    WHERE `f`.`category` <> 'forAdmin'
                     ORDER BY `f`.`category` ASC, `f`.`updated` DESC
                 ");
                 $query->execute(array());
                 $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                $data['isAdmin'] = isAdmin($db, getUID());
                 $data['status'] = 'success';
             }
             else{
@@ -400,12 +408,14 @@
                         DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
                         DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
                         IFNULL(`u`.`email`, 'Користувач видалений') AS `email`,
+                        `u`.`admin`,
                         IFNULL(`uu`.`email`, 'Користувач видалений') AS `email_upd`,
+                        `uu`.`admin` AS `admin_upd`,
                         (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
                     FROM `forum` AS `f`
                         LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
                         LEFT JOIN `users` AS `uu` ON (`uu`.`id` = `f`.`uid_upd`)
-                    WHERE `f`.`category` <> 'forAdmin' AND `f`.`id` = ?
+                    WHERE `f`.`id` = ?
                 ");
                 $query->execute(array($id));
                 $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -419,13 +429,15 @@
                         SELECT
                             `fc`.*,
                             DATE_FORMAT(`fc`.`created`, '%d.%m.%Y') AS `created`,
-                            IFNULL(`u`.`email`, 'Користувач видалений') AS `email`
+                            IFNULL(`u`.`email`, 'Користувач видалений') AS `email`,
+                            `u`.`admin`
                         FROM `forum_comments` AS `fc`
                             LEFT JOIN `users` AS `u` ON (`u`.`id` = `fc`.`uid`)
                         WHERE `fc`.`fid` = ?
                     ");
                     $query->execute(array($id));
                     $data['arr']['comments'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $data['isAdmin'] = isAdmin($db, getUID());
                     $data['status'] = 'success';
                 }
             }
@@ -457,7 +469,9 @@
                             DATE_FORMAT(`f`.`created`, '%d.%m.%Y') AS `created`,
                             DATE_FORMAT(`f`.`updated`, '%d.%m.%Y') AS `updated`,
                             `u`.`email`,
+                            `u`.`admin`,
                             `uu`.`email` AS `email_upd`,
+                            `uu`.`admin` AS `admin_upd`,
                             (SELECT COUNT(*) FROM `forum_comments` WHERE `fid` = `f`.`id`) AS `count`
                         FROM `forum` AS `f`
                             LEFT JOIN `users` AS `u` ON (`u`.`id` = `f`.`uid`)
@@ -516,6 +530,22 @@
                     $data['status'] = 'success';
                     $data['msg']    = "Готово! Коментар успішно доданий.";
                 }
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
+        case 'setPostStatus':
+            if (getAccess($db) && isAdmin($db, getUID())){
+                $id = trim($request->id);
+                $status = trim($request->status);
+                $query = $db->prepare("UPDATE `forum` SET `status` = ? WHERE `id` = ?");
+                $query->execute(array($status, $id));
+                $data['arr']['id'] = $id;
+                $data['arr']['status'] = $status;
+                $data['status'] = 'success';
+                $data['msg']    = "Готово! Статус поста успішно змінено.";
             }
             else{
                 $data['msg'] = 'Помилка! Немає доступу!';
