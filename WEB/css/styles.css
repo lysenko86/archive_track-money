@@ -192,11 +192,20 @@ nav.navbar{
         .main .home-worked .well{
             margin-top: 20px;
         }
+    .main .home-help{
+        float: left;
+        padding-top: 40px;
+    }
+        .main .home-help a{
+            color: #00f;
+            font-weight: bold;
+            cursor: pointer;
+        }
     .main .home-thank{
+        float: right;
         padding-top: 40px;
         color: #0a0;
         font-weight: bold;
-        text-align: right;
     }
 
 

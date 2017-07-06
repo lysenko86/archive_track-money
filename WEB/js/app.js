@@ -21,6 +21,9 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
     .when('/agree', {
 		templateUrl: 'templates/agree.html'
 	})
+    .when('/help', {
+		templateUrl: 'templates/help.html'
+	})
     .when('/confirm/:confirm', {
 		templateUrl: 'templates/confirm.html',
 		controller: 'confirmCtrl'
