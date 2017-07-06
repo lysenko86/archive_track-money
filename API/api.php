@@ -85,6 +85,19 @@
                 $data['status'] = 'error';
             }
         break;
+        case 'admin_getUsers':
+            if (getAdminAccess($adminToken)){
+                $query = $db->prepare("SELECT *, DATE_FORMAT(`created`, '%d.%m.%Y %H:%i:%s') AS `created` FROM `users` ORDER BY `created` DESC");
+                $query->execute(array());
+                $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+                $data['status'] = 'success';
+                $data['msg']    = "";
+            }
+            else{
+                $data['msg'] = 'Помилка! Немає доступу!';
+                $data['status'] = 'error';
+            }
+        break;
 
 
 
