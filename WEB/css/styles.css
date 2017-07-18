@@ -21,6 +21,17 @@
 
 
 
+.userHelp{}
+    .userHelp .text img{
+        width: 70%;
+        display: block;
+        margin: 0px auto;
+    }
+
+
+
+
+
 nav.navbar{
     background-color: #678c40;
     border-radius: 0px;
