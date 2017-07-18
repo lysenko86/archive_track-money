@@ -226,11 +226,23 @@ nav.navbar{
 .footer{
     height: 30px;
     background-color: #e5dd90;
-    text-align: center;
-    padding-top: 9px;
-    font-size: 12px;
-    line-height: 14px;
 }
+    .footer .text{
+        padding-top: 9px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 14px;
+    }
+    .footer .btnLiqPay:after{
+        content: ' ';
+        clear: both;
+    }
+        .footer .btnLiqPay .btn{
+            position: relative;
+            top: -25px;
+            float: right;
+            font-weight: bold;
+        }
 
 
 
