@@ -38,7 +38,7 @@
     		<div class="list-group">
                 <a href="#/forum/{{item.id}}" class="list-group-item" ng-repeat="item in posts" ng-if="item.category == catKey">
                     <h4 class="list-group-item-heading">{{item.title}}<span class="label-status {{item.status}}">{{statuses[item.status]}}</span></h4>
-                    <p class="list-group-item-text">Створено: {{item.admin ? 'Admin' : item.email}} ({{item.created}}), Оновлено: {{item.admin_upd ? 'Admin' : item.email_upd}} ({{item.updated}}), {{item.count}} коментарів</p>
+                    <p class="list-group-item-text">Створено: {{item.admin*1 ? 'Admin' : item.email}} ({{item.created}}), Оновлено: {{item.admin_upd*1 ? 'Admin' : item.email_upd}} ({{item.updated}}), {{item.count}} коментарів</p>
                 </a>
     		</div>
         </div>

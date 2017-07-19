@@ -25,7 +25,7 @@
                         <li ng-repeat="(key, val) in statuses"><span ng-click="setPostStatus(post.id, key)">{{val}}</a></li>
                     </ul>
                 </div></h3>
-                <p class="list-group-item-text">Створено: {{post.admin ? 'Admin' : post.email}} ({{post.created}}), Оновлено: {{post.admin_upd ? 'Admin' : post.email_upd}} ({{post.updated}}), {{post.count}} коментарів</p>
+                <p class="list-group-item-text">Створено: {{post.admin*1 ? 'Admin' : post.email}} ({{post.created}}), Оновлено: {{post.admin_upd*1 ? 'Admin' : post.email_upd}} ({{post.updated}}), {{post.count}} коментарів</p>
             </div>
 		</div>
 	</div>
@@ -35,7 +35,7 @@
 		<div class="list-group" ng-if="comments.length">
             <div class="list-group-item" ng-repeat="item in comments">
                 <h5 class="list-group-item-heading">{{item.comment}}</h5>
-                <p class="list-group-item-text">{{item.admin ? 'Admin' : item.email}} ({{item.created}})</p>
+                <p class="list-group-item-text">{{item.admin*1 ? 'Admin' : item.email}} ({{item.created}})</p>
             </div>
 		</div>
 	</div>
