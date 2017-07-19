@@ -586,7 +586,7 @@
                         LEFT JOIN `accounts` AS `a2` ON (`a2`.`id` = `a`.`accountTo_id`)
                         LEFT JOIN `categories` AS `c` ON (`c`.`id` = `a`.`category_id`)
                     WHERE `a`.`uid` = ?
-                    ORDER BY `a`.`id` DESC
+                    ORDER BY `a`.`date` DESC, `a`.`id` DESC
                     LIMIT ?,?
                 ");
                 $query->execute(array($uid, $from, $count));
