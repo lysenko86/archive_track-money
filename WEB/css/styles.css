@@ -218,6 +218,15 @@ nav.navbar{
         color: #0a0;
         font-weight: bold;
     }
+    .main .home-btnLiqPay a{
+        width: 280px;
+        display: block;
+        margin: 30px auto;
+        font-size: 24px;
+        font-weight: bold;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
 
 
 
@@ -232,17 +241,8 @@ nav.navbar{
         text-align: center;
         font-size: 12px;
         line-height: 14px;
+        font-weight: bold;
     }
-    .footer .btnLiqPay:after{
-        content: ' ';
-        clear: both;
-    }
-        .footer .btnLiqPay .btn{
-            position: relative;
-            top: -25px;
-            float: right;
-            font-weight: bold;
-        }
 
 
 
