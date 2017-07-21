@@ -179,6 +179,7 @@ nav.navbar{
         }
     .main .home-descr{
         padding: 10px 20px;
+        text-align: justify;
     }
     .main .home-countUser{
         padding: 20px;
