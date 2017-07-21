@@ -1102,7 +1102,7 @@
                     FROM `budgets` AS `b`
                         LEFT JOIN `categories` AS `c` ON (`c`.`id` = `b`.`category_id`)
                     WHERE `b`.`uid` = ? AND `b`.`month` = ? AND `b`.`year` = ?
-                    ORDER BY `b`.`id` DESC
+                    ORDER BY `category_title` ASC
                 ");
                 $query->execute(array($uid, $month, $year, $uid, $month, $year));
                 $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);

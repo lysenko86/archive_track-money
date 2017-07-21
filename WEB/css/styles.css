@@ -125,6 +125,9 @@ nav.navbar{
         	.main .table tbody>tr>td>.button-icon>span:hover{
         		opacity: 1;
         	}
+        .main .table tbody>tr>td.colorOverPlus, .main .table tbody>tr>td.colorOverMinus{
+            font-weight: bold;
+        }
     .main .panel{}
         .main .panel .panel-heading{
         	font-weight: 700;

@@ -64,14 +64,13 @@
 	<div class="col-xs-12">
 		<table class="table table-bordered table-hover" ng-if="budget.categories.length">
 			<thead class="over-head"><tr>
-				<th colspan="2">Доходи</th>
+				<th>Доходи</th>
 				<th>{{budget.plusPlan}}</th>
 				<th>{{budget.plusFact}}</th>
 				<th class="{{budget.plusRest < 0 ? ' colorOverPlus' : '' }}">{{budget.plusRest < 0 ? '+' : ''}}{{mathAbs(budget.plusRest)}}</th>
 				<th></th>
 			</tr></thead>
 			<thead class="bg-primary"><tr>
-				<th width="70px">ID</th>
 				<th>Категорія</th>
 				<th width="90px">План</th>
 				<th width="90px">Факт</th>
@@ -80,7 +79,6 @@
 			</tr></thead>
 			<tbody>
 				<tr ng-repeat="item in budget.categories" ng-if="item.type=='plus'">
-					<td>{{item.id}}</td>
 					<td>{{item.category_title}}</td>
 					<td>{{item.plan}}</td>
 					<td>{{item.fact}}</td>
@@ -94,14 +92,13 @@
 		</table>
 		<table class="table table-bordered table-hover" ng-if="budget.categories.length">
 			<thead class="over-head"><tr>
-				<th colspan="2">Витрати</th>
+				<th>Витрати</th>
 				<th>{{budget.minusPlan}}</th>
 				<th>{{budget.minusFact}}</th>
 				<th class="{{budget.minusRest < 0 ? ' colorOverMinus' : '' }}">{{budget.minusRest < 0 ? '-' : ''}}{{mathAbs(budget.minusRest)}}</th>
 				<th></th>
 			</tr></thead>
 			<thead class="bg-primary"><tr>
-				<th width="70px">ID</th>
 				<th>Категорія</th>
 				<th width="90px">План</th>
 				<th width="90px">Факт</th>
@@ -110,7 +107,6 @@
 			</tr></thead>
 			<tbody>
 				<tr ng-repeat="item in budget.categories" ng-if="item.type=='minus'">
-					<td>{{item.id}}</td>
 					<td>{{item.category_title}}</td>
 					<td>{{item.plan}}</td>
 					<td>{{item.fact}}</td>
