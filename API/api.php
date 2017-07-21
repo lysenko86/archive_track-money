@@ -87,7 +87,7 @@
         break;
         case 'admin_getUsers':
             if (getAdminAccess($adminToken)){
-                $query = $db->prepare("SELECT *, DATE_FORMAT(`created`, '%d.%m.%Y %H:%i:%s') AS `created` FROM `users` ORDER BY `created` DESC");
+                $query = $db->prepare("SELECT *, DATE_FORMAT(`created`, '%d.%m.%Y %H:%i:%s') AS `created` FROM `users` ORDER BY `created` DESC, `id` DESC");
                 $query->execute(array());
                 $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
                 $data['status'] = 'success';
