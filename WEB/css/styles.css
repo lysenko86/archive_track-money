@@ -233,14 +233,14 @@ nav.navbar{
 
 
 .footer{
-    height: 30px;
+    height: 50px;
     background-color: #e5dd90;
 }
     .footer .text{
         padding-top: 9px;
         text-align: center;
-        font-size: 12px;
-        line-height: 14px;
+        font-size: 14px;
+        line-height: 18px;
         font-weight: bold;
     }
 
