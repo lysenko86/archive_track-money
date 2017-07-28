@@ -24,31 +24,18 @@
 </div>
 <div class="row">
 	<div class="col-xs-12">
-		<table class="table table-bordered table-hover" ng-if="actions.length">
-			<thead class="bg-primary"><tr>
-				<th width="100px">Дата</th>
-				<th width="80px">Тип</th>
-				<th width="150px">Рахунок / Звідки</th>
-				<th width="150px">Категорія / Куди</th>
-				<th width="90px">Сума</th>
-				<th>Коментар</th>
-				<th width="60px">Дії</th>
-			</tr></thead>
-			<tbody>
-				<tr ng-repeat="item in actions">
-					<td>{{item.date}}</td>
-					<td>{{types[item.type]}}</td>
-					<td>{{item.accountFrom_title}}</td>
-					<td>{{item.type == 'move' ? item.accountTo_title : item.category_title}}</td>
-					<td ng-class="item.type == 'plus' ? 'colorPlus' : (item.type == 'minus' ? 'colorMinus' : '')">{{item.sum}}</td>
-					<td>{{item.description}}</td>
-					<td class="text-center">
-						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getAction(item.id)"></span></button>
-						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delAction(item.id)"></span></button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<ul class="list-group" ng-if="actions.length">
+			<li class="list-group-item" ng-repeat="item in actions">
+				<div class="rowDate" ng-show="item.date != actions[$index-1].date">{{item.date}}</div>
+				<div class="rowData">
+                    {{item.accountFrom_title}} <span class="glyphicon {{item.type == 'plus' ? 'glyphicon-arrow-left' : 'glyphicon glyphicon-arrow-right'}}{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}" aria-hidden="true"></span> {{item.type == 'move' ? item.accountTo_title : item.category_title}}
+					<button type="button" class="button-icon pull-right"><span class="glyphicon glyphicon-remove" ng-click="delAction(item.id)"></span></button>
+					<button type="button" class="button-icon pull-right"><span class="glyphicon glyphicon-edit" ng-click="getAction(item.id)"></span></button>
+                    <span class="pull-right{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}">{{item.sum}}</span>
+					<div class="rowDescr" ng-show="item.description">{{item.description}}</div>
+                </div>
+			</li>
+		</ul>
 	</div>
 </div>
 <div class="row">

@@ -10,6 +10,9 @@
 .colorOverMinus{
     color: #f00;
 }
+.colorMove{
+    color: #444;
+}
 
 
 
@@ -231,6 +234,51 @@ nav.navbar{
         padding-top: 15px;
         padding-bottom: 15px;
     }
+        .main .list-group .list-group-item{
+            border: none;
+            padding: 3px 0px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 0px;
+        }
+            .main .list-group .list-group-item .rowDate{
+                font-weight: bold;
+                padding-top: 15px;
+            }
+            .main .list-group .list-group-item .rowData{
+                margin-top: 5px;
+            }
+                .main .list-group .list-group-item .rowData>span{
+                    margin-right: 15px;
+                }
+            .main .list-group .list-group-item .rowData:hover{
+                background-color: #EEE;
+            }
+            .main .list-group .list-group-item .rowDescr{
+                color: #aaa;
+                font-size: 80%;
+                line-height: 1.2;
+                white-space: normal;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            .main .list-group .list-group-item .button-icon{
+            	padding: 0;
+            	cursor: pointer;
+            	background: 0 0;
+            	border: 0;
+            	top: 2px;
+            	position: relative;
+            }
+            	.main .list-group .list-group-item .button-icon>span{
+            		font-size: 16px;
+            		font-weight: 700;
+            		line-height: 1;
+            		color: #000;
+            		opacity: .2;
+            	}
+            	.main .list-group .list-group-item .button-icon>span:hover{
+            		opacity: 1;
+            	}
 
 
 
