@@ -26,14 +26,12 @@
 	<div class="col-xs-12">
 		<table class="table table-bordered table-hover" ng-if="categories.length">
 			<thead class="bg-primary"><tr>
-				<th width="70px">ID</th>
 				<th>Назва</th>
 				<th width="80px">Тип</th>
 				<th width="60px">Дії</th>
 			</tr></thead>
 			<tbody>
 				<tr ng-repeat="item in categories">
-					<td>{{item.id}}</td>
 					<td>{{item.title}}</td>
 					<td>{{types[item.type]}}</td>
 					<td class="text-center">

@@ -26,14 +26,12 @@
 	<div class="col-xs-12">
 		<table class="table table-bordered table-hover" ng-if="accounts.length">
 			<thead class="bg-primary"><tr>
-				<th width="70px">ID</th>
 				<th>Назва</th>
 				<th width="90px">Баланс</th>
 				<th width="60px">Дії</th>
 			</tr></thead>
 			<tbody>
 				<tr ng-repeat="item in accounts">
-					<td>{{item.id}}</td>
 					<td>{{item.title}}</td>
 					<td ng-class="item.balance >= 0 ? 'colorPlus' : 'colorMinus'">{{item.balance}}</td>
 					<td class="text-center">
