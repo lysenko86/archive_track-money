@@ -247,7 +247,7 @@ nav.navbar{
             .main .list-group .list-group-item .rowData{
                 margin-top: 5px;
             }
-                .main .list-group .list-group-item .rowData>span{
+                .main .list-group .list-group-item .rowData span.sum{
                     margin-right: 15px;
                 }
             .main .list-group .list-group-item .rowData:hover{

@@ -31,7 +31,7 @@
                     {{item.accountFrom_title}} <span class="glyphicon {{item.type == 'plus' ? 'glyphicon-arrow-left' : 'glyphicon glyphicon-arrow-right'}}{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}" aria-hidden="true"></span> {{item.type == 'move' ? item.accountTo_title : item.category_title}}
 					<button type="button" class="button-icon pull-right"><span class="glyphicon glyphicon-remove" ng-click="delAction(item.id)"></span></button>
 					<button type="button" class="button-icon pull-right"><span class="glyphicon glyphicon-edit" ng-click="getAction(item.id)"></span></button>
-                    <span class="pull-right{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}">{{item.sum}}</span>
+                    <span class="sum pull-right{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}">{{item.sum}}</span>
 					<div class="rowDescr" ng-show="item.description">{{item.description}}</div>
                 </div>
 			</li>
