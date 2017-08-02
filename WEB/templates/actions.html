@@ -1,36 +1,76 @@
-<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages">{{message.text}}</div>
-<div class="row">
-	<div class="col-xs-12">
-		<div class="panel panel-primary panelForm-add" ng-show="formType == 'add'">
-			<div class="panel-heading">Додавання транзакції</div>
-			<div class="panel-body">
-				<form class="form-inline" ng-submit="addAction()">
-					<ng-include src="'templates/_fieldsAction.html'"></ng-include>
-					<button type="submit" class="btn btn-primary">Додати</button>
+<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-hide="formIsShown">{{message.text}}</div>
+<div class="modal fade" id="popupEditForm" tabindex="-1" role="dialog" aria-labelledby="popupEditFormLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="popupEditFormLabel">{{action.id ? 'Редагування' : 'Додавання'}} транзакції</h4>
+			</div>
+			<div class="modal-body">
+				<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-show="formIsShown">{{message.text}}</div>
+				<form id="editForm" ng-submit="editAction()">
+					<input type="hidden" id="id" ng-model="action.id" />
+					<div class="form-group">
+						<label for="date">Дата:</label>
+						<input type="text" class="form-control" id="date" ng-model="action.date" placeholder="XX.XX.XXXX" maxLength="10" size="10" />
+					</div>
+					<div class="form-group">
+						<label for="type">Тип:</label>
+						<select class="form-control" id="type" ng-model="action.type">
+							<option value=''>- Оберіть -</option>
+							<option value='plus'>Дохід</option>
+							<option value='minus'>Витрата</option>
+							<option value='move'>Переказ</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="accountFrom_id" ng-if="action.type!='move'">Рахунок:</label>
+						<label for="accountFrom_id" ng-if="action.type=='move'">Звідки:</label>
+						<select class="form-control" id="accountFrom_id" ng-model="action.accountFrom_id">
+							<option value=''>- Оберіть -</option>
+							<option ng-repeat="item in accounts" value='{{item.id}}'>{{item.title}}</option>
+						</select>
+					</div>
+					<div class="form-group" ng-if="action.type=='move'">
+						<label for="accountTo_id">Куди:</label>
+						<select class="form-control" id="accountTo_id" ng-model="action.accountTo_id">
+							<option value=''>- Оберіть -</option>
+							<option ng-repeat="item in accounts" value='{{item.id}}'>{{item.title}}</option>
+						</select>
+					</div>
+					<div class="form-group" ng-if="action.type!='move'">
+						<label for="category_id">Категорія:</label>
+						<select class="form-control" id="category_id" ng-model="action.category_id">
+							<option value=''>- Оберіть -</option>
+							<option ng-repeat="item in categories" value='{{item.id}}' ng-if="action.type==item.type">{{item.title}}</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="sum">Сума:</label>
+						<input type="text" class="form-control" id="sum" ng-model="action.sum" placeholder="0.00" size="7" />
+					</div>
+					<div class="form-group">
+						<label for="description">Коментар:</label>
+						<textarea class="form-control" id="description" ng-model="action.description"></textarea>
+					</div>
 				</form>
 			</div>
-		</div>
-		<div class="panel panel-primary panelForm-edit" ng-show="formType == 'edit'">
-			<div class="panel-heading">Редагування транзакції</div>
-			<div class="panel-body">
-				<form class="form-inline" ng-submit="editAction()">
-					<ng-include src="'templates/_fieldsAction.html'"></ng-include>
-					<button type="submit" class="btn btn-primary">Зберегти</button>
-					<button type="button" class="btn btn-default" ng-click="getAction()">Відмінити</button>
-				</form>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger pull-left" data-dismiss="modal" ng-click="delAction(action.id)" ng-show="action.id">Видалити</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Скасувати</button>
+				<button type="submit" form="editForm" class="btn btn-primary">{{action.id ? 'Зберегти' : 'Додати'}}</button>
 			</div>
 		</div>
 	</div>
 </div>
 <div class="row">
 	<div class="col-xs-12">
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popupEditForm" ng-click="getAction(false)">Додати</button>
 		<ul class="list-group" ng-if="actions.length">
 			<li class="list-group-item" ng-repeat="item in actions">
 				<div class="rowDate" ng-show="item.date != actions[$index-1].date">{{item.date}}</div>
-				<div class="rowData">
+				<div class="rowData" data-toggle="modal" data-target="#popupEditForm" ng-click="getAction(item.id)">
                     {{item.accountFrom_title}} <span class="glyphicon {{item.type == 'plus' ? 'glyphicon-arrow-left' : 'glyphicon glyphicon-arrow-right'}}{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}" aria-hidden="true"></span> {{item.type == 'move' ? item.accountTo_title : item.category_title}}
-					<button type="button" class="button-icon pull-right"><span class="glyphicon glyphicon-remove" ng-click="delAction(item.id)"></span></button>
-					<button type="button" class="button-icon pull-right"><span class="glyphicon glyphicon-edit" ng-click="getAction(item.id)"></span></button>
                     <span class="sum pull-right{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}">{{item.sum}}</span>
 					<div class="rowDescr" ng-show="item.description">{{item.description}}</div>
                 </div>

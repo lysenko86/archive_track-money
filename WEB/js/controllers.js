@@ -515,12 +515,9 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
-		let obj = new Date();
-		let d = '0' + obj.getDate();
-		let m = '0' + (obj.getMonth()+1);
-		$scope.today = d.substr(d.length-2, 2) + '.' + m.substr(m.length-2, 2) + '.' + obj.getFullYear();
 		$scope.action = {
-			date: $scope.today,
+			id: false,
+			date: $scope.getToday(),
 			type: '',
 			accountFrom_id: '',
 			accountTo_id: '',
@@ -529,14 +526,16 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 			description: ''
 		};
 		$scope.actions = $scope.categories = $scope.accounts = [];
-		$scope.formType = 'add';
-		$scope.editID = '';
 		$scope.types = {
 			plus: 'Доходи',
 			minus: 'Витрати',
 			move: 'Переказ'
 		};
 		$scope.isShowMoreButton = true;
+		$scope.formIsShown = false;
+		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
+			$scope.formIsShown = false;
+		});
 		categoriesServ.getCategories(function(data){
 			if (data == 'requestError'){
 				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
@@ -567,6 +566,18 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 		});
 		$scope.getActions();
 	};
+	$scope.getToday = function(){
+		let obj = new Date();
+		let d = '0' + obj.getDate();
+		let m = '0' + (obj.getMonth()+1);
+		return d.substr(d.length-2, 2) + '.' + m.substr(m.length-2, 2) + '.' + obj.getFullYear();
+	}
+	$scope.dateToWEB = function(date){
+		return date.substr(8,2) + '.' + date.substr(5,2) + '.' + date.substr(0,4);
+	}
+	$scope.dateToAPI = function(date){
+		return date.substr(6,4) + '-' + date.substr(3,2) + '-' + date.substr(0,2);
+	}
 	$scope.getActions = function(data){
 		actionsServ.getActions($scope.actions.length, 20, function(data){
 			if (data == 'requestError'){
@@ -587,22 +598,21 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 		});
 	}
 	$scope.getAction = function(id){
-		if (id == undefined){
-			$scope.formType = 'add';
-			$scope.action.date = $scope.today;
-			$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = $scope.editID = '';
+		$scope.formIsShown = true;
+		if (!id){
+			$scope.action.id = false;
+			$scope.action.date = $scope.getToday();
+			$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
 		}
 		else{
-			$scope.editID = id;
 			actionsServ.getAction(id, function(data){
 				if (data == 'requestError'){
 					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
 				}
 				else{
 					if (data.status == 'success'){
-						data.arr.date = data.arr.date.substr(8,2) + '.' + data.arr.date.substr(5,2) + '.' + data.arr.date.substr(0,4);
-						$scope.formType = 'edit';
-						$scope.action.date = data.arr.date;
+						$scope.action.id = data.arr.id;
+						$scope.action.date = $scope.dateToWEB(data.arr.date);
 						$scope.action.type = data.arr.type;
 						$scope.action.accountFrom_id = data.arr.accountFrom_id;
 						$scope.action.accountTo_id = data.arr.accountTo_id;
@@ -615,44 +625,6 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 					}
 				}
 			});
-		}
-	}
-	$scope.addAction = function(){
-		if (!$scope.action.type){
-			messagesServ.showMessages('error', 'Помилка! Поле "Тип" обов\'язкове для заповнення!');
-		}
-		else if ($scope.action.type == 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.accountTo_id || !$scope.action.sum)){
-			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!');
-		}
-		else if ($scope.action.type != 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.category_id || !$scope.action.sum)){
-			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!');
-		}
-		else if (!/^\d{2}\.\d{2}\.\d{4}$/.test($scope.action.date)){
-			messagesServ.showMessages('error', 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!');
-		}
-		else if (!/^[\d\.]+$/.test($scope.action.sum)){
-			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим!');
-		}
-		else{
-			if ($scope.action.type == 'move'){
-				$scope.action.category_id = '0';
-			}
-			else if ($scope.action.type != 'move'){
-				$scope.action.accountTo_id = '0';
-			}
-			actionsServ.addAction($scope.action, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						$scope.actions.push(data.arr);
-						$scope.action.date = $scope.today;
-						$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
-					}
-					messagesServ.showMessages(data.status, data.msg);
-				}
-            });
 		}
 	}
 	$scope.editAction = function(){
@@ -678,24 +650,30 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 			else if ($scope.action.type != 'move'){
 				$scope.action.accountTo_id = '0';
 			}
-			actionsServ.editAction($scope.editID, $scope.action, function(data){
+			$scope.action.date = $scope.dateToAPI($scope.action.date);
+			actionsServ.editAction($scope.action, function(data){
 				if (data == 'requestError'){
 					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
 				}
 				else{
+					data.arr.date = $scope.dateToWEB(data.arr.date);
 					if (data.status == 'success'){
-						$scope.formType = 'add';
-						for (var i=0; i<$scope.actions.length; i++){
-							if ($scope.actions[i].id == $scope.editID){
-								$scope.actions[i] = data.arr;
+						if ($scope.action.id){     // edit transaction
+							for (var i=0; i<$scope.actions.length; i++){
+								if ($scope.actions[i].id == $scope.action.id){
+									$scope.actions[i] = data.arr;
+								}
 							}
 						}
-						$scope.action.date = $scope.today;
-						$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = $scope.editID = '';
+						else{     // add transaction
+							$scope.actions.unshift(data.arr);
+						}
+						angular.element(document).find('#popupEditForm').modal('hide');
+						$scope.formIsShown = false;
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}
-			});
+            });
 		}
 	}
 	$scope.delAction = function(id){
@@ -709,6 +687,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 						for (var i=0; i<$scope.actions.length; i++){
 							if ($scope.actions[i].id == id) $scope.actions.splice(i, 1);
 						}
+						$scope.formIsShown = false;
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}

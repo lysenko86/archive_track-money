@@ -252,6 +252,7 @@ nav.navbar{
                 }
             .main .list-group .list-group-item .rowData:hover{
                 background-color: #EEE;
+                cursor: pointer;
             }
             .main .list-group .list-group-item .rowDescr{
                 color: #aaa;
@@ -261,24 +262,16 @@ nav.navbar{
                 padding-left: 10px;
                 padding-right: 10px;
             }
-            .main .list-group .list-group-item .button-icon{
-            	padding: 0;
-            	cursor: pointer;
-            	background: 0 0;
-            	border: 0;
-            	top: 2px;
-            	position: relative;
-            }
-            	.main .list-group .list-group-item .button-icon>span{
-            		font-size: 16px;
-            		font-weight: 700;
-            		line-height: 1;
-            		color: #000;
-            		opacity: .2;
-            	}
-            	.main .list-group .list-group-item .button-icon>span:hover{
-            		opacity: 1;
-            	}
+
+
+
+
+
+.modal{}
+    .modal .modal-header{
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
 
 
 

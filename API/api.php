@@ -613,79 +613,6 @@
                 $data['status'] = 'error';
             }
         break;
-        case 'addAction':
-            if (getAccess($db)){
-                $uid = getUID();
-                $date = trim($request->date);
-                $type = trim($request->type);
-                $accountFrom_id = trim($request->accountFrom_id);
-                $accountTo_id = trim($request->accountTo_id);
-                $category_id = trim($request->category_id);
-                $sum = trim($request->sum);
-                $description = trim($request->description);
-                if (!$type){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення поля "Тип" не може бути пустим!';
-                }
-                elseif ($type == 'move' && (!$date || !$accountFrom_id || !$accountTo_id || !$sum)){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення полів "Дата", "Звідки", "Куди" та "Сума" не може бути пустим!';
-                }
-                elseif ($type != 'move' && (!$date || !$accountFrom_id || !$category_id || !$sum)){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення полів "Дата", "Рахунок", "Категорія" та "Сума" не може бути пустим!';
-                }
-                elseif (!preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $date)){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!';
-                }
-                elseif (!preg_match('/^[\d\.]+$/', $sum)){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення поля "Сума" має бути числовим!';
-                }
-                elseif (!in_array($type, array('plus', 'minus', 'move'))){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення поля "Тип" не корректне!';
-                }
-                else{
-                    switch ($type){
-                        case 'plus':
-                            $query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
-                            $query->execute(array($sum, $accountFrom_id));
-                        break;
-                        case 'minus':
-                            $query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
-                            $query->execute(array($sum, $accountFrom_id));
-                        break;
-                        case 'move':
-                            $query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` - ? WHERE `id` = ?");
-                            $query->execute(array($sum, $accountFrom_id));
-                            $query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
-                            $query->execute(array($sum, $accountTo_id));
-                        break;
-                    }
-                    $query = $db->prepare("INSERT INTO `actions` (`uid`, `date`, `type`, `accountFrom_id`, `accountTo_id`, `category_id`, `sum`, `description`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
-                    $query->execute(array($uid, $date, $type, $accountFrom_id, $accountTo_id, $category_id, $sum, $description));
-                    $data['arr'] = array(
-                        id    => $db->lastInsertId(),
-                        uid => $uid,
-                        date  => $date,
-                        type   => $type,
-                        accountFrom_id => $accountFrom_id,
-                        accountTo_id => $accountTo_id,
-                        category_id => $category_id,
-                        sum => $sum,
-                        description => $description
-                    );
-                    $data['status'] = 'success';
-                    $data['msg']    = "Готово! Транзакція успішно додана.";
-                }
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
         case 'editAction':
             if (getAccess($db)){
                 $uid = getUID();
@@ -722,7 +649,7 @@
                     $data['msg']    = 'Помилка! Значення поля "Тип" не корректне!';
                 }
                 else{
-                    if ($id){
+                    if ($id){     // edit transaction
                         $query = $db->prepare("SELECT * FROM `actions` WHERE `id` = ?");
                         $query->execute(array($id));
                         $tmp = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -764,21 +691,9 @@
                         }
                         $query = $db->prepare("UPDATE `actions` SET `date` = ?, `type` = ?, `accountFrom_id` = ?, `accountTo_id` = ?, `category_id` = ?, `sum` = ?, `description` = ? WHERE `id` = ? AND `uid` = ?");
                         $query->execute(array($date, $type, $accountFrom_id, $accountTo_id, $category_id, $sum, $description, $id, $uid));
-                        $data['arr'] = array(
-                            id    => $id,
-                            uid => $uid,
-                            date  => $date,
-                            type   => $type,
-                            accountFrom_id => $accountFrom_id,
-                            accountTo_id => $accountTo_id,
-                            category_id => $category_id,
-                            sum => $sum,
-                            description => $description
-                        );
-                        $data['status'] = 'success';
-                        $data['msg']    = "Готово! Транзакція успішно змінена.";
+                        $data['msg'] = "Готово! Транзакція успішно змінена.";
                     }
-                    else{
+                    else{     // add transaction
                         switch ($type){
                             case 'plus':
                                 $query = $db->prepare("UPDATE `accounts` SET `balance` = `balance` + ? WHERE `id` = ?");
@@ -797,20 +712,36 @@
                         }
                         $query = $db->prepare("INSERT INTO `actions` (`uid`, `date`, `type`, `accountFrom_id`, `accountTo_id`, `category_id`, `sum`, `description`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
                         $query->execute(array($uid, $date, $type, $accountFrom_id, $accountTo_id, $category_id, $sum, $description));
-                        $data['arr'] = array(
-                            id    => $db->lastInsertId(),
-                            date  => $date,
-                            uid  => $uid,
-                            type   => $type,
-                            accountFrom_id => $accountFrom_id,
-                            accountTo_id => $accountTo_id,
-                            category_id => $category_id,
-                            sum => $sum,
-                            description => $description
-                        );
-                        $data['status'] = 'success';
-                        $data['msg']    = "Готово! Транзакція успішно змінена.";
+                        $id = $db->lastInsertId();
+                        $data['msg'] = "Готово! Транзакція успішно додана.";
                     }
+                    $query = $db->prepare("SELECT `title` FROM `accounts` WHERE `id` = ?");
+                    $query->execute(array($accountFrom_id));
+                    $tmp = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $accountFrom_title = $tmp[0]['title'];
+                    $query = $db->prepare("SELECT `title` FROM `accounts` WHERE `id` = ?");
+                    $query->execute(array($accountTo_id));
+                    $tmp = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $accountTo_title = $tmp[0]['title'];
+                    $query = $db->prepare("SELECT `title` FROM `categories` WHERE `id` = ?");
+                    $query->execute(array($category_id));
+                    $tmp = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $category_title = $tmp[0]['title'];
+                    $data['arr'] = array(
+                        id  => $id,
+                        uid => $uid,
+                        date => $date,
+                        type => $type,
+                        accountFrom_id => $accountFrom_id,
+                        accountFrom_title => $accountFrom_title,
+                        accountTo_id => $accountTo_id,
+                        accountTo_title => $accountTo_title,
+                        category_id => $category_id,
+                        category_title => $category_title,
+                        sum => $sum,
+                        description => $description
+                    );
+                    $data['status'] = 'success';
                 }
             }
             else{

@@ -238,29 +238,11 @@ moneyApp.service('actionsServ', function($http, localStorageService){
             cb('requestError');
         });
     }
-	this.addAction = function(action, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'addAction',
-			date: action.date.substr(6,4) + '-' + action.date.substr(3,2) + '-' + action.date.substr(0,2),
-			type: action.type,
-			accountFrom_id: action.accountFrom_id,
-			accountTo_id: action.accountTo_id,
-			category_id: action.category_id,
-			sum: action.sum,
-			description: action.description
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
-	}
-	this.editAction = function(id, action, cb){
+    this.editAction = function(action, cb){
 		$http.post(config.api + '?token=' + token, {
 			action: 'editAction',
-			id: id,
-			date: action.date.substr(6,4) + '-' + action.date.substr(3,2) + '-' + action.date.substr(0,2),
+            id: action.id,
+			date: action.date,
 			type: action.type,
 			accountFrom_id: action.accountFrom_id,
 			accountTo_id: action.accountTo_id,
