@@ -293,24 +293,11 @@ moneyApp.service('categoriesServ', function($http, localStorageService){
             cb('requestError');
         });
     }
-	this.addCategory = function(category, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'addCategory',
-			title: category.title,
-			type: category.type
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
-	}
-	this.editCategory = function(id, category, cb){
+    this.editCategory = function(category, cb){
 		$http.post(config.api + '?token=' + token, {
 			action: 'editCategory',
-			id: id,
-			title: category.title,
+            id: category.id,
+            title: category.title,
 			type: category.type
 		})
 		.success(function(data){

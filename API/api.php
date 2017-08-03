@@ -817,33 +817,6 @@
                 $data['status'] = 'error';
             }
         break;
-        case 'addCategory':
-            if (getAccess($db)){
-                $uid = getUID();
-                $title = trim($request->title);
-                $type = trim($request->type);
-                if (!$title || !$type){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення полів "Назва" та "Тип" не може бути пустим!';
-                }
-                else{
-                    $query = $db->prepare("INSERT INTO `categories` (`uid`, `title`, `type`) VALUES(?, ?, ?)");
-                    $query->execute(array($uid, $title, $type));
-                    $data['arr'] = array(
-                        id    => $db->lastInsertId(),
-                        uid => $uid,
-                        title => $title,
-                        type  => $type
-                    );
-                    $data['status'] = 'success';
-                    $data['msg']    = "Готово! Категорія успішно додана.";
-                }
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
         case 'editCategory':
             if (getAccess($db)){
                 $uid = getUID();
@@ -855,16 +828,24 @@
                     $data['msg']    = 'Помилка! Значення полів "Назва" та "Тип" не може бути пустим!';
                 }
                 else{
-                    $query = $db->prepare("UPDATE `categories` SET `title` = ?, `type` = ? WHERE `id` = ? AND `uid` = ?");
-                    $query->execute(array($title, $type, $id, $uid));
+                    if ($id){     // edit category
+                        $query = $db->prepare("UPDATE `categories` SET `title` = ?, `type` = ? WHERE `id` = ? AND `uid` = ?");
+                        $query->execute(array($title, $type, $id, $uid));
+                        $data['msg'] = "Готово! Категорія успішно змінена.";
+                    }
+                    else{     // add category
+                        $query = $db->prepare("INSERT INTO `categories` (`uid`, `title`, `type`) VALUES(?, ?, ?)");
+                        $query->execute(array($uid, $title, $type));
+                        $id = $db->lastInsertId();
+                        $data['msg'] = "Готово! Категорія успішно додана.";
+                    }
                     $data['arr'] = array(
-                        id    => $id,
+                        id => $id,
                         uid => $uid,
                         title => $title,
-                        type  => $type
+                        type => $type
                     );
                     $data['status'] = 'success';
-                    $data['msg']    = "Готово! Категорія успішно змінена.";
                 }
             }
             else{

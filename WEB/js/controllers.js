@@ -708,17 +708,20 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 			$location.url('home');
 		}
 		$scope.category = {
+			id: false,
 			title: '',
 			type: ''
 		};
 		$scope.categories = [];
-		$scope.formType = 'add';
-		$scope.editID = '';
 		$scope.types = {
 			plus: 'Доходи',
 			minus: 'Витрати'
 		};
 		$scope.getCategories();
+		$scope.formIsShown = false;
+		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
+			$scope.formIsShown = false;
+		});
 	}
 	$scope.getCategories = function(){
 		categoriesServ.getCategories(function(data){
@@ -737,19 +740,19 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 		});
 	}
 	$scope.getCategory = function(id){
-		if (id == undefined){
-			$scope.formType = 'add';
-			$scope.category.title = $scope.category.type = $scope.editID = '';
+		$scope.formIsShown = true;
+		if (!id){
+			$scope.category.id = false;
+			$scope.category.title = $scope.category.type = '';
 		}
 		else{
-			$scope.editID = id;
 			categoriesServ.getCategory(id, function(data){
 				if (data == 'requestError'){
 					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
 				}
 				else{
 					if (data.status == 'success'){
-						$scope.formType = 'edit';
+						$scope.category.id = data.arr.id;
 						$scope.category.title = data.arr.title;
 						$scope.category.type = data.arr.type;
 					}
@@ -760,47 +763,38 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 			});
 		}
 	}
-	$scope.addCategory = function(){
-		if (!$scope.category.title || !$scope.category.type){
-			messagesServ.showMessages('error', 'Помилка! Поля "Назва" та "Тип" обов\'язкові для заповнення!');
-		}
-		else{
-			categoriesServ.addCategory($scope.category, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						$scope.categories.push(data.arr);
-						$scope.category.title = $scope.category.type = '';
-					}
-					messagesServ.showMessages(data.status, data.msg);
-				}
-            });
-		}
-	}
 	$scope.editCategory = function(){
 		if (!$scope.category.title || !$scope.category.type){
 			messagesServ.showMessages('error', 'Помилка! Поля "Назва" та "Тип" обов\'язкові для заповнення!');
 		}
 		else{
-			categoriesServ.editCategory($scope.editID, $scope.category, function(data){
+			categoriesServ.editCategory($scope.category, function(data){
 				if (data == 'requestError'){
 					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
 				}
 				else{
 					if (data.status == 'success'){
-						$scope.formType = 'add';
-						for (var i=0; i<$scope.categories.length; i++){
-							if ($scope.categories[i].id == $scope.editID){
-								$scope.categories[i] = data.arr;
+						if ($scope.category.id){     // edit category
+							for (var i=0; i<$scope.categories.length; i++){
+								if ($scope.categories[i].id == $scope.category.id){
+									$scope.categories[i] = data.arr;
+								}
 							}
 						}
-						$scope.category.title = $scope.category.type = $scope.editID = '';
+						else{     // add category
+							if (data.arr.type == 'plus'){
+								$scope.categories.unshift(data.arr);
+							}
+							else{
+								$scope.categories.push(data.arr);
+							}
+						}
+						angular.element(document).find('#popupEditForm').modal('hide');
+						$scope.formIsShown = false;
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}
-			});
+            });
 		}
 	}
 	$scope.delCategory = function(id){
