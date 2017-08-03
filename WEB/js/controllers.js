@@ -809,6 +809,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 							if ($scope.categories[i].id == id) $scope.categories.splice(i, 1);
 						}
 					}
+					$scope.formIsShown = false;
 					messagesServ.showMessages(data.status, data.msg);
 				}
 			});
