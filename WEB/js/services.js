@@ -343,24 +343,11 @@ moneyApp.service('accountsServ', function($http, localStorageService){
             cb('requestError');
         });
     }
-	this.addAccount = function(account, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'addAccount',
-			title: account.title,
-			balance: account.balance
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
-	}
-	this.editAccount = function(id, account, cb){
+    this.editAccount = function(account, cb){
 		$http.post(config.api + '?token=' + token, {
 			action: 'editAccount',
-			id: id,
-			title: account.title,
+            id: account.id,
+            title: account.title,
 			balance: account.balance
 		})
 		.success(function(data){

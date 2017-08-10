@@ -908,37 +908,6 @@
                 $data['status'] = 'error';
             }
         break;
-        case 'addAccount':
-            if (getAccess($db)){
-                $uid = getUID();
-                $title = trim($request->title);
-                $balance = trim($request->balance);
-                if (!$title || $balance == ''){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення полів "Назва" та "Баланс" не може бути пустим!';
-                }
-                elseif (!preg_match('/^[\-\+\d\.]+$/', $balance)){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення поля "Баланс" має бути числовим!';
-                }
-                else{
-                    $query = $db->prepare("INSERT INTO `accounts` (`uid`, `title`, `balance`) VALUES(?, ?, ?)");
-                    $query->execute(array($uid, $title, $balance));
-                    $data['arr'] = array(
-                        id    => $db->lastInsertId(),
-                        uid => $uid,
-                        title => $title,
-                        balance  => $balance
-                    );
-                    $data['status'] = 'success';
-                    $data['msg']    = "Готово! Рахунок успішно доданий.";
-                }
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
         case 'editAccount':
             if (getAccess($db)){
                 $uid = getUID();
@@ -954,16 +923,24 @@
                     $data['msg']    = 'Помилка! Значення поля "Баланс" має бути числовим!';
                 }
                 else{
-                    $query = $db->prepare("UPDATE `accounts` SET `title` = ?, `balance` = ? WHERE `id` = ? AND `uid` = ?");
-                    $query->execute(array($title, $balance, $id, $uid));
+                    if ($id){     // edit account
+                        $query = $db->prepare("UPDATE `accounts` SET `title` = ?, `balance` = ? WHERE `id` = ? AND `uid` = ?");
+                        $query->execute(array($title, $balance, $id, $uid));
+                        $data['msg'] = "Готово! Рахунок успішно змінений.";
+                    }
+                    else{     // add account
+                        $query = $db->prepare("INSERT INTO `accounts` (`uid`, `title`, `balance`) VALUES(?, ?, ?)");
+                        $query->execute(array($uid, $title, $balance));
+                        $id = $db->lastInsertId();
+                        $data['msg'] = "Готово! Рахунок успішно доданий.";
+                    }
                     $data['arr'] = array(
-                        id    => $id,
+                        id => $id,
                         uid => $uid,
                         title => $title,
-                        balance  => $balance
+                        balance => $balance
                     );
                     $data['status'] = 'success';
-                    $data['msg']    = "Готово! Рахунок успішно змінений.";
                 }
             }
             else{

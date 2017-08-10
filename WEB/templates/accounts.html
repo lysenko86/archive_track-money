@@ -1,45 +1,43 @@
-<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages">{{message.text}}</div>
-<div class="row">
-	<div class="col-xs-12">
-		<div class="panel panel-primary panelForm-add" ng-show="formType == 'add'">
-			<div class="panel-heading">Додавання рахунку</div>
-			<div class="panel-body">
-				<form class="form-inline" ng-submit="addAccount()">
-					<ng-include src="'templates/_fieldsAccount.html'"></ng-include>
-					<button type="submit" class="btn btn-primary">Додати</button>
+<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-hide="formIsShown">{{message.text}}</div>
+<div class="modal fade" id="popupEditForm" tabindex="-1" role="dialog" aria-labelledby="popupEditFormLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="popupEditFormLabel">{{account.id ? 'Редагування' : 'Додавання'}} рахунку</h4>
+			</div>
+			<div class="modal-body">
+				<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-show="formIsShown">{{message.text}}</div>
+				<form id="editForm" ng-submit="editAccount()">
+					<input type="hidden" id="id" ng-model="account.id" />
+					<div class="form-group">
+						<label for="title">Назва:</label>
+						<input type="text" class="form-control" id="title" ng-model="account.title" placeholder="Назва" />
+					</div>
+					<div class="form-group">
+						<label for="balance">Баланс:</label>
+						<input type="text" class="form-control" id="balance" ng-model="account.balance" placeholder="0.00" />
+					</div>
 				</form>
 			</div>
-		</div>
-		<div class="panel panel-primary panelForm-edit" ng-show="formType == 'edit'">
-			<div class="panel-heading">Редагування рахунку</div>
-			<div class="panel-body">
-				<form class="form-inline" ng-submit="editAccount()">
-					<ng-include src="'templates/_fieldsAccount.html'"></ng-include>
-					<button type="submit" class="btn btn-primary">Зберегти</button>
-					<button type="button" class="btn btn-default" ng-click="getAccount()">Відмінити</button>
-				</form>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger pull-left" data-dismiss="modal" ng-click="delAccount(account.id)" ng-show="account.id">Видалити</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Скасувати</button>
+				<button type="submit" form="editForm" class="btn btn-primary">{{account.id ? 'Зберегти' : 'Додати'}}</button>
 			</div>
 		</div>
 	</div>
 </div>
 <div class="row">
 	<div class="col-xs-12">
-		<table class="table table-bordered table-hover" ng-if="accounts.length">
-			<thead class="bg-primary"><tr>
-				<th>Назва</th>
-				<th width="90px">Баланс</th>
-				<th width="60px">Дії</th>
-			</tr></thead>
-			<tbody>
-				<tr ng-repeat="item in accounts">
-					<td>{{item.title}}</td>
-					<td ng-class="item.balance >= 0 ? 'colorPlus' : 'colorMinus'">{{item.balance}}</td>
-					<td class="text-center">
-						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getAccount(item.id)"></span></button>
-						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delAccount(item.id)"></span></button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popupEditForm" ng-click="getAccount(false)">Додати</button>
+		<ul class="list-group" ng-if="accounts.length">
+			<li class="list-group-item" ng-repeat="item in accounts">
+				<div class="rowData" data-toggle="modal" data-target="#popupEditForm" ng-click="getAccount(item.id)">
+                    {{item.title}}
+					<span class="pull-right{{item.balance >= 0 ? ' colorPlus' : ' colorMinus'}}">{{item.balance}}</span>
+                </div>
+			</li>
+		</ul>
 	</div>
 </div>

@@ -829,13 +829,16 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 			$location.url('home');
 		}
 		$scope.account = {
+			id: false,
 			title: '',
 			balance: ''
 		};
 		$scope.accounts = [];
-		$scope.formType = 'add';
-		$scope.editID = '';
 		$scope.getAccounts();
+		$scope.formIsShown = false;
+		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
+			$scope.formIsShown = false;
+		});
 	}
 	$scope.getAccounts = function(){
 		accountsServ.getAccounts(function(data){
@@ -854,19 +857,19 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 		});
 	}
 	$scope.getAccount = function(id){
-		if (id == undefined){
-			$scope.formType = 'add';
-			$scope.account.title = $scope.account.balance = $scope.editID = '';
+		$scope.formIsShown = true;
+		if (!id){
+			$scope.account.id = false;
+			$scope.account.title = $scope.account.balance = '';
 		}
 		else{
-			$scope.editID = id;
 			accountsServ.getAccount(id, function(data){
 				if (data == 'requestError'){
 					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
 				}
 				else{
 					if (data.status == 'success'){
-						$scope.formType = 'edit';
+						$scope.account.id = data.arr.id;
 						$scope.account.title = data.arr.title;
 						$scope.account.balance = data.arr.balance;
 					}
@@ -877,28 +880,6 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 			});
 		}
 	}
-	$scope.addAccount = function(){
-		if (!$scope.account.title || $scope.account.balance == ''){
-			messagesServ.showMessages('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
-		}
-		else if (!/^[\-\+\d\.]+$/.test($scope.account.balance)){
-			messagesServ.showMessages('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
-		}
-		else{
-			accountsServ.addAccount($scope.account, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						$scope.accounts.push(data.arr);
-						$scope.account.title = $scope.account.balance = '';
-					}
-					messagesServ.showMessages(data.status, data.msg);
-				}
-            });
-		}
-	}
 	$scope.editAccount = function(){
 		if (!$scope.account.title || $scope.account.balance == ''){
 			messagesServ.showMessages('error', 'Помилка! Поля "Назва" та "Баланс" обов\'язкові для заповнення!');
@@ -907,23 +888,28 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 			messagesServ.showMessages('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
 		}
 		else{
-			accountsServ.editAccount($scope.editID, $scope.account, function(data){
+			accountsServ.editAccount($scope.account, function(data){
 				if (data == 'requestError'){
 					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
 				}
 				else{
 					if (data.status == 'success'){
-						$scope.formType = 'add';
-						for (var i=0; i<$scope.accounts.length; i++){
-							if ($scope.accounts[i].id == $scope.editID){
-								$scope.accounts[i] = data.arr;
+						if ($scope.account.id){     // edit account
+							for (var i=0; i<$scope.accounts.length; i++){
+								if ($scope.accounts[i].id == $scope.account.id){
+									$scope.accounts[i] = data.arr;
+								}
 							}
 						}
-						$scope.account.title = $scope.account.balance = $scope.editID = '';
+						else{     // add account
+							$scope.accounts.push(data.arr);
+						}
+						angular.element(document).find('#popupEditForm').modal('hide');
+						$scope.formIsShown = false;
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}
-			});
+            });
 		}
 	}
 	$scope.delAccount = function(id){
