@@ -31,7 +31,7 @@
 		</div>
 	</div>
 </div>
-<div class="row">
+<div class="row visible-md visible-lg">
 	<div class="col-xs-12">
 		<div class="btn-toolbar barMonthYear" role="toolbar">
 			<div class="btn-group" role="group">
@@ -40,6 +40,22 @@
 			<div class="btn-group" role="group">
 				<button type="button" class="btn btn-default{{$index+1 == budget.month ? ' active' : ''}}" ng-repeat="month in months" ng-click="getBudget(budget.year, $index+1)">{{months[$index]}}</button>
 			</div>
+		</div>
+	</div>
+</div>
+<div class="row hidden-md hidden-lg">
+	<div class="col-xs-12">
+		<div class="dropdown pull-left">
+			<button type="button" class="btn btn-default dropdown-toggle" id="ddMenuYear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{budget.year}} <span class="caret"></span></button>
+			<ul class="dropdown-menu" aria-labelledby="ddMenuYear">
+				<li class="{{year == budget.year ? ' active' : ''}}" ng-repeat="year in years" ng-click="getBudget(year, budget.month)"><a href="#" onclick="return false;">{{year}}</a></li>
+			</ul>
+		</div>
+		<div class="dropdown pull-left">
+			<button type="button" class="btn btn-default dropdown-toggle" id="ddMenuMonth" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{months[budget.month-1]}} <span class="caret"></span></button>
+			<ul class="dropdown-menu" aria-labelledby="ddMenuMonth">
+				<li class="{{$index+1 == budget.month ? ' active' : ''}}" ng-repeat="month in months" ng-click="getBudget(budget.year, $index+1)"><a href="#" onclick="return false;">{{months[$index]}}</a></li>
+			</ul>
 		</div>
 	</div>
 </div>
@@ -66,7 +82,7 @@
 				<th>Категорія</th>
 				<th width="90px">План</th>
 				<th width="90px">Факт</th>
-				<th width="110px">Залишилось</th>
+				<th width="110px">Залишок</th>
 			</tr></thead>
 			<tbody>
 				<tr ng-repeat="item in budget.categories" ng-if="item.type=='plus'" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
@@ -88,7 +104,7 @@
 				<th>Категорія</th>
 				<th width="90px">План</th>
 				<th width="90px">Факт</th>
-				<th width="110px">Залишилось</th>
+				<th width="110px">Залишок</th>
 			</tr></thead>
 			<tbody>
 				<tr ng-repeat="item in budget.categories" ng-if="item.type=='minus'" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
