@@ -1,92 +1,79 @@
-<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages">{{message.text}}</div>
-<div class="row">
-	<div class="col-xs-12">
-		<div class="panel panel-primary panelForm-add" ng-show="formType == 'add'">
-			<div class="panel-heading">Додавання категорії</div>
-			<div class="panel-body">
-				<form class="form-inline" ng-submit="addCategory()">
-					<ng-include src="'templates/_fieldsBudget.html'"></ng-include>
-					<button type="submit" class="btn btn-primary">Додати</button>
-				</form>
+<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-hide="formIsShown">{{message.text}}</div>
+<div class="modal fade" id="popupEditForm" tabindex="-1" role="dialog" aria-labelledby="popupEditFormLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="popupEditFormLabel">{{category.id ? 'Редагування' : 'Додавання'}} категорії</h4>
 			</div>
-		</div>
-		<div class="panel panel-primary panelForm-edit" ng-show="formType == 'edit'">
-			<div class="panel-heading">Редагування категорії</div>
-			<div class="panel-body">
-				<form class="form-inline" ng-submit="editCategory()">
-					<ng-include src="'templates/_fieldsBudget.html'"></ng-include>
-					<button type="submit" class="btn btn-primary">Зберегти</button>
-					<button type="button" class="btn btn-default" ng-click="getCategory()">Відмінити</button>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12">
-		<div class="panel panel-primary">
-			<div class="panel-heading">Бюджет за...</div>
-			<div class="panel-body">
-				<form class="form-inline" ng-submit="getBudget()">
+			<div class="modal-body">
+				<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-show="formIsShown">{{message.text}}</div>
+				<form id="editForm" ng-submit="editCategory()">
+					<input type="hidden" id="id" ng-model="category.id" />
 					<div class="form-group">
-						<label for="month">Місяць:</label>
-						<select class="form-control" id="month" ng-model="budget.month">
-							<option value="">- Оберіть -</option>
-							<option value="1">Січень</option>
-							<option value="2">Лютий</option>
-							<option value="3">Березень</option>
-							<option value="4">Квітень</option>
-							<option value="5">Травень</option>
-							<option value="6">Червень</option>
-							<option value="7">Липень</option>
-							<option value="8">Серпень</option>
-							<option value="9">Вересень</option>
-							<option value="10">Жовтень</option>
-							<option value="11">Листопад</option>
-							<option value="12">Грудень</option>
+						<label for="category_id">Категорія:</label>
+						<select class="form-control" id="category_id" ng-model="category.category_id">
+							<option value=''>- Оберіть -</option>
+							<option ng-repeat="item in categories" value='{{item.id}}'>{{item.title}}</option>
 						</select>
 					</div>
 					<div class="form-group">
-						<label for="year">Рік:</label>
-						<input type="text" class="form-control" id="year" ng-model="budget.year" placeholder="XXXX" maxLength="4" size="4" />
+						<label for="sum">Сума:</label>
+						<input type="text" class="form-control" id="sum" ng-model="category.sum" placeholder="0.00" />
 					</div>
-					<button type="submit" class="btn btn-primary">Показати</button>
 				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger pull-left" data-dismiss="modal" ng-click="delCategory(category.id)" ng-show="category.id">Видалити</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Скасувати</button>
+				<button type="submit" form="editForm" class="btn btn-primary">{{category.id ? 'Зберегти' : 'Додати'}}</button>
 			</div>
 		</div>
 	</div>
 </div>
 <div class="row">
+	<div class="col-xs-12">
+		<div class="btn-toolbar barMonthYear" role="toolbar">
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default{{year == budget.year ? ' active' : ''}}" ng-repeat="year in years" ng-click="getBudget(year, budget.month)">{{year}}</button>
+			</div>
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default{{$index+1 == budget.month ? ' active' : ''}}" ng-repeat="month in months" ng-click="getBudget(budget.year, $index+1)">{{months[$index]}}</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(false)">Додати</button>
+	</div>
+</div>
+<div class="row" ng-if="budget.categories.length">
 	<div class="col-xs-6 balance-head text-right">Баланс план: <span class="{{budget.balancePlan >= 0 ? 'colorPlus' : 'colorMinus'}}">{{budget.balancePlan}}</span></div>
 	<div class="col-xs-6 balance-head text-left">Баланс факт: <span class="{{budget.balanceFact >= 0 ? 'colorPlus' : 'colorMinus'}}">{{budget.balanceFact}}</span></div>
 </div>
 <div class="row">
 	<div class="col-xs-12">
+		<div class="well" ng-if="!budget.categories.length">Немає записів</div>
 		<table class="table table-bordered table-hover" ng-if="budget.categories.length">
 			<thead class="over-head"><tr>
 				<th>Доходи</th>
 				<th>{{budget.plusPlan}}</th>
 				<th>{{budget.plusFact}}</th>
 				<th class="{{budget.plusRest < 0 ? ' colorOverPlus' : '' }}">{{budget.plusRest < 0 ? '+' : ''}}{{mathAbs(budget.plusRest)}}</th>
-				<th></th>
 			</tr></thead>
 			<thead class="bg-primary"><tr>
 				<th>Категорія</th>
 				<th width="90px">План</th>
 				<th width="90px">Факт</th>
 				<th width="110px">Залишилось</th>
-				<th width="60px">Дії</th>
 			</tr></thead>
 			<tbody>
-				<tr ng-repeat="item in budget.categories" ng-if="item.type=='plus'">
+				<tr ng-repeat="item in budget.categories" ng-if="item.type=='plus'" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
 					<td>{{item.category_title}}</td>
 					<td>{{item.plan}}</td>
 					<td>{{item.fact}}</td>
 					<td class="{{item.plan - item.fact < 0 ? 'colorOverPlus' : '' }}">{{item.plan - item.fact < 0 ? '+' : ''}}{{mathAbs(item.plan - item.fact)}}</td>
-					<td class="text-center">
-						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getCategory(item.id)"></span></button>
-						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delCategory(item.id)"></span></button>
-					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -96,25 +83,19 @@
 				<th>{{budget.minusPlan}}</th>
 				<th>{{budget.minusFact}}</th>
 				<th class="{{budget.minusRest < 0 ? ' colorOverMinus' : '' }}">{{budget.minusRest < 0 ? '-' : ''}}{{mathAbs(budget.minusRest)}}</th>
-				<th></th>
 			</tr></thead>
 			<thead class="bg-primary"><tr>
 				<th>Категорія</th>
 				<th width="90px">План</th>
 				<th width="90px">Факт</th>
 				<th width="110px">Залишилось</th>
-				<th width="60px">Дії</th>
 			</tr></thead>
 			<tbody>
-				<tr ng-repeat="item in budget.categories" ng-if="item.type=='minus'">
+				<tr ng-repeat="item in budget.categories" ng-if="item.type=='minus'" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
 					<td>{{item.category_title}}</td>
 					<td>{{item.plan}}</td>
 					<td>{{item.fact}}</td>
 					<td class="{{item.plan - item.fact < 0 ? 'colorOverMinus' : '' }}">{{item.plan - item.fact < 0 ? '-' : ''}}{{mathAbs(item.plan - item.fact)}}</td>
-					<td class="text-center">
-						<button type="button" class="button-icon"><span class="glyphicon glyphicon-edit" ng-click="getCategory(item.id)"></span></button>
-						<button type="button" class="button-icon"><span class="glyphicon glyphicon-remove" ng-click="delCategory(item.id)"></span></button>
-					</td>
 				</tr>
 			</tbody>
 		</table>

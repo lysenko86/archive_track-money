@@ -943,9 +943,12 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 			$location.url('home');
 		}
 		let obj = new Date();
+		var activeYear = obj.getFullYear();
+		$scope.years = [activeYear-1, activeYear, activeYear+1];
+		$scope.months = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
 		$scope.budget = {
-			month: obj.getMonth()+1+'',
-			year: obj.getFullYear(),
+			month: obj.getMonth()+1,
+			year: activeYear,
 			categories: [],
 			plusPlan: '',
 			plusFact: '',
@@ -956,16 +959,21 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 	        balancePlan: '',
 	        balanceFact: ''
 		};
+
 		$scope.category = {
+			id: false,
 			month: '',
 			year: '',
 			category_id: '',
 			sum: ''
 		};
 		$scope.categories = [];
-		$scope.formType = 'add';
-		$scope.editID = '';
+		$scope.formIsShown = false;
 		$scope.mathAbs = window.Math.abs;
+		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
+			$scope.formIsShown = false;
+		});
+
 		categoriesServ.getCategories(function(data){
 			if (data == 'requestError'){
 				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
@@ -980,60 +988,57 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 				}
 			}
 		});
-		$scope.getBudget();
+		$scope.getBudget($scope.budget.year, $scope.budget.month);
 	}
-	$scope.getBudget = function(){
-		if (!$scope.budget.month || !$scope.budget.year){
-			messagesServ.showMessages('error', 'Помилка! Поля "Місяць" та "Рік" обов\'язкові для заповнення!');
+	$scope.calculateTotalSum = function(){
+		$scope.budget.plusPlan = $scope.budget.plusFact = $scope.budget.plusRest = $scope.budget.minusPlan = $scope.budget.minusFact = $scope.budget.minusRest = $scope.budget.balancePlan = $scope.budget.balanceFact = '';
+		for (var i=0; i<$scope.budget.categories.length; i++){
+			if ($scope.budget.categories[i].type == 'plus'){
+				$scope.budget.plusPlan = $scope.budget.plusPlan*1 + $scope.budget.categories[i].plan*1;
+				$scope.budget.plusFact = $scope.budget.plusFact*1 + $scope.budget.categories[i].fact*1;
+			}
+			else{
+				$scope.budget.minusPlan = $scope.budget.minusPlan*1 + $scope.budget.categories[i].plan*1;
+				$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
+			}
 		}
-		else if (!/^\d{4}$/.test($scope.budget.year)){
-			messagesServ.showMessages('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
-		}
-		else{
-			budgetsServ.getBudget($scope.budget, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+		$scope.budget.plusRest = $scope.budget.plusPlan - $scope.budget.plusFact;
+		$scope.budget.minusRest = $scope.budget.minusPlan - $scope.budget.minusFact;
+		$scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
+		$scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
+	}
+	$scope.getBudget = function(year, month){
+		$scope.budget.year = year;
+		$scope.budget.month = month;
+		budgetsServ.getBudget($scope.budget, function(data){
+			if (data == 'requestError'){
+				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			}
+			else{
+				if (data.status == 'success'){
+					$scope.budget.categories = data.arr;
+					$scope.calculateTotalSum();
 				}
 				else{
-					if (data.status == 'success'){
-						$scope.budget.categories = data.arr;
-						$scope.budget.plusPlan = $scope.budget.plusFact = $scope.budget.plusRest = $scope.budget.minusPlan = $scope.budget.minusFact = $scope.budget.minusRest = $scope.budget.balancePlan = $scope.budget.balanceFact = '';
-						for (var i=0; i<$scope.budget.categories.length; i++){
-							if ($scope.budget.categories[i].type == 'plus'){
-								$scope.budget.plusPlan = $scope.budget.plusPlan*1 + $scope.budget.categories[i].plan*1;
-								$scope.budget.plusFact = $scope.budget.plusFact*1 + $scope.budget.categories[i].fact*1;
-							}
-							else{
-								$scope.budget.minusPlan = $scope.budget.minusPlan*1 + $scope.budget.categories[i].plan*1;
-								$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
-							}
-						}
-						$scope.budget.plusRest = $scope.budget.plusPlan - $scope.budget.plusFact;
-				        $scope.budget.minusRest = $scope.budget.minusPlan - $scope.budget.minusFact;
-						$scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
-				        $scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
-					}
-					else{
-						messagesServ.showMessages(data.status, data.msg);
-					}
+					messagesServ.showMessages(data.status, data.msg);
 				}
-			});
-		}
+			}
+		});
 	}
 	$scope.getCategory = function(id){
-		if (id == undefined){
-			$scope.formType = 'add';
-			$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = $scope.editID = '';
+		$scope.formIsShown = true;
+		if (!id){
+			$scope.category.id = false;
+			$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = '';
 		}
 		else{
-			$scope.editID = id;
 			budgetsServ.getCategory(id, function(data){
 				if (data == 'requestError'){
 					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
 				}
 				else{
 					if (data.status == 'success'){
-						$scope.formType = 'edit';
+						$scope.category.id = data.arr.id;
 						$scope.category.month = data.arr.month;
 						$scope.category.year = data.arr.year;
 						$scope.category.category_id = data.arr.category_id;
@@ -1046,58 +1051,39 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 			});
 		}
 	}
-	$scope.addCategory = function(){
-		if (!$scope.category.month || !$scope.category.year || !$scope.category.category_id || !$scope.category.sum){
-			messagesServ.showMessages('error', 'Помилка! Поля "Місяць", "Рік", "Категорія" та "Сума" обов\'язкові для заповнення!');
-		}
-		else if (!/^\d{4}$/.test($scope.category.year)){
-			messagesServ.showMessages('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
+	$scope.editCategory = function(){
+		if (!$scope.category.category_id || !$scope.category.sum){
+			messagesServ.showMessages('error', 'Помилка! Поля "Категорія" та "Сума" обов\'язкові для заповнення!');
 		}
 		else if (!/^[\d\.]+$/.test($scope.category.sum)){
 			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим!');
 		}
 		else{
-			budgetsServ.addCategory($scope.category, function(data){
+			$scope.category.month = $scope.budget.month;
+			$scope.category.year = $scope.budget.year;
+			budgetsServ.editCategory($scope.category, function(data){
 				if (data == 'requestError'){
 					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
 				}
 				else{
 					if (data.status == 'success'){
-						$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = '';
+						if ($scope.category.id){     // edit budgetCategory
+							for (var i=0; i<$scope.budget.categories.length; i++){
+								if ($scope.budget.categories[i].id == $scope.category.id){
+									$scope.budget.categories[i] = data.arr;
+								}
+							}
+						}
+						else{     // add budgetCategory
+							$scope.budget.categories.push(data.arr);
+						}
+						$scope.calculateTotalSum();
+						angular.element(document).find('#popupEditForm').modal('hide');
+						$scope.formIsShown = false;
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}
             });
-		}
-	}
-	$scope.editCategory = function(){
-		if (!$scope.category.month || !$scope.category.year || !$scope.category.category_id || !$scope.category.sum){
-			messagesServ.showMessages('error', 'Помилка! Поля "Місяць", "Рік", "Категорія" та "Сума" обов\'язкові для заповнення!');
-		}
-		else if (!/^\d{4}$/.test($scope.category.year)){
-			messagesServ.showMessages('error', 'Помилка! Значення поля "Рік" має бути наступного формату: 2017!');
-		}
-		else if (!/^[\d\.]+$/.test($scope.category.sum)){
-			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим!');
-		}
-		else{
-			budgetsServ.editCategory($scope.editID, $scope.category, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						$scope.formType = 'add';
-						for (var i=0; i<$scope.budget.categories.length; i++){
-							if ($scope.budget.categories[i].id == $scope.editID){
-								$scope.budget.categories[i] = data.arr;
-							}
-						}
-						$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = $scope.editID = '';
-					}
-					messagesServ.showMessages(data.status, data.msg);
-				}
-			});
 		}
 	}
 	$scope.delCategory = function(id){
@@ -1111,6 +1097,7 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 						for (var i=0; i<$scope.budget.categories.length; i++){
 							if ($scope.budget.categories[i].id == id) $scope.budget.categories.splice(i, 1);
 						}
+						$scope.calculateTotalSum();
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}

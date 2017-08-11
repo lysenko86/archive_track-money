@@ -110,24 +110,9 @@ nav.navbar{
         		padding: 2px;
         		font-size: 20px;
         	}
-        .main .table tbody>tr>td>.button-icon{
-        	padding: 0;
+        .main .table tbody>tr{
         	cursor: pointer;
-        	background: 0 0;
-        	border: 0;
-        	top: 2px;
-        	position: relative;
         }
-        	.main .table tbody>tr>td>.button-icon>span{
-        		font-size: 16px;
-        		font-weight: 700;
-        		line-height: 1;
-        		color: #000;
-        		opacity: .2;
-        	}
-        	.main .table tbody>tr>td>.button-icon>span:hover{
-        		opacity: 1;
-        	}
         .main .table tbody>tr>td.colorOverPlus, .main .table tbody>tr>td.colorOverMinus{
             font-weight: bold;
         }
@@ -262,6 +247,9 @@ nav.navbar{
                 padding-left: 10px;
                 padding-right: 10px;
             }
+    .main .barMonthYear{
+        margin-bottom: 30px;
+    }
 
 
 

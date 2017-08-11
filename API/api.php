@@ -1017,55 +1017,6 @@
                 $data['status'] = 'error';
             }
         break;
-        case 'addBudgetCategory':
-            if (getAccess($db)){
-                $uid = getUID();
-                $month = trim($request->month);
-                $year = trim($request->year);
-                $category_id = trim($request->category_id);
-                $sum = trim($request->sum);
-                if (!$month || !$year || !$category_id || !$sum){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення полів "Місяць", "Рік", "Категорія" та "Сума" не може бути пустим!';
-                }
-                elseif (!preg_match('/^[\d\.]+$/', $year)){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення поля "Рік" має бути числовим!';
-                }
-                elseif (!preg_match('/^[\d\.]+$/', $sum)){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення поля "Сума" має бути числовим!';
-                }
-                else{
-                    $query = $db->prepare("SELECT COUNT(*) AS `count` FROM `budgets` WHERE `uid` = ? AND `month` = ? AND `year` = ? AND `category_id` = ?");
-                    $query->execute(array($uid, $month, $year, $category_id));
-                    $count = $query->fetchAll(PDO::FETCH_ASSOC);
-                    $count = $count[0]['count'];
-                    if ($count > 0){
-                        $data['status'] = 'error';
-                        $data['msg']    = "Помилка! Дана категорія в бюджеті на вибраний місяць і рік вже присутня, спочатку треба видалити її!";
-                    }
-                    else{
-                        $query = $db->prepare("INSERT INTO `budgets` (`uid`, `month`, `year`, `category_id`, `sum`) VALUES(?, ?, ?, ?, ?)");
-                        $query->execute(array($uid, $month, $year, $category_id, $sum));
-                        $data['arr'] = array(
-                            id    => $db->lastInsertId(),
-                            uid => $uid,
-                            month => $month,
-                            year  => $year,
-                            category_id  => $category_id,
-                            sum  => $sum
-                        );
-                        $data['status'] = 'success';
-                        $data['msg']    = "Готово! Категорія успішно додана.";
-                    }
-                }
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
         case 'editBudgetCategory':
             if (getAccess($db)){
                 $uid = getUID();
@@ -1074,31 +1025,64 @@
                 $year = trim($request->year);
                 $category_id = trim($request->category_id);
                 $sum = trim($request->sum);
-                if (!$month || !$year || !$category_id || !$sum){
+                if (!$category_id || !$sum){
                     $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення полів "Місяць", "Рік", "Категорія" та "Сума" не може бути пустим!';
-                }
-                elseif (!preg_match('/^[\d\.]+$/', $year)){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення поля "Рік" має бути числовим!';
+                    $data['msg']    = 'Помилка! Значення полів "Категорія" та "Сума" не може бути пустим!';
                 }
                 elseif (!preg_match('/^[\d\.]+$/', $sum)){
                     $data['status'] = 'error';
                     $data['msg']    = 'Помилка! Значення поля "Сума" має бути числовим!';
                 }
                 else{
-                    $query = $db->prepare("UPDATE `budgets` SET `month` = ?, `year` = ?, `category_id` = ?, `sum` = ? WHERE `id` = ? AND `uid` = ?");
-                    $query->execute(array($month, $year, $category_id, $sum, $id, $uid));
+                    if ($id){     // edit budgetCategory
+                        $query = $db->prepare("UPDATE `budgets` SET `month` = ?, `year` = ?, `category_id` = ?, `sum` = ? WHERE `id` = ? AND `uid` = ?");
+                        $query->execute(array($month, $year, $category_id, $sum, $id, $uid));
+                        $data['msg'] = "Готово! Категорія успішно змінена.";
+                    }
+                    else{     // add budgetCategory
+                        $query = $db->prepare("SELECT COUNT(*) AS `count` FROM `budgets` WHERE `uid` = ? AND `month` = ? AND `year` = ? AND `category_id` = ?");
+                        $query->execute(array($uid, $month, $year, $category_id));
+                        $count = $query->fetchAll(PDO::FETCH_ASSOC);
+                        $count = $count[0]['count'];
+                        if ($count > 0){
+                            $data['status'] = 'error';
+                            $data['msg']    = "Помилка! Дана категорія в бюджеті на вибраний місяць і рік вже присутня, спочатку треба видалити її!";
+                        }
+                        else{
+                            $query = $db->prepare("INSERT INTO `budgets` (`uid`, `month`, `year`, `category_id`, `sum`) VALUES(?, ?, ?, ?, ?)");
+                            $query->execute(array($uid, $month, $year, $category_id, $sum));
+                            $id = $db->lastInsertId();
+                            $data['msg'] = "Готово! Категорія успішно додана.";
+                        }
+                    }
+                    $query = $db->prepare("SELECT `title`, `type` FROM `categories` WHERE `id` = ?");
+                    $query->execute(array($category_id));
+                    $tmp = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $category_title = $tmp[0]['title'];
+                    $type = $tmp[0]['type'];
+                    $query = $db->prepare("SELECT ROUND(`sum`) AS `plan` FROM `budgets` WHERE `id` = ?");
+                    $query->execute(array($id));
+                    $tmp = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $plan = $tmp[0]['plan'];
+                    $query = $db->prepare("SELECT ROUND(IFNULL(SUM(`sum`), 0)) AS `fact` FROM `actions` WHERE `uid` = ? AND `category_id` = ? AND MONTH(`date`) = ? AND YEAR(`date`) = ?");
+                    $query->execute(array($uid, $category_id, $month, $year));
+                    $tmp = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $fact = $tmp[0]['fact'];
                     $data['arr'] = array(
-                        id    => $id,
-                        uid   => $uid,
+                        id => $id,
+                        uid => $uid,
                         month => $month,
-                        year  => $year,
-                        category_id  => $category_id,
-                        sum  => $sum
+                        year => $year,
+                        category_id => $category_id,
+                        category_title => $category_title,
+                        sum => $sum,
+                        type => $type,
+                        plan => $plan,
+                        fact => $fact
                     );
-                    $data['status'] = 'success';
-                    $data['msg']    = "Готово! Категорія успішно змінена.";
+                    if ($data['status'] != 'error'){
+                        $data['status'] = 'success';
+                    }
                 }
             }
             else{

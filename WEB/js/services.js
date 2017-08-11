@@ -393,26 +393,11 @@ moneyApp.service('budgetsServ', function($http, localStorageService){
             cb('requestError');
         });
     }
-	this.addCategory = function(category, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'addBudgetCategory',
-			month: category.month,
-			year: category.year,
-			category_id: category.category_id,
-			sum: category.sum
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
-	}
-	this.editCategory = function(id, category, cb){
+    this.editCategory = function(category, cb){
 		$http.post(config.api + '?token=' + token, {
 			action: 'editBudgetCategory',
-			id: id,
-			month: category.month,
+            id: category.id,
+            month: category.month,
 			year: category.year,
 			category_id: category.category_id,
 			sum: category.sum
