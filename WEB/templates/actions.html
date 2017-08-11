@@ -66,6 +66,7 @@
 <div class="row">
 	<div class="col-xs-12">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popupEditForm" ng-click="getAction(false)">Додати</button>
+		<div class="well" ng-if="!actions.length">Немає записів</div>
 		<ul class="list-group" ng-if="actions.length">
 			<li class="list-group-item" ng-repeat="item in actions">
 				<div class="rowDate" ng-show="item.date != actions[$index-1].date">{{item.date}}</div>
