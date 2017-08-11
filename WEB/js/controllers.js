@@ -400,6 +400,10 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 		$scope.posts = $scope.comments = [];
 		$scope.fid = $routeParams.post;
 		$scope.isAdmin = false;
+		$scope.formIsShown = false;
+		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
+			$scope.formIsShown = false;
+		});
 		if (!$scope.fid){
 			forumServ.getPosts($scope.posts.length, 20, function(data){
 				if (data == 'requestError'){
@@ -445,6 +449,9 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 			});
 		}
 	}
+	$scope.setFormIsShown = function(){
+		$scope.formIsShown = true;
+	}
 	$scope.addPost = function(){
 		if (!$scope.post.title || !$scope.post.category || !$scope.post.comment){
 			messagesServ.showMessages('error', 'Помилка! Поля "Тема", "Категорія" та "Перший коментар" обов\'язкові для заповнення!');
@@ -456,8 +463,10 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 				}
 				else{
 					if (data.status == 'success'){
-						$scope.posts.push(data.arr);
+						$scope.posts.unshift(data.arr);
 						$scope.post.title = $scope.post.category = $scope.post.comment = '';
+						angular.element(document).find('#popupEditForm').modal('hide');
+						$scope.formIsShown = false;
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}
@@ -481,6 +490,8 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 						$scope.post.updated = data.arr.created;
 						$scope.post.email_upd = data.arr.email;
 						$scope.comment = '';
+						angular.element(document).find('#popupEditForm').modal('hide');
+						$scope.formIsShown = false;
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}

@@ -1,18 +1,30 @@
-<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages">{{message.text}}</div>
-<div class="row" ng-show="post.category">
-    <div class="col-xs-12">
-        <div class="panel panel-primary">
-			<div class="panel-heading">Додавання комменту</div>
-			<div class="panel-body">
-				<form ng-submit="addComment()">
+<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-hide="formIsShown">{{message.text}}</div>
+<div class="modal fade" id="popupEditForm" tabindex="-1" role="dialog" aria-labelledby="popupEditFormLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="popupEditFormLabel">Додавання комменту</h4>
+			</div>
+			<div class="modal-body">
+				<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-show="formIsShown">{{message.text}}</div>
+				<form id="editForm" ng-submit="addComment()">
                     <div class="form-group">
                     	<label for="date">Коментар:</label>
                     	<textarea class="form-control" id="comment" ng-model="comment" placeholder="Коментар"></textarea>
                     </div>
-					<button type="submit" class="btn btn-primary">Додати</button>
 				</form>
 			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Скасувати</button>
+				<button type="submit" form="editForm" class="btn btn-primary">Додати</button>
+			</div>
 		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popupEditForm" ng-click="setFormIsShown()">Додати</button>
     </div>
 </div>
 <div class="row" ng-show="post.category">
