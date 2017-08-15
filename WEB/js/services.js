@@ -348,7 +348,8 @@ moneyApp.service('accountsServ', function($http, localStorageService){
 			action: 'editAccount',
             id: account.id,
             title: account.title,
-			balance: account.balance
+            balance: account.balance,
+            panel: account.panel
 		})
 		.success(function(data){
             cb(data);

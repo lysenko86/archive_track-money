@@ -914,6 +914,7 @@
                 $id = trim($request->id);
                 $title = trim($request->title);
                 $balance = trim($request->balance);
+                $panel = trim($request->panel);
                 if (!$title || $balance == ''){
                     $data['status'] = 'error';
                     $data['msg']    = 'Помилка! Значення полів "Назва" та "Баланс" не може бути пустим!';
@@ -924,13 +925,13 @@
                 }
                 else{
                     if ($id){     // edit account
-                        $query = $db->prepare("UPDATE `accounts` SET `title` = ?, `balance` = ? WHERE `id` = ? AND `uid` = ?");
-                        $query->execute(array($title, $balance, $id, $uid));
+                        $query = $db->prepare("UPDATE `accounts` SET `title` = ?, `balance` = ?, `panel` = ? WHERE `id` = ? AND `uid` = ?");
+                        $query->execute(array($title, $balance, $panel, $id, $uid));
                         $data['msg'] = "Готово! Рахунок успішно змінений.";
                     }
                     else{     // add account
-                        $query = $db->prepare("INSERT INTO `accounts` (`uid`, `title`, `balance`) VALUES(?, ?, ?)");
-                        $query->execute(array($uid, $title, $balance));
+                        $query = $db->prepare("INSERT INTO `accounts` (`uid`, `title`, `balance`, `panel`) VALUES(?, ?, ?, ?)");
+                        $query->execute(array($uid, $title, $balance, $panel));
                         $id = $db->lastInsertId();
                         $data['msg'] = "Готово! Рахунок успішно доданий.";
                     }
@@ -938,7 +939,8 @@
                         id => $id,
                         uid => $uid,
                         title => $title,
-                        balance => $balance
+                        balance => $balance,
+                        panel => $panel
                     );
                     $data['status'] = 'success';
                 }

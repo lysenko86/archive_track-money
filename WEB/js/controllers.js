@@ -2,9 +2,24 @@
 
 
 
-moneyApp.controller('menuCtrl', function($location, $scope, localStorageService){
+moneyApp.controller('menuCtrl', function($location, $scope, localStorageService, accountsServ){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
+		$scope.accounts = [];
+		accountsServ.getAccounts(function(data){
+			if (data == 'requestError'){
+				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			}
+			else{
+				if (data.status == 'success'){
+					data.arr = data.arr ? data.arr : [];
+					$scope.accounts = data.arr;
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
+			}
+		});
 		angular.element('nav.navbar li a:not(.dropdown-toggle)').click(function(){
 			if (angular.element('nav.navbar .navbar-collapse.collapse').hasClass('in')){
 				angular.element('nav.navbar .navbar-header button.navbar-toggle').click();
@@ -842,7 +857,8 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 		$scope.account = {
 			id: false,
 			title: '',
-			balance: ''
+			balance: '',
+			panel: false
 		};
 		$scope.accounts = [];
 		$scope.getAccounts();
@@ -883,6 +899,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 						$scope.account.id = data.arr.id;
 						$scope.account.title = data.arr.title;
 						$scope.account.balance = data.arr.balance;
+						$scope.account.panel = data.arr.panel == '1' ? true : false;
 					}
 					else{
 						messagesServ.showMessages(data.status, data.msg);
@@ -899,6 +916,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 			messagesServ.showMessages('error', 'Помилка! Значення поля "Баланс" має бути числовим!');
 		}
 		else{
+			$scope.account.panel = $scope.account.panel ? '1' : '0';
 			accountsServ.editAccount($scope.account, function(data){
 				if (data == 'requestError'){
 					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
@@ -909,6 +927,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 							for (var i=0; i<$scope.accounts.length; i++){
 								if ($scope.accounts[i].id == $scope.account.id){
 									$scope.accounts[i] = data.arr;
+									console.log($scope);
 								}
 							}
 						}
