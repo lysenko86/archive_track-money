@@ -2,10 +2,10 @@
 
 
 
-moneyApp.controller('menuCtrl', function($location, $scope, localStorageService, accountsServ){
+moneyApp.controller('menuCtrl', function($location, $scope, $rootScope, localStorageService, accountsServ){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
-		$scope.accounts = [];
+		$rootScope.accounts = [];
 		accountsServ.getAccounts(function(data){
 			if (data == 'requestError'){
 				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
@@ -13,7 +13,7 @@ moneyApp.controller('menuCtrl', function($location, $scope, localStorageService,
 			else{
 				if (data.status == 'success'){
 					data.arr = data.arr ? data.arr : [];
-					$scope.accounts = data.arr;
+					$rootScope.accounts = data.arr;
 				}
 				else{
 					messagesServ.showMessages(data.status, data.msg);
@@ -534,7 +534,7 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 
 
 
-moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
+moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
@@ -696,6 +696,25 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 						}
 						angular.element(document).find('#popupEditForm').modal('hide');
 						$scope.formIsShown = false;
+						accountsServ.getAccounts(function(data){
+							if (data == 'requestError'){
+								messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+							}
+							else{
+								if (data.status == 'success'){
+									data.arr = data.arr ? data.arr : [];
+									$rootScope.accounts = [];
+									for (var i=0; i<data.arr.length; i++){
+										if (data.arr[i].panel == '1'){
+											$rootScope.accounts.push(data.arr[i]);
+										}
+									}
+								}
+								else{
+									messagesServ.showMessages(data.status, data.msg);
+								}
+							}
+						});
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}
@@ -711,9 +730,30 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 				else{
 					if (data.status == 'success'){
 						for (var i=0; i<$scope.actions.length; i++){
-							if ($scope.actions[i].id == id) $scope.actions.splice(i, 1);
+							if ($scope.actions[i].id == id){
+								$scope.actions.splice(i, 1);
+							}
 						}
 						$scope.formIsShown = false;
+						accountsServ.getAccounts(function(data){
+							if (data == 'requestError'){
+								messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+							}
+							else{
+								if (data.status == 'success'){
+									data.arr = data.arr ? data.arr : [];
+									$rootScope.accounts = [];
+									for (var i=0; i<data.arr.length; i++){
+										if (data.arr[i].panel == '1'){
+											$rootScope.accounts.push(data.arr[i]);
+										}
+									}
+								}
+								else{
+									messagesServ.showMessages(data.status, data.msg);
+								}
+							}
+						});
 					}
 					messagesServ.showMessages(data.status, data.msg);
 				}
@@ -847,7 +887,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 
 
 
-moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, accountsServ, localStorageService){
+moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, messagesServ, accountsServ, localStorageService){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
@@ -927,11 +967,16 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 							for (var i=0; i<$scope.accounts.length; i++){
 								if ($scope.accounts[i].id == $scope.account.id){
 									$scope.accounts[i] = data.arr;
-									console.log($scope);
+								}
+								if ($rootScope.accounts[i].id == $scope.account.id){
+									$rootScope.accounts[i] = data.arr;
 								}
 							}
 						}
 						else{     // add account
+							if (data.arr.panel == '1'){
+								$rootScope.accounts.push(data.arr);
+							}
 							$scope.accounts.push(data.arr);
 						}
 						angular.element(document).find('#popupEditForm').modal('hide');
@@ -951,7 +996,12 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 				else{
 					if (data.status == 'success'){
 						for (var i=0; i<$scope.accounts.length; i++){
-							if ($scope.accounts[i].id == id) $scope.accounts.splice(i, 1);
+							if ($scope.accounts[i].id == id){
+								$scope.accounts.splice(i, 1);
+							}
+							if ($rootScope.accounts[i].id == id){
+								$rootScope.accounts.splice(i, 1);
+							}
 						}
 					}
 					messagesServ.showMessages(data.status, data.msg);
