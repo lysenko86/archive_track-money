@@ -91,12 +91,11 @@ nav.navbar{
         top: 0px;
         left: 0px;
         margin-top: 50px;
-        padding-left: 100px;
+        margin-left: 100px;
     }
         nav.navbar .accountsTopPanel ul{
             list-style: none;
             padding-left: 0px;
-            padding-right: 80px;
             padding-top: 4px;
             margin: 0px;
         }
