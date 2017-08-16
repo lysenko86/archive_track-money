@@ -90,8 +90,8 @@ nav.navbar{
         position: absolute;
         top: 0px;
         left: 0px;
-        right: 0px;
         margin-top: 50px;
+        padding-left: 100px;
     }
         nav.navbar .accountsTopPanel ul{
             list-style: none;
@@ -308,4 +308,11 @@ nav.navbar{
 
 
 
-@media screen and (max-width: 650px){}
+@media (max-width: 767px) {
+    nav.navbar .accountsTopPanel{
+        margin-top: 0px;
+    }
+        nav.navbar .accountsTopPanel ul li{
+            float: none;
+        }
+}
