@@ -6,10 +6,6 @@
     $adminToken      = 'bAYOBNDFC1oiI46TkEOfyafJQymccGHJGThEl6dp0moFK3ksZNg220HHosl3rukt';
     $forumEmail      = 'lysenkoa86@gmail.com';
 
-    $dbName = 'db_trackmoney';
-    $dbUser = 'u_trackmoney';
-    $dbPass = 'X39MWT22';
-
     $data = array(
         'status' => '',  // success, error
         'msg'    => '',  // status message
@@ -18,26 +14,38 @@
 
 
 
+    require_once('db.php');
     require_once('router.php');
+
     require_once('controllers/actions.php');
     require_once('controllers/categories.php');
 
 
 
+    $db     = new Db;
     $router = new Router;
-    if ($router->checkAction()){
-        $ctrl   = $router->getController();
-        $method = $router->getMethod();
-        $params = $router->getParams();
-        $access = $router->getAccess();
-        $ctrl = new $ctrl;
-        $ctrl->$method($params, $access, $data);
-    }
-    else{
+
+    $db->connect();
+
+    if (!$router->checkAction()){
         $data['arr']    = false;
         $data['status'] = 'error';
         $data['msg']    = 'Помилка! Методу "' . $router->getAction() . '" в API не існує.';
+	}
+	elseif (!$router->checkAccess($db)){
+        $data['arr']    = false;
+        $data['status'] = 'error';
+        $data['msg']    = 'Помилка! Доступ заборонено!';
+	}
+    else{
+        $ctrl   = $router->getController();
+        $method = $router->getMethod();
+        $params = $router->getParams();
+        $ctrl   = new $ctrl;
+        $ctrl->$method($params, $data, $db);
     }
+
+    $db->disconnect();
 
 
 
@@ -49,18 +57,7 @@
 
 
 /*
-    require_once('db.php');
-    $db = new PDO("mysql:host=localhost;dbname=$dbName", $dbUser, $dbPass);
-    $db->exec("set names utf8");
 
-
-    $request = json_decode(file_get_contents('php://input'));
-    $action = $_GET['action'] ? $_GET['action'] : ($request->action ? $request->action : 'none');
-    $data = array(
-        'status' => '',   // success, error
-        'msg'    => '',   // status message
-        'arr'    => array()   // JSON
-    );
 
     function getAdminAccess(){
         return $_GET['token'] == $adminToken;
@@ -89,11 +86,6 @@
 
 
 
-    if (!getAdminAccess(){}
-    else{
-        $data['msg'] = 'Помилка! Немає доступу!';
-        $data['status'] = 'error';
-    }
 
 
 
@@ -1187,10 +1179,5 @@
 
     }
 
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: GET, POST');
-    header('Access-Control-Allow-Headers: Content-Type');
-    echo json_encode($data);
-
-    $db = null;*/
+    */
 ?>
