@@ -1,12 +1,58 @@
 <?php
+    $salt            = 'mySUPERsalt';
+    $defaultPassword = '123456';
+    $adminEmail      = 'a@a';
+    $adminPassword   = 'tm_admin';
+    $adminToken      = 'bAYOBNDFC1oiI46TkEOfyafJQymccGHJGThEl6dp0moFK3ksZNg220HHosl3rukt';
+    $forumEmail      = 'lysenkoa86@gmail.com';
+
+    $dbName = 'db_trackmoney';
+    $dbUser = 'u_trackmoney';
+    $dbPass = 'X39MWT22';
+
+    $data = array(
+        'status' => '',  // success, error
+        'msg'    => '',  // status message
+        'arr'    => []   // JSON data
+    );
+
+
+
+    require_once('router.php');
+    require_once('controllers/actions.php');
+    require_once('controllers/categories.php');
+
+
+
+    $router = new Router;
+    if ($router->checkAction()){
+        $ctrl   = $router->getController();
+        $method = $router->getMethod();
+        $params = $router->getParams();
+        $access = $router->getAccess();
+        $ctrl = new $ctrl;
+        $ctrl->$method($params, $access, $data);
+    }
+    else{
+        $data['arr']    = false;
+        $data['status'] = 'error';
+        $data['msg']    = 'Помилка! Методу "' . $router->getAction() . '" в API не існує.';
+    }
+
+
+
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST');
+    header('Access-Control-Allow-Headers: Content-Type');
+    echo json_encode($data);
+    exit;
+
+
+/*
     require_once('db.php');
     $db = new PDO("mysql:host=localhost;dbname=$dbName", $dbUser, $dbPass);
     $db->exec("set names utf8");
-    $salt = 'mySUPERsalt';
-    $defaultPassword = '123456';
-    $adminEmail = 'a@a';
-    $adminPassword = 'tm_admin';
-    $adminToken = 'bAYOBNDFC1oiI46TkEOfyafJQymccGHJGThEl6dp0moFK3ksZNg220HHosl3rukt';
+
 
     $request = json_decode(file_get_contents('php://input'));
     $action = $_GET['action'] ? $_GET['action'] : ($request->action ? $request->action : 'none');
@@ -15,8 +61,9 @@
         'msg'    => '',   // status message
         'arr'    => array()   // JSON
     );
-    function getAdminAccess($token){
-        return $_GET['token'] == $token;
+
+    function getAdminAccess(){
+        return $_GET['token'] == $adminToken;
     }
     function getAccess($db){
         $token = explode('.', trim($_GET['token']));
@@ -35,22 +82,38 @@
         $res = $query->fetchAll(PDO::FETCH_ASSOC);
         return $res[0]['admin'] ? true : false;
     }
+
+    $actions_admin = ['admin_signin'];
+    $actions_user = [];
+    $actions_guest = [];
+
+
+
+    if (!getAdminAccess(){}
+    else{
+        $data['msg'] = 'Помилка! Немає доступу!';
+        $data['status'] = 'error';
+    }
+
+
+
     switch ($action){
 
 
 
-        case 'testConnection':
-            $query = $db->prepare("SELECT COUNT(*) AS `count` FROM `accounts`");
-            $query->execute(array());
-            $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
-            $data['arr'] = $data['arr'][0];
-            $data['status'] = 'success';
-        break;
+        // для аплікухи - треба видалити цей метод
+        // case 'testConnection':
+        //     $query = $db->prepare("SELECT COUNT(*) AS `count` FROM `accounts`");
+        //     $query->execute(array());
+        //     $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
+        //     $data['arr'] = $data['arr'][0];
+        //     $data['status'] = 'success';
+        // break;
 
 
 
         case 'admin_signin':
-            if (!getAdminAccess($adminToken)){
+            if (!getAdminAccess(){
                 $email = trim($request->email);
                 $password = trim($request->password);
                 if (!$email || !$password){
@@ -76,7 +139,7 @@
              }
         break;
         case 'admin_logout':
-            if (getAdminAccess($adminToken)){
+            if (getAdminAccess()){
                 $data['status'] = 'success';
                 $data['msg']    = "Готово! Ви успішно вийшли зі свого аккаунту.";
             }
@@ -86,7 +149,7 @@
             }
         break;
         case 'admin_getUsers':
-            if (getAdminAccess($adminToken)){
+            if (getAdminAccess()){
                 $query = $db->prepare("SELECT *, DATE_FORMAT(`created`, '%d.%m.%Y %H:%i:%s') AS `created` FROM `users` ORDER BY `created` DESC, `id` DESC");
                 $query->execute(array());
                 $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -496,7 +559,7 @@
                     $data['arr'] = $data['arr'][0];
                     $subject = 'TrackMoney.com.ua - Нове повідомлення на форумі';
                     $mail = 'Новий пост на форумі, для перегляду перейдіть за посиланням: http://trackmoney.com.ua/#/forum/'.$id;
-                    mail('lysenkoa86@gmail.com', $subject, $mail);
+                    mail($forumEmail, $subject, $mail);
                     $data['status'] = 'success';
                     $data['msg']    = "Готово! Пост успішно доданий.";
                 }
@@ -538,7 +601,7 @@
                     $data['arr'] = $data['arr'][0];
                     $subject = 'TrackMoney.com.ua - Нове повідомлення на форумі';
                     $mail = 'Нове повідомлення на форумі, для перегляду перейдіть за посиланням: http://trackmoney.com.ua/#/forum/'.$fid;
-                    mail('lysenkoa86@gmail.com', $subject, $mail);
+                    mail($forumEmail, $subject, $mail);
                     mail($data['arr']['email_created'], $subject, $mail);
                     $data['status'] = 'success';
                     $data['msg']    = "Готово! Коментар успішно доданий.";
@@ -1129,5 +1192,5 @@
     header('Access-Control-Allow-Headers: Content-Type');
     echo json_encode($data);
 
-    $db = null;
+    $db = null;*/
 ?>

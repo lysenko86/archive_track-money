@@ -6,6 +6,82 @@ var config = {
     api: isDev ? 'http://api.trackmoney/api.php' : 'http://api.trackmoney.com.ua/api.php'
 }
 
+
+
+moneyApp.service('requestServ', function($http, localStorageService){
+    var token = localStorageService.get('token');
+    this.sendRequest = function(method, action, data, cb){
+        let url = config.api + '?action=' + action + '&token=' + token;
+        if (method == 'post'){     // method post
+            $http.post(url)
+                 .success(function(data){ cb(data); })
+                 .error(function(error, status){ cb('requestError'); });
+        }
+        else{     // method get
+            $http.get(url)
+                .success(function(data){ cb(data); })
+                .error(function(error, status){ cb('requestError'); });
+        }
+    }
+});
+
+this.sendPasswordMail = function(email, cb){
+    $http.post(config.api, {
+        action: 'sendPasswordMail',
+        email: email
+    })
+    .success(function(data){
+        cb(data);
+    })
+    .error(function(error, status){
+        cb('requestError');
+    });
+}
+this.getProfile = function(cb){
+    $http.get(config.api + '?action=getProfile&token=' + token)
+    .success(function(data){
+        cb(data);
+    })
+    .error(function(error, status){
+        cb('requestError');
+    });
+}
+
+
+
+function sendRequest(method, data, cb){
+    $http.get(config.api + '?action=getAccounts&token=' + token)
+	.success(function(data){
+        cb(data);
+    })
+    .error(function(error, status){
+        cb('requestError');
+    });
+}
+
+
+
+moneyApp.service('messagesServ', function($timeout){
+    var self = this;
+    this.messages = [];
+    this.delay = 4000;
+    this.showMessages = function(status, text, delay, cb){
+        self.messages.push({
+            status: status,
+            class: status == 'error' ? 'alert-danger' : 'alert-success',
+            text: text
+        });
+        $timeout(function(){
+            self.messages.shift();
+            if (cb){
+                cb();
+            }
+        }, delay ? delay : this.delay);
+    }
+});
+
+
+
 moneyApp.service('usersServ', function($http, localStorageService){
     var token = localStorageService.get('token');
     this.getCount = function(cb){
@@ -128,27 +204,6 @@ moneyApp.service('usersServ', function($http, localStorageService){
         .error(function(error, status){
             cb('requestError');
         });
-    }
-});
-
-
-
-moneyApp.service('messagesServ', function($timeout){
-    var self = this;
-    this.messages = [];
-    this.delay = 4000;
-    this.showMessages = function(status, text, delay, cb){
-        self.messages.push({
-            status: status,
-            class: status == 'error' ? 'alert-danger' : 'alert-success',
-            text: text
-        });
-        $timeout(function(){
-            self.messages.shift();
-            if (cb){
-                cb();
-            }
-        }, delay ? delay : this.delay);
     }
 });
 
