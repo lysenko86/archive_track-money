@@ -1,22 +1,21 @@
 <?php
-    $salt            = 'mySUPERsalt';
-    $defaultPassword = '123456';
     $adminEmail      = 'a@a';
     $adminPassword   = 'tm_admin';
     $adminToken      = 'bAYOBNDFC1oiI46TkEOfyafJQymccGHJGThEl6dp0moFK3ksZNg220HHosl3rukt';
     $forumEmail      = 'lysenkoa86@gmail.com';
 
-    $data = array(
+    $data = [
         'status' => '',  // success, error
         'msg'    => '',  // status message
         'arr'    => []   // JSON data
-    );
+    ];
 
 
 
     require_once('db.php');
     require_once('router.php');
 
+    require_once('controllers/users.php');
     require_once('controllers/actions.php');
     require_once('controllers/categories.php');
 
@@ -25,9 +24,14 @@
     $db     = new Db;
     $router = new Router;
 
-    $db->connect();
+    $dbError = $db->connect();
 
-    if (!$router->checkAction()){
+    if ($dbError == 'requestMySQLError'){
+        $data['arr']    = false;
+        $data['status'] = 'error';
+        $data['msg']    = 'Помилка! Не можу підключитись до бази даних.';
+	}
+    elseif (!$router->checkAction()){
         $data['arr']    = false;
         $data['status'] = 'error';
         $data['msg']    = 'Помилка! Методу "' . $router->getAction() . '" в API не існує.';
@@ -62,27 +66,8 @@
     function getAdminAccess(){
         return $_GET['token'] == $adminToken;
     }
-    function getAccess($db){
-        $token = explode('.', trim($_GET['token']));
-        $query = $db->prepare("SELECT `id` FROM `users` WHERE `id` = ? AND `token` = ?");
-        $query->execute(array($token[0], $token[1]));
-        $access = $query->fetchAll(PDO::FETCH_ASSOC);
-        return $access ? true : false;
-    }
-    function getUID(){
-        $token = explode('.', trim($_GET['token']));
-        return $token[0];
-    }
-    function isAdmin($db, $id){
-        $query = $db->prepare("SELECT `admin` FROM `users` WHERE `id` = ?");
-        $query->execute(array($id));
-        $res = $query->fetchAll(PDO::FETCH_ASSOC);
-        return $res[0]['admin'] ? true : false;
-    }
 
-    $actions_admin = ['admin_signin'];
-    $actions_user = [];
-    $actions_guest = [];
+    
 
 
 
@@ -92,15 +77,6 @@
     switch ($action){
 
 
-
-        // для аплікухи - треба видалити цей метод
-        // case 'testConnection':
-        //     $query = $db->prepare("SELECT COUNT(*) AS `count` FROM `accounts`");
-        //     $query->execute(array());
-        //     $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
-        //     $data['arr'] = $data['arr'][0];
-        //     $data['status'] = 'success';
-        // break;
 
 
 
@@ -156,212 +132,9 @@
 
 
 
-        case 'getCountUsers':
-            $query = $db->prepare("SELECT COUNT(*) AS `count` FROM `users` WHERE `confirm` = ?");
-            $query->execute(array('1'));
-            $data['arr'] = $query->fetchAll(PDO::FETCH_ASSOC);
-            $data['arr'] = $data['arr'][0];
-            $data['status'] = 'success';
-        break;
-        case 'signin':
-            if (!getAccess($db)){
-                $email = trim($request->email);
-                $password = trim($request->password);
-                if (!$email || !$password){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!';
-                }
-                else{
-                    $password = md5($salt . md5($password) . $salt);
-    				$query = $db->prepare("SELECT `id`, `token`, `email`, `confirm` FROM `users` WHERE `email` = ? AND `password` = ?");
-    				$query->execute(array($email, $password));
-                    $isUser = $query->fetchAll(PDO::FETCH_ASSOC);
-                    if (!$isUser){
-                        $data['token'] = false;
-                        $data['status'] = 'error';
-                        $data['msg']    = "Помилка! Невірний логін або пароль.";
-                    }
-                    elseif (!$isUser[0]['confirm']){
-                        $data['notConfirmed'] = true;
-                        $data['email'] = $isUser[0]['email'];
-                        $data['token'] = false;
-                        $data['status'] = 'error';
-                        $data['msg']    = "Помилка! Ваш Email не підтверджено.";
-                    }
-                    else{
-                        if ($isUser[0]['token']){
-                            $token = $isUser[0]['token'];
-                        }
-                        else{
-                            $token = md5(uniqid(rand(), 1));
-                            $query = $db->prepare("UPDATE `users` SET `token` = ? WHERE `email` = ?");
-            				$query->execute(array($token, $email));
-                        }
-                        $data['arr']['token'] = $isUser[0]['id'].'.'.$token;
-        				$data['status'] = 'success';
-        				$data['msg']    = "Готово! Авторизація пройшла успішно.";
-                    }
-                 }
-             }
-             else{
-                 $data['msg'] = 'Помилка! Немає доступу!';
-                 $data['status'] = 'error';
-             }
-        break;
-        case 'sendConfirmMail':
-            if (!getAccess($db)){
-                $email = trim($request->email);
-                $query = $db->prepare("SELECT `id`, `password` FROM `users` WHERE `email` = ?");
-                $query->execute(array($email));
-                $user = $query->fetchAll(PDO::FETCH_ASSOC);
-                $user = $user[0];
-                $subject = 'TrackMoney.com.ua - Підтвердження Email';
-                $mail = 'Для підтвердження Email перейдіть будь ласка за посиланням: http://trackmoney.com.ua/#/confirm/'.$user['id'].'.'.$user['password'];
-                mail($email, $subject, $mail);
-                $data['status'] = 'success';
-                $data['msg']    = "Готово! На вказану вами пошту вислано листа, для підтвердження Email - перейдіть по посиланню.";
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
-        case 'sendPasswordMail':
-            if (!getAccess($db)){
-                $email = trim($request->email);
-                if (!$email){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Поле "Email" обов\'язкове для заповнення!';
-                }
-                else{
-                    $query = $db->prepare("SELECT `id`, `password` FROM `users` WHERE `email` = ?");
-                    $query->execute(array($email));
-                    $user = $query->fetchAll(PDO::FETCH_ASSOC);
-                    if (!$user){
-                        $data['status'] = 'error';
-                        $data['msg']    = "Помилка! Такого Email не зареєстровано.";
-                    }
-                    else{
-                        $user = $user[0];
-                        $subject = 'TrackMoney.com.ua - Скидування паролю';
-                        $mail = 'Для скидування паролю перейдіть будь ласка за посиланням: http://trackmoney.com.ua/#/reset/'.$user['id'].'.'.$user['password'];
-                        mail($email, $subject, $mail);
-                        $data['status'] = 'success';
-                        $data['msg']    = "Готово! На вказану вами пошту вислано листа, для скидування паролю - перейдіть по посиланню.";
-                    }
-                }
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
-        case 'signup':
-            if (!getAccess($db)){
-                $email = trim($request->email);
-                $password = trim($request->password);
-                $agree = trim($request->agree);
-                if (!$email || !$password){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!';
-                }
-                elseif (!preg_match('/^\S+@\S+$/', $email)){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Значення поля "Email" має бути наступного формату: email@email.com!';
-                }
-                elseif (!$agree){
-                    $data['status'] = 'error';
-                    $data['msg']    = 'Помилка! Ви повинні прийняти умови користувацької угоди, повірте, це важливо, там не багато читати :)';
-                }
-                else{
-                    $query = $db->prepare("SELECT `id` FROM `users` WHERE `email` = ?");
-                    $query->execute(array($email));
-                    $isUser = $query->fetchAll(PDO::FETCH_ASSOC);
-                    if ($isUser){
-                        $data['status'] = 'error';
-                        $data['msg']    = "Помилка! Даний Email вже зайнятий, оберіть інший.";
-                    }
-                    else{
-                        $date = date("Y-m-d H:i:s");
-                        $hash = md5($salt . md5($password) . $salt);
-                        $query = $db->prepare("INSERT INTO `users` (`email`, `password`, `created`) VALUES(?, ?, ?)");
-                        $query->execute(array($email, $hash, $date));
-                        $id = $db->lastInsertId();
-                        $subject = 'TrackMoney.com.ua - Підтвердження Email';
-                        $mail = "Вітаємо в сервісі TrackMoney.com.ua, маємо надію, що вам все сподобається.\nВаш логін: $email\nВаш пароль: $password\n\nДля підтвердження Email перейдіть будь ласка за посиланням: http://trackmoney.com.ua/#/confirm/".$id.'.'.$hash;
-                        mail($email, $subject, $mail);
-                        $data['status'] = 'success';
-                        $data['msg']    = "Готово! Реєстрація пройшла успішно. На вказану вами пошту вислано листа, для підтвердження Email - перейдіть по посиланню.";
-                    }
-                }
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
-        case 'logout':
-            if (getAccess($db)){
-                $uid = getUID();
-                $query = $db->prepare("UPDATE `users` SET `token` = ? WHERE `id` = ?");
-                $query->execute(array('', $uid));
-                $data['status'] = 'success';
-                $data['msg']    = "Готово! Ви успішно вийшли зі свого аккаунту.";
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
-        case 'confirmEmail':
-            if (!getAccess($db)){
-                $confirm = explode('.', trim($_GET['confirm']));
-                $query = $db->prepare("SELECT `id` FROM `users` WHERE `id` = ? AND `password` = ?");
-                $query->execute(array($confirm[0], $confirm[1]));
-                $isUser = $query->fetchAll(PDO::FETCH_ASSOC);
-                if (!$isUser){
-                    $data['status'] = 'error';
-                    $data['msg']    = "Помилка! Такого користувача не знайдено.";
-                }
-                else{
-                    $query = $db->prepare("UPDATE `users` SET `confirm` = '1' WHERE `id` = ? AND `password` = ?");
-                    $query->execute(array($confirm[0], $confirm[1]));
-                    $data['status'] = 'success';
-                    $data['msg']    = "Готово! Email успішно підтверджено.";
-                }
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
-        case 'resetPassword':
-            if (!getAccess($db)){
-                $reset = explode('.', trim($_GET['reset']));
-                $query = $db->prepare("SELECT `id`, `email` FROM `users` WHERE `id` = ? AND `password` = ?");
-                $query->execute(array($reset[0], $reset[1]));
-                $isUser = $query->fetchAll(PDO::FETCH_ASSOC);
-                if (!$isUser){
-                    $data['status'] = 'error';
-                    $data['msg']    = "Помилка! Такого користувача не знайдено.";
-                }
-                else{
-                    $isUser = $isUser[0];
-                    $password = md5($salt . md5($defaultPassword) . $salt);
-                    $query = $db->prepare("UPDATE `users` SET `password` = ? WHERE `id` = ? AND `password` = ?");
-                    $query->execute(array($password, $reset[0], $reset[1]));
-                    $subject = 'TrackMoney.com.ua - Ваш пароль змінено';
-                    $mail = "Ваш новий пароль:\n".$defaultPassword."\n Будь ласка, зразу змініть його, як тільки авторизуєтесь, оскільки це дуже не надійний пароль.";
-                    mail($isUser['email'], $subject, $mail);
-                    $data['status'] = 'success';
-                    $data['msg']    = "Готово! Пароль успішно змінено.";
-                }
-            }
-            else{
-                $data['msg'] = 'Помилка! Немає доступу!';
-                $data['status'] = 'error';
-            }
-        break;
+        
+        
+        
         case 'getProfile':
             if (getAccess($db)){
                 $uid = getUID();

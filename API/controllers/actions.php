@@ -15,7 +15,7 @@ class Actions{
             WHERE `a`.`uid` = ?
             ORDER BY `a`.`date` DESC, `a`.`id` DESC
             LIMIT ?,?
-        ", array($params['uid'], $params['from'], $params['count']), false);
+        ", [$params['uid'], $params['from'], $params['count']], false);
         $data['status'] = 'success';
     }
 }

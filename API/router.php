@@ -1,15 +1,56 @@
 <?php
 class Router{
-    private $action  = 'none';
-    private $params  = [];
+    private $action = 'none';
+    private $params = [];
+    private $user   = [];
 
 
 
     private $actions = [
+        'getCountUsers' => [
+            'ctrl'   => 'Users',
+            'method' => 'getCountUsers',
+            'access' => ['guest', 'user', 'admin']
+        ],
+        'signin' => [
+            'ctrl'   => 'Users',
+            'method' => 'signin',
+            'access' => ['guest']
+        ],
+        'logout' => [
+            'ctrl'   => 'Users',
+            'method' => 'logout',
+            'access' => ['user', 'admin']
+        ],
+        'sendPasswordMail' => [
+            'ctrl'   => 'Users',
+            'method' => 'sendPasswordMail',
+            'access' => ['guest']
+        ],
+        'resetPassword' => [
+            'ctrl'   => 'Users',
+            'method' => 'resetPassword',
+            'access' => ['guest']
+        ],
+        'signup' => [
+            'ctrl'   => 'Users',
+            'method' => 'signup',
+            'access' => ['guest']
+        ],
+        'confirmEmail' => [
+            'ctrl'   => 'Users',
+            'method' => 'confirmEmail',
+            'access' => ['guest']
+        ],
+        'sendConfirmMail' => [
+            'ctrl'   => 'Users',
+            'method' => 'sendConfirmMail',
+            'access' => ['guest']
+        ],
         'getActions' => [
             'ctrl'   => 'Actions',
             'method' => 'getActions',
-            'access' => 'user'   // user, guest, admin
+            'access' => ['user', 'admin']
         ]
     ];
 
@@ -43,9 +84,26 @@ class Router{
         return $this->actions[$this->action];
     }
     function checkAccess(&$db){
-        $token  = explode('.', trim($_GET['token']));
-        $access = $db->query("SELECT `id` FROM `users` WHERE `id` = ? AND `token` = ?", array($token[0], $token[1]));
-        return $access ? true : false;
+        if (!$this->params['token']){
+            array_push($this->user, 'guest');
+        }
+        if ($this->params['token']){
+            $token = explode('.', $this->params['token']);
+            $user  = $db->query("SELECT `id`, `admin` FROM `users` WHERE `id` = ? AND `token` = ?", [$token[0], $token[1]]);
+            if ($user['id']){
+                array_push($this->user, 'user');
+            }
+            if ($user['admin']){
+                array_push($this->user, 'admin');
+            }
+        }
+        $access = true;
+        foreach ($this->user as $v){
+            if (!in_array($v, $this->actions[$this->action]['access'])){
+                $access = false;
+            }
+        }
+        return $access;
     }
 
 
