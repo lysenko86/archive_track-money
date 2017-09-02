@@ -1,57 +1,54 @@
 <?php
 class Router{
-    private $action = 'none';
-    private $params = [];
-    private $user   = [];
+    private $action     = 'none';
+    private $params     = [];
+    private $user       = [];
+    private $superToken = 'bAYOBNDFC1oiI46TkEOfyafJQymccGHJGThEl6dp0moFK3ksZNg220HHosl3rukt';
 
 
 
     private $actions = [
-        'getCountUsers' => [
-            'ctrl'   => 'Users',
-            'method' => 'getCountUsers',
-            'access' => ['guest', 'user', 'admin']
-        ],
-        'signin' => [
-            'ctrl'   => 'Users',
-            'method' => 'signin',
-            'access' => ['guest']
-        ],
-        'logout' => [
-            'ctrl'   => 'Users',
-            'method' => 'logout',
-            'access' => ['user', 'admin']
-        ],
-        'sendPasswordMail' => [
-            'ctrl'   => 'Users',
-            'method' => 'sendPasswordMail',
-            'access' => ['guest']
-        ],
-        'resetPassword' => [
-            'ctrl'   => 'Users',
-            'method' => 'resetPassword',
-            'access' => ['guest']
-        ],
-        'signup' => [
-            'ctrl'   => 'Users',
-            'method' => 'signup',
-            'access' => ['guest']
-        ],
-        'confirmEmail' => [
-            'ctrl'   => 'Users',
-            'method' => 'confirmEmail',
-            'access' => ['guest']
-        ],
-        'sendConfirmMail' => [
-            'ctrl'   => 'Users',
-            'method' => 'sendConfirmMail',
-            'access' => ['guest']
-        ],
-        'getActions' => [
-            'ctrl'   => 'Actions',
-            'method' => 'getActions',
-            'access' => ['user', 'admin']
-        ]
+        'admin_signin'   => ['ctrl' => 'Admins', 'method' => 'signin',   'access' => ['guest']],
+        'admin_logout'   => ['ctrl' => 'Admins', 'method' => 'logout',   'access' => ['super']],
+        'admin_getUsers' => ['ctrl' => 'Admins', 'method' => 'getUsers', 'access' => ['super']],
+
+        'getCountUsers'    => ['ctrl' => 'Users', 'method' => 'getCountUsers',    'access' => ['guest', 'user', 'admin']],
+        'signin'           => ['ctrl' => 'Users', 'method' => 'signin',           'access' => ['guest']],
+        'logout'           => ['ctrl' => 'Users', 'method' => 'logout',           'access' => ['user', 'admin']],
+        'sendPasswordMail' => ['ctrl' => 'Users', 'method' => 'sendPasswordMail', 'access' => ['guest']],
+        'resetPassword'    => ['ctrl' => 'Users', 'method' => 'resetPassword',    'access' => ['guest']],
+        'signup'           => ['ctrl' => 'Users', 'method' => 'signup',           'access' => ['guest']],
+        'confirmEmail'     => ['ctrl' => 'Users', 'method' => 'confirmEmail',     'access' => ['guest']],
+        'sendConfirmMail'  => ['ctrl' => 'Users', 'method' => 'sendConfirmMail',  'access' => ['guest']],
+        'getProfile'       => ['ctrl' => 'Users', 'method' => 'getProfile',       'access' => ['user', 'admin']],
+        'editPassword'     => ['ctrl' => 'Users', 'method' => 'editPassword',     'access' => ['user', 'admin']],
+        'removeAccount'    => ['ctrl' => 'Users', 'method' => 'removeAccount',    'access' => ['user', 'admin']],
+
+        'getPosts'      => ['ctrl' => 'Forum', 'method' => 'getPosts',      'access' => ['user', 'admin']],
+        'getPost'       => ['ctrl' => 'Forum', 'method' => 'getPost',       'access' => ['user', 'admin']],
+        'addPost'       => ['ctrl' => 'Forum', 'method' => 'addPost',       'access' => ['user', 'admin']],
+        'addComment'    => ['ctrl' => 'Forum', 'method' => 'addCommentt',   'access' => ['user', 'admin']],
+        'setPostStatus' => ['ctrl' => 'Forum', 'method' => 'setPostStatus', 'access' => ['admin']],
+
+        'getActions' => ['ctrl' => 'Actions', 'method' => 'getActions', 'access' => ['user', 'admin']],
+        'getAction'  => ['ctrl' => 'Actions', 'method' => 'getAction',  'access' => ['user', 'admin']],
+        'editAction' => ['ctrl' => 'Actions', 'method' => 'editAction', 'access' => ['user', 'admin']],
+        'delAction'  => ['ctrl' => 'Actions', 'method' => 'delAction',  'access' => ['user', 'admin']],
+
+        'getCategories' => ['ctrl' => 'Categories', 'method' => 'getCategories', 'access' => ['user', 'admin']],
+        'getCategory'   => ['ctrl' => 'Categories', 'method' => 'getCategory',   'access' => ['user', 'admin']],
+        'editCategory'  => ['ctrl' => 'Categories', 'method' => 'editCategory',  'access' => ['user', 'admin']],
+        'delCategory'   => ['ctrl' => 'Categories', 'method' => 'delCategory',   'access' => ['user', 'admin']],
+
+        'getAccounts' => ['ctrl' => 'Accounts', 'method' => 'getAccounts', 'access' => ['user', 'admin']],
+        'getAccount'  => ['ctrl' => 'Accounts', 'method' => 'getAccount',  'access' => ['user', 'admin']],
+        'editAccount' => ['ctrl' => 'Accounts', 'method' => 'editAccount', 'access' => ['user', 'admin']],
+        'delAccount'  => ['ctrl' => 'Accounts', 'method' => 'delAccount',  'access' => ['user', 'admin']],
+
+        'getBudget'          => ['ctrl' => 'Budgets', 'method' => 'getBudget',    'access' => ['user', 'admin']],
+        'getBudgetCategory'  => ['ctrl' => 'Budgets', 'method' => 'getCategory',  'access' => ['user', 'admin']],
+        'editBudgetCategory' => ['ctrl' => 'Budgets', 'method' => 'editCategory', 'access' => ['user', 'admin']],
+        'delBudgetCategory'  => ['ctrl' => 'Budgets', 'method' => 'delCategory',  'access' => ['user', 'admin']]
     ];
 
 
@@ -95,6 +92,9 @@ class Router{
             }
             if ($user['admin']){
                 array_push($this->user, 'admin');
+            }
+            if ($this->params['token'] == $this->superToken){
+                array_push($this->user, 'super');
             }
         }
         $access = true;

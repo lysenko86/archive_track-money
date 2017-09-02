@@ -7,7 +7,7 @@ class Db{
     function connect(){
         $error = false;
         try{
-            $this->db = new PDO("mysql:host=localhost:3307;dbname=$this->dbName", $this->dbUser, $this->dbPass);
+            $this->db = new PDO("mysql:host=localhost;dbname=$this->dbName", $this->dbUser, $this->dbPass);
         } catch(\PDOException $ex) {
             $error = 'requestMySQLError';
         }
