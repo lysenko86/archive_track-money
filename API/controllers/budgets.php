@@ -39,12 +39,11 @@ class Budgets{
             $this->data['msg']    = 'Помилка! Значення поля "Сума" має бути числовим!';
         }
         else{
-            $count = $this->db->query(
-                "SELECT COUNT(*) AS `count` FROM `budgets` WHERE `uid` = ? AND `month` = ? AND `year` = ? AND `category_id` = ?",
+            $tmp = $this->db->query(
+                "SELECT `id` FROM `budgets` WHERE `uid` = ? AND `month` = ? AND `year` = ? AND `category_id` = ?",
                 [$this->params['uid'], $this->params['month'], $this->params['year'], $this->params['category_id']]
             );
-            $count = $count[0]['count'];
-            if ($count > 0){
+            if ($tmp && $tmp[0]['id'] != $this->params['id']){
                 $this->data['status'] = 'error';
                 $this->data['msg']    = "Помилка! Дана категорія в бюджеті на вибраний місяць і рік вже присутня, спочатку треба видалити її!";
             }
