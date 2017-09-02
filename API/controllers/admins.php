@@ -30,13 +30,13 @@ class Admins{
         }
     }
     function logout(){
-        $data['status'] = 'success';
-        $data['msg']    = "Готово! Ви успішно вийшли зі свого аккаунту.";
+        $this->data['status'] = 'success';
+        $this->data['msg']    = "Готово! Ви успішно вийшли зі свого аккаунту.";
     }
     function getUsers(){
-        $data['arr']    = $this->db->query("SELECT *, DATE_FORMAT(`created`, '%d.%m.%Y %H:%i:%s') AS `created` FROM `users` ORDER BY `created` DESC, `id` DESC", []);
-        $data['status'] = 'success';
-        $data['msg']    = "";
+        $this->data['arr']    = $this->db->query("SELECT *, DATE_FORMAT(`created`, '%d.%m.%Y %H:%i:%s') AS `created` FROM `users` ORDER BY `created` DESC, `id` DESC", []);
+        $this->data['status'] = 'success';
+        $this->data['msg']    = "";
     }
 }
 ?>
