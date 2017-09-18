@@ -1,10 +1,31 @@
 "use strict";
 
-var isDev = location.href.indexOf('/web.trackmoney/') > -1;
+var isDev  = location.href.indexOf('/web.trackmoney/') > -1;
 var config = {
     isDev : isDev,
     api: isDev ? 'http://api.trackmoney/api.php' : 'http://api.trackmoney.com.ua/api.php'
-}
+};
+
+
+
+moneyApp.service('messagesServ', function($timeout){
+    var self      = this;
+    this.messages = [];
+    this.delay    = 4000;
+    this.showMessages = function(status, text, delay, cb){
+        self.messages.push({
+            status: status,
+            class: status == 'error' ? 'alert-danger' : 'alert-success',
+            text: text
+        });
+        $timeout(function(){
+            self.messages.shift();
+            if (cb){
+                cb();
+            }
+        }, delay ? delay : this.delay);
+    }
+});
 
 
 
@@ -41,6 +62,7 @@ moneyApp.service('requestServ', function($http, localStorageService){
 
 
 
+<<<<<<< HEAD
 
 
 
@@ -68,6 +90,9 @@ moneyApp.service('requestServ', function($http, localStorageService){
 
 
 this.sendPasswordMail = function(email, cb){
+=======
+/*this.sendPasswordMail = function(email, cb){
+>>>>>>> e52b0f225af1ba3f001b9d0672745709318e9c4d
     $http.post(config.api, {
         action: 'sendPasswordMail',
         email: email
@@ -87,11 +112,11 @@ this.getProfile = function(cb){
     .error(function(error, status){
         cb('requestError');
     });
-}
+}*/
 
 
 
-function sendRequest(method, data, cb){
+/*function sendRequest(method, data, cb){
     $http.get(config.api + '?action=getAccounts&token=' + token)
 	.success(function(data){
         cb(data);
@@ -99,33 +124,13 @@ function sendRequest(method, data, cb){
     .error(function(error, status){
         cb('requestError');
     });
-}
+}*/
 
 
 
-moneyApp.service('messagesServ', function($timeout){
-    var self = this;
-    this.messages = [];
-    this.delay = 4000;
-    this.showMessages = function(status, text, delay, cb){
-        self.messages.push({
-            status: status,
-            class: status == 'error' ? 'alert-danger' : 'alert-success',
-            text: text
-        });
-        $timeout(function(){
-            self.messages.shift();
-            if (cb){
-                cb();
-            }
-        }, delay ? delay : this.delay);
-    }
-});
-
-
-
-moneyApp.service('usersServ', function($http, localStorageService){
+moneyApp.service('usersServ', function($http, localStorageService, requestServ){
     var token = localStorageService.get('token');
+    //requestServ.sendRequest()
     this.getCount = function(cb){
         $http.get(config.api + '?action=getCountUsers&token=' + token)
 		.success(function(data){
