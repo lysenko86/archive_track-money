@@ -11,19 +11,61 @@ var config = {
 moneyApp.service('requestServ', function($http, localStorageService){
     var token = localStorageService.get('token');
     this.sendRequest = function(method, action, data, cb){
-        let url = config.api + '?action=' + action + '&token=' + token;
-        if (method == 'post'){     // method post
-            $http.post(url)
-                 .success(function(data){ cb(data); })
-                 .error(function(error, status){ cb('requestError'); });
-        }
-        else{     // method get
+        let url = config.api + '?token=' + token;
+        if (method === 'get'){
+            url += '&action=' + action;
+            if ("from" in data && "count" in data){
+                url += '&from=' + data.from + '&count=' + data.count;
+                delete data.from;
+                delete data.count;
+            }
+            if ("id" in data){
+                url += '&id=' + data.id;
+                delete data.id;
+            }
             $http.get(url)
                 .success(function(data){ cb(data); })
                 .error(function(error, status){ cb('requestError'); });
         }
+        else if (method === 'post'){
+            data.action = action;
+            $http.post(url, data)
+                 .success(function(data){ cb(data); })
+                 .error(function(error, status){ cb('requestError'); });
+        }
+        else{
+            cb('requestError');
+        }
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 this.sendPasswordMail = function(email, cb){
     $http.post(config.api, {
@@ -273,106 +315,59 @@ moneyApp.service('forumServ', function($http, localStorageService){
 
 
 
-moneyApp.service('actionsServ', function($http, localStorageService){
-    var token = localStorageService.get('token');
-	this.getActions = function(from, count, cb){
-        $http.get(config.api + '?action=getActions&token=' + token + '&from=' + from + '&count=' + count)
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
+moneyApp.service('actionsServ', function(requestServ){
+    this.getActions = function(from, count, cb){
+        requestServ.sendRequest('get', 'getActions', {
+            from:  from,
+            count: count
+        }, cb);
     }
-	this.getAction = function(id, cb){
-        $http.get(config.api + '?action=getAction&token=' + token + '&id=' + id)
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
+    this.getAction = function(id, cb){
+        requestServ.sendRequest('get', 'getAction', {
+            id: id
+        }, cb);
     }
     this.editAction = function(action, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'editAction',
-            id: action.id,
-			date: action.date,
-			type: action.type,
+        requestServ.sendRequest('post', 'editAction', {
+            id:             action.id,
+			date:           action.date,
+			type:           action.type,
 			accountFrom_id: action.accountFrom_id,
-			accountTo_id: action.accountTo_id,
-			category_id: action.category_id,
-			sum: action.sum,
-			description: action.description
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
+			accountTo_id:   action.accountTo_id,
+			category_id:    action.category_id,
+			sum:            action.sum,
+			description:    action.description
+        }, cb);
 	}
-	this.delAction = function(id, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'delAction',
+    this.delAction = function(id, cb){
+        requestServ.sendRequest('post', 'delAction', {
 			id: id
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
+        }, cb);
     }
 });
 
 
 
-moneyApp.service('categoriesServ', function($http, localStorageService){
-    var token = localStorageService.get('token');
+moneyApp.service('categoriesServ', function(requestServ){
     this.getCategories = function(cb){
-        $http.get(config.api + '?action=getCategories&token=' + token)
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
+        requestServ.sendRequest('get', 'getCategories', {}, cb);
     }
-	this.getCategory = function(id, cb){
-        $http.get(config.api + '?action=getCategory&token=' + token + '&id=' + id)
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
+    this.getCategory = function(id, cb){
+        requestServ.sendRequest('get', 'getCategory', {
+            id: id
+        }, cb);
     }
     this.editCategory = function(category, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'editCategory',
-            id: category.id,
-            title: category.title,
-			type: category.type
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
+        requestServ.sendRequest('post', 'editCategory', {
+            id:    category.id,
+			title: category.title,
+			type:  category.type
+        }, cb);
 	}
-	this.delCategory = function(id, cb){
-		$http.post(config.api + '?token=' + token, {
-			action: 'delCategory',
+    this.delCategory = function(id, cb){
+        requestServ.sendRequest('post', 'delCategory', {
 			id: id
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
+        }, cb);
     }
 });
 
