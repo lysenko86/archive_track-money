@@ -41,6 +41,7 @@ class Router{
         'delCategory'   => ['ctrl' => 'Categories', 'method' => 'delCategory',   'access' => ['user', 'admin']],
 
         'getAccounts' => ['ctrl' => 'Accounts', 'method' => 'getAccounts', 'access' => ['user', 'admin']],
+        'getBalances' => ['ctrl' => 'Accounts', 'method' => 'getBalances', 'access' => ['user', 'admin']],
         'getAccount'  => ['ctrl' => 'Accounts', 'method' => 'getAccount',  'access' => ['user', 'admin']],
         'editAccount' => ['ctrl' => 'Accounts', 'method' => 'editAccount', 'access' => ['user', 'admin']],
         'delAccount'  => ['ctrl' => 'Accounts', 'method' => 'delAccount',  'access' => ['user', 'admin']],

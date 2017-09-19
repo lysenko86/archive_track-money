@@ -12,6 +12,10 @@ class Accounts{
         $this->data['arr']    = $this->db->query("SELECT * FROM `accounts` WHERE `uid` = ? ORDER BY `title` ASC", [$this->params['uid']]);
         $this->data['status'] = 'success';
     }
+    function getBalances(){
+        $this->data['arr']    = $this->db->query("SELECT * FROM `accounts` WHERE `uid` = ? AND `panel` = ? ORDER BY `title` ASC", [$this->params['uid'], 1]);
+        $this->data['status'] = 'success';
+    }
     function getAccount(){
         $this->data['arr']    = $this->db->query("SELECT * FROM `accounts` WHERE `id` = ? AND `uid` = ?", [$this->params['id'], $this->params['uid']]);
         $this->data['arr']    = $this->data['arr'][0];

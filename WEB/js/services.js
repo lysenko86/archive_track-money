@@ -211,6 +211,9 @@ moneyApp.service('accountsServ', function(requestServ){
     this.getAccounts = function(cb){
         requestServ.sendRequest('get', 'getAccounts', {}, cb);
     }
+    this.getBalances = function(cb){
+        requestServ.sendRequest('get', 'getBalances', {}, cb);
+    }
     this.getAccount = function(id, cb){
         requestServ.sendRequest('get', 'getAccount', {
             id: id
