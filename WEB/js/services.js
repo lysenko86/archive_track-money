@@ -29,9 +29,11 @@ moneyApp.service('messagesServ', function($timeout){
 
 
 
-moneyApp.service('requestServ', function($http, localStorageService){
+moneyApp.service('requestServ', function($http, localStorageService, messagesServ){
     var token = localStorageService.get('token');
+    var link  = this;
     this.sendRequest = function(method, action, data, cb){
+        angular.element(document).find('#loaderPage').css('display', 'block');
         let url = config.api + '?token=' + token;
         if (method === 'get'){
             url += '&action=' + action;
@@ -40,17 +42,34 @@ moneyApp.service('requestServ', function($http, localStorageService){
                 delete data[key];
             }
             $http.get(url)
-                .success(function(data){ cb(data); })
-                .error(function(error, status){ cb('requestError'); });
+                .success(function(data){
+                    link.getResponse(data, cb);
+                })
+                .error(function(error, status){
+                    link.getResponse('requestError', cb);
+                });
         }
         else if (method === 'post'){
             data.action = action;
             $http.post(url, data)
-                 .success(function(data){ cb(data); })
-                 .error(function(error, status){ cb('requestError'); });
+                 .success(function(data){
+                     link.getResponse(data, cb);
+                 })
+                 .error(function(error, status){
+                     link.getResponse('requestError', cb);
+                 });
         }
         else{
-            cb('requestError');
+            link.getResponse('requestError', cb);
+        }
+    }
+    this.getResponse = function(data, cb){
+        angular.element(document).find('#loaderPage').css('display', 'none');
+        if (data == 'requestError'){
+            messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+        }
+        else{
+            cb(data);
         }
     }
 });

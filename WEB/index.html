@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link type="text/css" href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<link type="text/css" href="css/styles.css" rel="stylesheet">
+	<link type="text/css" href="css/loader.css" rel="stylesheet">
 	<script type="text/javascript" src="libs/jquery/jquery-3.1.0.min.js"></script>
 	<script type="text/javascript" src="libs/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="libs/angular/angular.min.js"></script>
@@ -59,7 +60,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="main" ng-view></div>
-            </div>
+			</div>
         </div>
     </div>
     <div class="container">
@@ -71,5 +72,13 @@
             </div>
         </div>
     </div>
+	<div id="loaderPage">
+		<div class="cssload-loader">
+			<div class="cssload-inner cssload-one"></div>
+			<div class="cssload-inner cssload-two"></div>
+			<div class="cssload-inner cssload-three"></div>
+		</div>
+		<div class="loaderBG"></div>
+	</div>
 </body>
 </html>

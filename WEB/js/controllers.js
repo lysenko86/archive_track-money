@@ -4,20 +4,15 @@
 
 moneyApp.controller('menuCtrl', function($location, $scope, $rootScope, localStorageService, accountsServ){
 	this.init = function(){
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth       = localStorageService.get('token');
 		$rootScope.accounts = [];
 		accountsServ.getAccounts(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				data.arr            = data.arr ? data.arr : [];
+				$rootScope.accounts = data.arr;
 			}
 			else{
-				if (data.status == 'success'){
-					data.arr = data.arr ? data.arr : [];
-					$rootScope.accounts = data.arr;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 		angular.element('nav.navbar li a:not(.dropdown-toggle)').click(function(){
@@ -38,7 +33,7 @@ moneyApp.controller('menuCtrl', function($location, $scope, $rootScope, localSto
 moneyApp.controller('homeCtrl', function($scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
-		this.phrases = [
+		this.phrases  = [
 			{text:"Дешева рибка - погана юшка.", author:"Українське прислів'я"},
 			{text:"Борги схожі на всяку іншу пастку: потрапити в них вельми легко, але вибратися досить важко.", author:"Джордж Бернард Шоу"},
 			{text:"Якщо умієш щось, не роби цього безкоштовно.", author:"The Dark Knight"},
@@ -70,19 +65,14 @@ moneyApp.controller('homeCtrl', function($scope, messagesServ, localStorageServi
 			{text:"У моїх можливостях дати звіт за кожен мій мільйон, за винятком самого першого.", author:"Рокфеллер"},
 			{text:"Працюйте так, немов гроші не мають для Вас жодного значення.",author:"Марк Твен"}
 		];
-		let index = Math.round(Math.random() * (this.phrases.length-1));
+		let index     = Math.round(Math.random() * (this.phrases.length-1));
 		$scope.phrase = this.phrases[index];
 		usersServ.getCount(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				$scope.countUsers = data.arr.count;
 			}
 			else{
-				if (data.status == 'success'){
-					$scope.countUsers = data.arr.count;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 	}
@@ -95,7 +85,7 @@ moneyApp.controller('homeCtrl', function($scope, messagesServ, localStorageServi
 moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
@@ -111,38 +101,28 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 	$scope.signin = function(){
 		if (!$scope.user.email || !$scope.user.password){
 			$scope.auth.notConfirmed = false;
-			$scope.auth.email = '';
+			$scope.auth.email        = '';
 			messagesServ.showMessages('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
 		}
 		else{
 			usersServ.signin($scope.user, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					$scope.user.email = $scope.user.password = '';
-					$scope.auth.notConfirmed = data.notConfirmed;
-					$scope.auth.email = data.email;
-					messagesServ.showMessages(data.status, data.msg, 2000, function(){
-						if (data.status == 'success'){
-							localStorageService.set('token', data.arr.token);
-							$window.location.href = '/';
-						}
-					});
-				}
+				$scope.user.email        = $scope.user.password = '';
+				$scope.auth.notConfirmed = data.notConfirmed;
+				$scope.auth.email        = data.email;
+				messagesServ.showMessages(data.status, data.msg, 2000, function(){
+					if (data.status == 'success'){
+						localStorageService.set('token', data.arr.token);
+						$window.location.href = '/';
+					}
+				});
             });
 		}
 	}
 	$scope.sendConfirmMail = function(){
 		usersServ.sendConfirmMail($scope.auth.email, function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-			}
-			else{
-				$scope.auth.notConfirmed = false;
-				$scope.auth.email = '';
-				messagesServ.showMessages(data.status, data.msg);
-			}
+			$scope.auth.notConfirmed = false;
+			$scope.auth.email        = '';
+			messagesServ.showMessages(data.status, data.msg);
 		});
 	}
 
@@ -154,7 +134,7 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
@@ -176,17 +156,12 @@ moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, loca
 		}
 		else{
 			usersServ.signup($scope.user, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					$scope.user.email = $scope.user.password = $scope.user.agree = '';
-					messagesServ.showMessages(data.status, data.msg, 6000, function(){
-						if (data.status == 'success'){
-							$location.url('home');
-						}
-					});
-				}
+				$scope.user.email = $scope.user.password = $scope.user.agree = '';
+				messagesServ.showMessages(data.status, data.msg, 6000, function(){
+					if (data.status == 'success'){
+						$location.url('home');
+					}
+				});
 			});
 		}
 	}
@@ -199,23 +174,18 @@ moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, loca
 moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
 		else{
 			usersServ.logout(function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg, 2000, function(){
-						if (data.status == 'success'){
-							localStorageService.remove('token');
-							$window.location.href = '/';
-						}
-					});
-				}
+				messagesServ.showMessages(data.status, data.msg, 2000, function(){
+					if (data.status == 'success'){
+						localStorageService.remove('token');
+						$window.location.href = '/';
+					}
+				});
 			});
 		}
 	}
@@ -228,22 +198,17 @@ moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesS
 moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routeParams, localStorageService, messagesServ, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
 		let confirm = $routeParams.confirm.split('.');
 		usersServ.confirm(confirm, function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-			}
-			else{
-				messagesServ.showMessages(data.status, data.msg, 2000, function(){
-					if (data.status == 'success'){
-						$location.url('home');
-					}
-				});
-			}
+			messagesServ.showMessages(data.status, data.msg, 2000, function(){
+				if (data.status == 'success'){
+					$location.url('home');
+				}
+			});
 		});
 	}
 
@@ -255,7 +220,7 @@ moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routePa
 moneyApp.controller('passwordCtrl', function($location, $window, $scope, $routeParams, localStorageService, messagesServ, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
@@ -267,15 +232,10 @@ moneyApp.controller('passwordCtrl', function($location, $window, $scope, $routeP
 		}
 		else{
 			usersServ.sendPasswordMail($scope.email, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					$scope.email = '';
 				}
-				else{
-					if (data.status == 'success'){
-						$scope.email = '';
-					}
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
@@ -288,22 +248,17 @@ moneyApp.controller('passwordCtrl', function($location, $window, $scope, $routeP
 moneyApp.controller('resetCtrl', function($location, $window, $scope, $routeParams, localStorageService, messagesServ, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
 		let reset = $routeParams.password.split('.');
 		usersServ.reset(reset, function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-			}
-			else{
-				messagesServ.showMessages(data.status, data.msg, false, function(){
-					if (data.status == 'success'){
-						$location.url('home');
-					}
-				});
-			}
+			messagesServ.showMessages(data.status, data.msg, false, function(){
+				if (data.status == 'success'){
+					$location.url('home');
+				}
+			});
 		});
 	}
 
@@ -315,11 +270,11 @@ moneyApp.controller('resetCtrl', function($location, $window, $scope, $routePara
 moneyApp.controller('profileCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
-		$scope.email = '';
+		$scope.email      = '';
 		$scope.chPassword = {
 			password: '',
 			newPassword: '',
@@ -327,17 +282,12 @@ moneyApp.controller('profileCtrl', function($location, $window, $scope, messages
 		};
 
 		usersServ.getProfile(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				$scope.email   = data.arr.email;
+				$scope.created = data.arr.created;
 			}
 			else{
-				if (data.status == 'success'){
-					$scope.email = data.arr.email;
-					$scope.created = data.arr.created;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 	}
@@ -350,32 +300,22 @@ moneyApp.controller('profileCtrl', function($location, $window, $scope, messages
 		}
 		else{
 			usersServ.editPassword($scope.chPassword, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					$scope.chPassword.password = $scope.chPassword.newPassword = $scope.chPassword.confirmPassword = '';
 				}
-				else{
-					if (data.status == 'success'){
-						$scope.chPassword.password = $scope.chPassword.newPassword = $scope.chPassword.confirmPassword = '';
-					}
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.removeAccount = function(){
 		if (confirm('Ви дійсно хочете видалити всю інформацію (транзакції, категорії, рахунки, бюджети) а також сам акаунт без можливості відновлення?')){
 			usersServ.removeAccount(function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg, false, function(){
-						if (data.status == 'success'){
-							localStorageService.remove('token');
-							$window.location.href = '/';
-						}
-					});
-				}
+				messagesServ.showMessages(data.status, data.msg, false, function(){
+					if (data.status == 'success'){
+						localStorageService.remove('token');
+						$window.location.href = '/';
+					}
+				});
 			});
 		}
 	}
@@ -388,7 +328,7 @@ moneyApp.controller('profileCtrl', function($location, $window, $scope, messages
 moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messagesServ, localStorageService, forumServ){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
@@ -411,55 +351,45 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 			category: '',
 			comment: ''
 		};
-		$scope.comment = '';
-		$scope.posts = $scope.comments = [];
-		$scope.fid = $routeParams.post;
-		$scope.isAdmin = false;
+		$scope.comment     = '';
+		$scope.posts       = $scope.comments = [];
+		$scope.fid         = $routeParams.post;
+		$scope.isAdmin     = false;
 		$scope.formIsShown = false;
 		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
 			$scope.formIsShown = false;
 		});
 		if (!$scope.fid){
 			forumServ.getPosts($scope.posts.length, 20, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					data.arr       = data.arr ? data.arr : [];
+					$scope.posts   = data.arr;
+					$scope.isAdmin = data.isAdmin;
 				}
 				else{
-					if (data.status == 'success'){
-						data.arr = data.arr ? data.arr : [];
-						$scope.posts = data.arr;
-						$scope.isAdmin = data.isAdmin;
-					}
-					else{
-						messagesServ.showMessages(data.status, data.msg);
-					}
+					messagesServ.showMessages(data.status, data.msg);
 				}
 			});
 		}
 		else{
 			forumServ.getPost($scope.fid, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					$scope.post.id        = data.arr.id;
+					$scope.post.title     = data.arr.title;
+					$scope.post.category  = data.arr.category;
+					$scope.post.status    = data.arr.status;
+					$scope.post.created   = data.arr.created;
+					$scope.post.updated   = data.arr.updated;
+					$scope.post.email     = data.arr.email;
+					$scope.post.admin     = data.arr.admin;
+					$scope.post.email_upd = data.arr.email_upd;
+					$scope.post.admin_upd = data.arr.admin_upd;
+					$scope.post.count     = data.arr.count;
+					$scope.comments       = data.arr.comments;
+					$scope.isAdmin        = data.isAdmin;
 				}
 				else{
-					if (data.status == 'success'){
-						$scope.post.id = data.arr.id;
-						$scope.post.title = data.arr.title;
-						$scope.post.category = data.arr.category;
-						$scope.post.status = data.arr.status;
-						$scope.post.created = data.arr.created;
-						$scope.post.updated = data.arr.updated;
-						$scope.post.email = data.arr.email;
-						$scope.post.admin = data.arr.admin;
-						$scope.post.email_upd = data.arr.email_upd;
-						$scope.post.admin_upd = data.arr.admin_upd;
-						$scope.post.count = data.arr.count;
-						$scope.comments = data.arr.comments;
-						$scope.isAdmin = data.isAdmin;
-					}
-					else{
-						messagesServ.showMessages(data.status, data.msg);
-					}
+					messagesServ.showMessages(data.status, data.msg);
 				}
 			});
 		}
@@ -473,18 +403,13 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 		}
 		else{
 			forumServ.addPost($scope.post, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					$scope.posts.unshift(data.arr);
+					$scope.post.title  = $scope.post.category = $scope.post.comment = '';
+					angular.element(document).find('#popupEditForm').modal('hide');
+					$scope.formIsShown = false;
 				}
-				else{
-					if (data.status == 'success'){
-						$scope.posts.unshift(data.arr);
-						$scope.post.title = $scope.post.category = $scope.post.comment = '';
-						angular.element(document).find('#popupEditForm').modal('hide');
-						$scope.formIsShown = false;
-					}
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
@@ -495,36 +420,26 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 		else{
 			$scope.fid = $routeParams.post;
 			forumServ.addComment($scope.fid, $scope.comment, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					$scope.comments.push(data.arr);
+					$scope.post.count     = $scope.comments.length;
+					$scope.post.updated   = data.arr.created;
+					$scope.post.email_upd = data.arr.email;
+					$scope.comment        = '';
+					angular.element(document).find('#popupEditForm').modal('hide');
+					$scope.formIsShown    = false;
 				}
-				else{
-					if (data.status == 'success'){
-						$scope.comments.push(data.arr);
-						$scope.post.count = $scope.comments.length;
-						$scope.post.updated = data.arr.created;
-						$scope.post.email_upd = data.arr.email;
-						$scope.comment = '';
-						angular.element(document).find('#popupEditForm').modal('hide');
-						$scope.formIsShown = false;
-					}
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.setPostStatus = function(id, status){
 		forumServ.setPostStatus(id, status, function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				$scope.post.status = data.arr.status;
 			}
 			else{
-				if (data.status == 'success'){
-					$scope.post.status = data.arr.status;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
         });
 	}
@@ -537,7 +452,7 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
@@ -552,42 +467,32 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, messa
 			description: ''
 		};
 		$scope.actions = $scope.categories = $scope.accounts = [];
-		$scope.types = {
+		$scope.types   = {
 			plus: 'Доходи',
 			minus: 'Витрати',
 			move: 'Переказ'
 		};
 		$scope.isShowMoreButton = true;
-		$scope.formIsShown = false;
+		$scope.formIsShown      = false;
 		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
 			$scope.formIsShown = false;
 		});
 		categoriesServ.getCategories(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				data.arr          = data.arr ? data.arr : [];
+				$scope.categories = data.arr;
 			}
 			else{
-				if (data.status == 'success'){
-					data.arr = data.arr ? data.arr : [];
-					$scope.categories = data.arr;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 		accountsServ.getAccounts(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				data.arr        = data.arr ? data.arr : [];
+				$scope.accounts = data.arr;
 			}
 			else{
-				if (data.status == 'success'){
-					data.arr = data.arr ? data.arr : [];
-					$scope.accounts = data.arr;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 		$scope.getActions();
@@ -606,49 +511,39 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, messa
 	}
 	$scope.getActions = function(data){
 		actionsServ.getActions($scope.actions.length, 20, function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				data.arr       = data.arr ? data.arr : [];
+				$scope.actions = $scope.actions.concat(data.arr);
+				if (!data.arr.length){
+					$scope.isShowMoreButton = false;
+				}
 			}
 			else{
-				if (data.status == 'success'){
-					data.arr = data.arr ? data.arr : [];
-					$scope.actions = $scope.actions.concat(data.arr);
-					if (!data.arr.length){
-						$scope.isShowMoreButton = false;
-					}
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 	}
 	$scope.getAction = function(id){
 		$scope.formIsShown = true;
 		if (!id){
-			$scope.action.id = false;
+			$scope.action.id   = false;
 			$scope.action.date = $scope.getToday();
 			$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
 		}
 		else{
 			actionsServ.getAction(id, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					$scope.action.id             = data.arr.id;
+					$scope.action.date           = $scope.dateToWEB(data.arr.date);
+					$scope.action.type           = data.arr.type;
+					$scope.action.accountFrom_id = data.arr.accountFrom_id;
+					$scope.action.accountTo_id   = data.arr.accountTo_id;
+					$scope.action.category_id    = data.arr.category_id;
+					$scope.action.sum            = data.arr.sum;
+					$scope.action.description    = data.arr.description;
 				}
 				else{
-					if (data.status == 'success'){
-						$scope.action.id = data.arr.id;
-						$scope.action.date = $scope.dateToWEB(data.arr.date);
-						$scope.action.type = data.arr.type;
-						$scope.action.accountFrom_id = data.arr.accountFrom_id;
-						$scope.action.accountTo_id = data.arr.accountTo_id;
-						$scope.action.category_id = data.arr.category_id;
-						$scope.action.sum = data.arr.sum;
-						$scope.action.description = data.arr.description;
-					}
-					else{
-						messagesServ.showMessages(data.status, data.msg);
-					}
+					messagesServ.showMessages(data.status, data.msg);
 				}
 			});
 		}
@@ -678,85 +573,65 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, messa
 			}
 			$scope.action.date = $scope.dateToAPI($scope.action.date);
 			actionsServ.editAction($scope.action, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					data.arr.date = $scope.dateToWEB(data.arr.date);
-					if (data.status == 'success'){
-						if ($scope.action.id){     // edit transaction
-							for (var i=0; i<$scope.actions.length; i++){
-								if ($scope.actions[i].id == $scope.action.id){
-									$scope.actions[i] = data.arr;
-								}
+				data.arr.date = $scope.dateToWEB(data.arr.date);
+				if (data.status == 'success'){
+					if ($scope.action.id){     // edit transaction
+						for (var i=0; i<$scope.actions.length; i++){
+							if ($scope.actions[i].id == $scope.action.id){
+								$scope.actions[i] = data.arr;
 							}
 						}
-						else{     // add transaction
-							$scope.actions.unshift(data.arr);
-						}
-						angular.element(document).find('#popupEditForm').modal('hide');
-						$scope.formIsShown = false;
-						accountsServ.getAccounts(function(data){
-							if (data == 'requestError'){
-								messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-							}
-							else{
-								if (data.status == 'success'){
-									data.arr = data.arr ? data.arr : [];
-									$rootScope.accounts = [];
-									for (var i=0; i<data.arr.length; i++){
-										if (data.arr[i].panel == '1'){
-											$rootScope.accounts.push(data.arr[i]);
-										}
-									}
-								}
-								else{
-									messagesServ.showMessages(data.status, data.msg);
-								}
-							}
-						});
 					}
-					messagesServ.showMessages(data.status, data.msg);
+					else{     // add transaction
+						$scope.actions.unshift(data.arr);
+					}
+					angular.element(document).find('#popupEditForm').modal('hide');
+					$scope.formIsShown = false;
+					accountsServ.getAccounts(function(data){
+						if (data.status == 'success'){
+							data.arr            = data.arr ? data.arr : [];
+							$rootScope.accounts = [];
+							for (var i=0; i<data.arr.length; i++){
+								if (data.arr[i].panel == '1'){
+									$rootScope.accounts.push(data.arr[i]);
+								}
+							}
+						}
+						else{
+							messagesServ.showMessages(data.status, data.msg);
+						}
+					});
 				}
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.delAction = function(id){
 		if (confirm('Ви точно хочете видалити цю транзакцію?')){
 			actionsServ.delAction(id, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						for (var i=0; i<$scope.actions.length; i++){
-							if ($scope.actions[i].id == id){
-								$scope.actions.splice(i, 1);
+				if (data.status == 'success'){
+					for (var i=0; i<$scope.actions.length; i++){
+						if ($scope.actions[i].id == id){
+							$scope.actions.splice(i, 1);
+						}
+					}
+					$scope.formIsShown = false;
+					accountsServ.getAccounts(function(data){
+						if (data.status == 'success'){
+							data.arr            = data.arr ? data.arr : [];
+							$rootScope.accounts = [];
+							for (var i=0; i<data.arr.length; i++){
+								if (data.arr[i].panel == '1'){
+									$rootScope.accounts.push(data.arr[i]);
+								}
 							}
 						}
-						$scope.formIsShown = false;
-						accountsServ.getAccounts(function(data){
-							if (data == 'requestError'){
-								messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-							}
-							else{
-								if (data.status == 'success'){
-									data.arr = data.arr ? data.arr : [];
-									$rootScope.accounts = [];
-									for (var i=0; i<data.arr.length; i++){
-										if (data.arr[i].panel == '1'){
-											$rootScope.accounts.push(data.arr[i]);
-										}
-									}
-								}
-								else{
-									messagesServ.showMessages(data.status, data.msg);
-								}
-							}
-						});
-					}
-					messagesServ.showMessages(data.status, data.msg);
+						else{
+							messagesServ.showMessages(data.status, data.msg);
+						}
+					});
 				}
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -769,14 +644,14 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, messa
 moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, categoriesServ, localStorageService){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
 		$scope.category = {
-			id: false,
+			id:    false,
 			title: '',
-			type: ''
+			type:  ''
 		};
 		$scope.categories = [];
 		$scope.types = {
@@ -791,17 +666,12 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 	}
 	$scope.getCategories = function(){
 		categoriesServ.getCategories(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				data.arr          = data.arr ? data.arr : [];
+				$scope.categories = data.arr;
 			}
 			else{
-				if (data.status == 'success'){
-					data.arr = data.arr ? data.arr : [];
-					$scope.categories = data.arr;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 	}
@@ -813,18 +683,13 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 		}
 		else{
 			categoriesServ.getCategory(id, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					$scope.category.id    = data.arr.id;
+					$scope.category.title = data.arr.title;
+					$scope.category.type  = data.arr.type;
 				}
 				else{
-					if (data.status == 'success'){
-						$scope.category.id = data.arr.id;
-						$scope.category.title = data.arr.title;
-						$scope.category.type = data.arr.type;
-					}
-					else{
-						messagesServ.showMessages(data.status, data.msg);
-					}
+					messagesServ.showMessages(data.status, data.msg);
 				}
 			});
 		}
@@ -835,49 +700,39 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 		}
 		else{
 			categoriesServ.editCategory($scope.category, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						if ($scope.category.id){     // edit category
-							for (var i=0; i<$scope.categories.length; i++){
-								if ($scope.categories[i].id == $scope.category.id){
-									$scope.categories[i] = data.arr;
-								}
+				if (data.status == 'success'){
+					if ($scope.category.id){     // edit category
+						for (var i=0; i<$scope.categories.length; i++){
+							if ($scope.categories[i].id == $scope.category.id){
+								$scope.categories[i] = data.arr;
 							}
 						}
-						else{     // add category
-							if (data.arr.type == 'plus'){
-								$scope.categories.unshift(data.arr);
-							}
-							else{
-								$scope.categories.push(data.arr);
-							}
-						}
-						angular.element(document).find('#popupEditForm').modal('hide');
-						$scope.formIsShown = false;
 					}
-					messagesServ.showMessages(data.status, data.msg);
+					else{     // add category
+						if (data.arr.type == 'plus'){
+							$scope.categories.unshift(data.arr);
+						}
+						else{
+							$scope.categories.push(data.arr);
+						}
+					}
+					angular.element(document).find('#popupEditForm').modal('hide');
+					$scope.formIsShown = false;
 				}
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.delCategory = function(id){
 		if (confirm('Ви точно хочете видалити цю категорію?')){
 			categoriesServ.delCategory(id, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						for (var i=0; i<$scope.categories.length; i++){
-							if ($scope.categories[i].id == id) $scope.categories.splice(i, 1);
-						}
+				if (data.status == 'success'){
+					for (var i=0; i<$scope.categories.length; i++){
+						if ($scope.categories[i].id == id) $scope.categories.splice(i, 1);
 					}
-					$scope.formIsShown = false;
-					messagesServ.showMessages(data.status, data.msg);
 				}
+				$scope.formIsShown = false;
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -890,7 +745,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, messagesServ, accountsServ, localStorageService){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
@@ -909,41 +764,31 @@ moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, mess
 	}
 	$scope.getAccounts = function(){
 		accountsServ.getAccounts(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.accounts = data.arr;
 			}
 			else{
-				if (data.status == 'success'){
-					data.arr = data.arr ? data.arr : [];
-					$scope.accounts = data.arr;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 	}
 	$scope.getAccount = function(id){
 		$scope.formIsShown = true;
 		if (!id){
-			$scope.account.id = false;
+			$scope.account.id    = false;
 			$scope.account.title = $scope.account.balance = '';
 		}
 		else{
 			accountsServ.getAccount(id, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					$scope.account.id      = data.arr.id;
+					$scope.account.title   = data.arr.title;
+					$scope.account.balance = data.arr.balance;
+					$scope.account.panel   = data.arr.panel == '1' ? true : false;
 				}
 				else{
-					if (data.status == 'success'){
-						$scope.account.id = data.arr.id;
-						$scope.account.title = data.arr.title;
-						$scope.account.balance = data.arr.balance;
-						$scope.account.panel = data.arr.panel == '1' ? true : false;
-					}
-					else{
-						messagesServ.showMessages(data.status, data.msg);
-					}
+					messagesServ.showMessages(data.status, data.msg);
 				}
 			});
 		}
@@ -958,54 +803,44 @@ moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, mess
 		else{
 			$scope.account.panel = $scope.account.panel ? '1' : '0';
 			accountsServ.editAccount($scope.account, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						if ($scope.account.id){     // edit account
-							for (var i=0; i<$scope.accounts.length; i++){
-								if ($scope.accounts[i].id == $scope.account.id){
-									$scope.accounts[i] = data.arr;
-								}
-								if ($rootScope.accounts[i].id == $scope.account.id){
-									$rootScope.accounts[i] = data.arr;
-								}
+				if (data.status == 'success'){
+					if ($scope.account.id){     // edit account
+						for (var i=0; i<$scope.accounts.length; i++){
+							if ($scope.accounts[i].id == $scope.account.id){
+								$scope.accounts[i] = data.arr;
+							}
+							if ($rootScope.accounts[i].id == $scope.account.id){
+								$rootScope.accounts[i] = data.arr;
 							}
 						}
-						else{     // add account
-							if (data.arr.panel == '1'){
-								$rootScope.accounts.push(data.arr);
-							}
-							$scope.accounts.push(data.arr);
-						}
-						angular.element(document).find('#popupEditForm').modal('hide');
-						$scope.formIsShown = false;
 					}
-					messagesServ.showMessages(data.status, data.msg);
+					else{     // add account
+						if (data.arr.panel == '1'){
+							$rootScope.accounts.push(data.arr);
+						}
+						$scope.accounts.push(data.arr);
+					}
+					angular.element(document).find('#popupEditForm').modal('hide');
+					$scope.formIsShown = false;
 				}
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.delAccount = function(id){
 		if (confirm('Ви точно хочете видалити цей рахунок?')){
 			accountsServ.delAccount(id, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						for (var i=0; i<$scope.accounts.length; i++){
-							if ($scope.accounts[i].id == id){
-								$scope.accounts.splice(i, 1);
-							}
-							if ($rootScope.accounts[i].id == id){
-								$rootScope.accounts.splice(i, 1);
-							}
+				if (data.status == 'success'){
+					for (var i=0; i<$scope.accounts.length; i++){
+						if ($scope.accounts[i].id == id){
+							$scope.accounts.splice(i, 1);
+						}
+						if ($rootScope.accounts[i].id == id){
+							$rootScope.accounts.splice(i, 1);
 						}
 					}
-					messagesServ.showMessages(data.status, data.msg);
 				}
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
@@ -1018,15 +853,15 @@ moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, mess
 moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, budgetsServ, categoriesServ, localStorageService){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
-		$scope.isAuth = localStorageService.get('token');
+		$scope.isAuth   = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
-		let obj = new Date();
+		let obj        = new Date();
 		var activeYear = obj.getFullYear();
-		$scope.years = [activeYear-1, activeYear, activeYear+1];
-		$scope.months = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
-		$scope.budget = {
+		$scope.years   = [activeYear-1, activeYear, activeYear+1];
+		$scope.months  = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+		$scope.budget  = {
 			month: obj.getMonth()+1,
 			year: activeYear,
 			categories: [],
@@ -1047,25 +882,20 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 			category_id: '',
 			sum: ''
 		};
-		$scope.categories = [];
+		$scope.categories  = [];
 		$scope.formIsShown = false;
-		$scope.mathAbs = window.Math.abs;
+		$scope.mathAbs     = window.Math.abs;
 		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
 			$scope.formIsShown = false;
 		});
 
 		categoriesServ.getCategories(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.categories = data.arr;
 			}
 			else{
-				if (data.status == 'success'){
-					data.arr = data.arr ? data.arr : [];
-					$scope.categories = data.arr;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 		$scope.getBudget($scope.budget.year, $scope.budget.month);
@@ -1082,51 +912,41 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 				$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
 			}
 		}
-		$scope.budget.plusRest = $scope.budget.plusPlan - $scope.budget.plusFact;
-		$scope.budget.minusRest = $scope.budget.minusPlan - $scope.budget.minusFact;
+		$scope.budget.plusRest    = $scope.budget.plusPlan - $scope.budget.plusFact;
+		$scope.budget.minusRest   = $scope.budget.minusPlan - $scope.budget.minusFact;
 		$scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
 		$scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
 	}
 	$scope.getBudget = function(year, month){
-		$scope.budget.year = year;
+		$scope.budget.year  = year;
 		$scope.budget.month = month;
 		budgetsServ.getBudget($scope.budget, function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				$scope.budget.categories = data.arr;
+				$scope.calculateTotalSum();
 			}
 			else{
-				if (data.status == 'success'){
-					$scope.budget.categories = data.arr;
-					$scope.calculateTotalSum();
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 	}
 	$scope.getCategory = function(id){
 		$scope.formIsShown = true;
 		if (!id){
-			$scope.category.id = false;
+			$scope.category.id    = false;
 			$scope.category.month = $scope.category.year = $scope.category.category_id = $scope.category.sum = '';
 		}
 		else{
 			budgetsServ.getCategory(id, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+				if (data.status == 'success'){
+					$scope.category.id          = data.arr.id;
+					$scope.category.month       = data.arr.month;
+					$scope.category.year        = data.arr.year;
+					$scope.category.category_id = data.arr.category_id;
+					$scope.category.sum         = data.arr.sum;
 				}
 				else{
-					if (data.status == 'success'){
-						$scope.category.id = data.arr.id;
-						$scope.category.month = data.arr.month;
-						$scope.category.year = data.arr.year;
-						$scope.category.category_id = data.arr.category_id;
-						$scope.category.sum = data.arr.sum;
-					}
-					else{
-						messagesServ.showMessages(data.status, data.msg);
-					}
+					messagesServ.showMessages(data.status, data.msg);
 				}
 			});
 		}
@@ -1140,47 +960,37 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 		}
 		else{
 			$scope.category.month = $scope.budget.month;
-			$scope.category.year = $scope.budget.year;
+			$scope.category.year  = $scope.budget.year;
 			budgetsServ.editCategory($scope.category, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						if ($scope.category.id){     // edit budgetCategory
-							for (var i=0; i<$scope.budget.categories.length; i++){
-								if ($scope.budget.categories[i].id == $scope.category.id){
-									$scope.budget.categories[i] = data.arr;
-								}
+				if (data.status == 'success'){
+					if ($scope.category.id){     // edit budgetCategory
+						for (var i=0; i<$scope.budget.categories.length; i++){
+							if ($scope.budget.categories[i].id == $scope.category.id){
+								$scope.budget.categories[i] = data.arr;
 							}
 						}
-						else{     // add budgetCategory
-							$scope.budget.categories.push(data.arr);
-						}
-						$scope.calculateTotalSum();
-						angular.element(document).find('#popupEditForm').modal('hide');
-						$scope.formIsShown = false;
 					}
-					messagesServ.showMessages(data.status, data.msg);
+					else{     // add budgetCategory
+						$scope.budget.categories.push(data.arr);
+					}
+					$scope.calculateTotalSum();
+					angular.element(document).find('#popupEditForm').modal('hide');
+					$scope.formIsShown = false;
 				}
+				messagesServ.showMessages(data.status, data.msg);
             });
 		}
 	}
 	$scope.delCategory = function(id){
 		if (confirm('Ви точно хочете видалити цю категорію?')){
 			budgetsServ.delCategory(id, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					if (data.status == 'success'){
-						for (var i=0; i<$scope.budget.categories.length; i++){
-							if ($scope.budget.categories[i].id == id) $scope.budget.categories.splice(i, 1);
-						}
-						$scope.calculateTotalSum();
+				if (data.status == 'success'){
+					for (var i=0; i<$scope.budget.categories.length; i++){
+						if ($scope.budget.categories[i].id == id) $scope.budget.categories.splice(i, 1);
 					}
-					messagesServ.showMessages(data.status, data.msg);
+					$scope.calculateTotalSum();
 				}
+				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
 	}
