@@ -4,17 +4,9 @@
 
 moneyApp.controller('menuCtrl', function($location, $scope, $rootScope, localStorageService, accountsServ){
 	this.init = function(){
-		$scope.isAuth       = localStorageService.get('token');
-		$rootScope.accounts = [];
-		accountsServ.getAccounts(function(data){
-			if (data.status == 'success'){
-				data.arr            = data.arr ? data.arr : [];
-				$rootScope.accounts = data.arr;
-			}
-			else{
-				messagesServ.showMessages(data.status, data.msg);
-			}
-		});
+		$scope.isAuth            = localStorageService.get('token');
+		$rootScope.accountsPanel = [];
+		accountsServ.getAccountsPanel();
 		angular.element('nav.navbar li a:not(.dropdown-toggle)').click(function(){
 			if (angular.element('nav.navbar .navbar-collapse.collapse').hasClass('in')){
 				angular.element('nav.navbar .navbar-header button.navbar-toggle').click();
@@ -449,7 +441,7 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 
 
 
-moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
+moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
 		$scope.isAuth   = localStorageService.get('token');
@@ -585,22 +577,9 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, messa
 					else{     // add transaction
 						$scope.actions.unshift(data.arr);
 					}
+					accountsServ.getAccountsPanel();
 					angular.element(document).find('#popupEditForm').modal('hide');
 					$scope.formIsShown = false;
-					accountsServ.getAccounts(function(data){
-						if (data.status == 'success'){
-							data.arr            = data.arr ? data.arr : [];
-							$rootScope.accounts = [];
-							for (var i=0; i<data.arr.length; i++){
-								if (data.arr[i].panel == '1'){
-									$rootScope.accounts.push(data.arr[i]);
-								}
-							}
-						}
-						else{
-							messagesServ.showMessages(data.status, data.msg);
-						}
-					});
 				}
 				messagesServ.showMessages(data.status, data.msg);
             });
@@ -615,21 +594,8 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, messa
 							$scope.actions.splice(i, 1);
 						}
 					}
+					accountsServ.getAccountsPanel();
 					$scope.formIsShown = false;
-					accountsServ.getAccounts(function(data){
-						if (data.status == 'success'){
-							data.arr            = data.arr ? data.arr : [];
-							$rootScope.accounts = [];
-							for (var i=0; i<data.arr.length; i++){
-								if (data.arr[i].panel == '1'){
-									$rootScope.accounts.push(data.arr[i]);
-								}
-							}
-						}
-						else{
-							messagesServ.showMessages(data.status, data.msg);
-						}
-					});
 				}
 				messagesServ.showMessages(data.status, data.msg);
 			});
@@ -742,7 +708,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 
 
 
-moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, messagesServ, accountsServ, localStorageService){
+moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, accountsServ, localStorageService){
 	this.init = function(){
 		$scope.messages = messagesServ.messages;
 		$scope.isAuth   = localStorageService.get('token');
@@ -809,17 +775,12 @@ moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, mess
 							if ($scope.accounts[i].id == $scope.account.id){
 								$scope.accounts[i] = data.arr;
 							}
-							if ($rootScope.accounts[i].id == $scope.account.id){
-								$rootScope.accounts[i] = data.arr;
-							}
 						}
 					}
 					else{     // add account
-						if (data.arr.panel == '1'){
-							$rootScope.accounts.push(data.arr);
-						}
 						$scope.accounts.push(data.arr);
 					}
+					accountsServ.getAccountsPanel();
 					angular.element(document).find('#popupEditForm').modal('hide');
 					$scope.formIsShown = false;
 				}
@@ -835,10 +796,8 @@ moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, mess
 						if ($scope.accounts[i].id == id){
 							$scope.accounts.splice(i, 1);
 						}
-						if ($rootScope.accounts[i].id == id){
-							$rootScope.accounts.splice(i, 1);
-						}
 					}
+					accountsServ.getAccountsPanel();
 				}
 				messagesServ.showMessages(data.status, data.msg);
 			});

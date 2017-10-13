@@ -226,7 +226,7 @@ moneyApp.service('categoriesServ', function(requestServ){
 
 
 
-moneyApp.service('accountsServ', function(requestServ){
+moneyApp.service('accountsServ', function($rootScope, requestServ, messagesServ){
     this.getAccounts = function(cb){
         requestServ.sendRequest('get', 'getAccounts', {}, cb);
     }
@@ -250,6 +250,14 @@ moneyApp.service('accountsServ', function(requestServ){
         requestServ.sendRequest('post', 'delAccount', {
 			id: id
         }, cb);
+    }
+    this.getAccountsPanel = function(){
+        requestServ.sendRequest('get', 'getAccounts', {}, function(data){
+            if (data.status != 'success'){
+                messagesServ.showMessages(data.status, data.msg);
+			}
+            $rootScope.accountsPanel = data.arr ? data.arr : [];
+        });
     }
 });
 
