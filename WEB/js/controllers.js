@@ -2,10 +2,9 @@
 
 
 
-moneyApp.controller('menuCtrl', function($location, $scope, $rootScope, localStorageService, accountsServ){
+moneyApp.controller('menuCtrl', function($location, $scope, localStorageService, accountsServ){
 	this.init = function(){
-		$scope.isAuth            = localStorageService.get('token');
-		$rootScope.accountsPanel = [];
+		$scope.isAuth = localStorageService.get('token');
 		accountsServ.getAccountsPanel();
 		angular.element('nav.navbar li a:not(.dropdown-toggle)').click(function(){
 			if (angular.element('nav.navbar .navbar-collapse.collapse').hasClass('in')){
