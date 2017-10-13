@@ -8,22 +8,20 @@ var config = {
 
 
 
-moneyApp.service('messagesServ', function($timeout){
-    var self      = this;
-    this.messages = [];
-    this.delay    = 4000;
+moneyApp.service('messagesServ', function($rootScope, $timeout){
+    $rootScope.messages = [];
     this.showMessages = function(status, text, delay, cb){
-        self.messages.push({
+        $rootScope.messages.push({
             status: status,
-            class: status == 'error' ? 'alert-danger' : 'alert-success',
-            text: text
+            class:  status == 'error' ? 'alert-danger' : 'alert-success',
+            text:   text
         });
         $timeout(function(){
-            self.messages.shift();
+            $rootScope.messages.shift();
             if (cb){
                 cb();
             }
-        }, delay ? delay : this.delay);
+        }, delay ? delay : 4000);
     }
 });
 

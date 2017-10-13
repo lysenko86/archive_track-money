@@ -76,8 +76,7 @@ moneyApp.controller('homeCtrl', function($scope, messagesServ, localStorageServi
 
 moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
@@ -125,8 +124,7 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 
 moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
@@ -165,8 +163,7 @@ moneyApp.controller('signupCtrl', function($location, $scope, messagesServ, loca
 
 moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
@@ -189,8 +186,7 @@ moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesS
 
 moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routeParams, localStorageService, messagesServ, usersServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
@@ -211,8 +207,7 @@ moneyApp.controller('confirmCtrl', function($location, $window, $scope, $routePa
 
 moneyApp.controller('passwordCtrl', function($location, $window, $scope, $routeParams, localStorageService, messagesServ, usersServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
@@ -239,8 +234,7 @@ moneyApp.controller('passwordCtrl', function($location, $window, $scope, $routeP
 
 moneyApp.controller('resetCtrl', function($location, $window, $scope, $routeParams, localStorageService, messagesServ, usersServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
 		}
@@ -261,8 +255,7 @@ moneyApp.controller('resetCtrl', function($location, $window, $scope, $routePara
 
 moneyApp.controller('profileCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
@@ -319,8 +312,7 @@ moneyApp.controller('profileCtrl', function($location, $window, $scope, messages
 
 moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messagesServ, localStorageService, forumServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
@@ -443,8 +435,7 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 
 moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
@@ -609,7 +600,6 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 
 moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, categoriesServ, localStorageService){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
 		$scope.isAuth   = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
@@ -710,8 +700,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 
 moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, accountsServ, localStorageService){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
@@ -811,8 +800,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 
 moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, budgetsServ, categoriesServ, localStorageService){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
-		$scope.isAuth   = localStorageService.get('token');
+		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
