@@ -31,7 +31,7 @@ moneyApp.service('requestServ', function($http, localStorageService, messagesSer
     var token = localStorageService.get('token');
     var link  = this;
     this.sendRequest = function(method, action, data, cb){
-        angular.element(document).find('#loaderPage').css('display', 'block');
+        angular.element(document).find('#loaderPage').css('display', 'flex');
         let url = config.api + '?token=' + token;
         if (method === 'get'){
             url += '&action=' + action;
