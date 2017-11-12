@@ -6,58 +6,85 @@ var config = {
     api: isDev ? 'http://api.trackmoney/api.php' : 'http://api.trackmoney.com.ua/api.php'
 }
 
-moneyApp.service('usersServ', function($http, localStorageService){
-    var token = localStorageService.get('token');
-    this.signin = function(user, cb){
-        $http.post(config.api, {
-			action: 'admin_signin',
-			email: user.email,
-			password: user.password
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
+
+
+moneyApp.service('messagesServ', function($rootScope, $timeout){
+    $rootScope.messages = [];
+    this.showMessages = function(status, text, delay, cb){
+        $rootScope.messages.push({
+            status: status,
+            class:  status == 'error' ? 'alert-danger' : 'alert-success',
+            text:   text
         });
-    }
-    this.logout = function(cb){
-        $http.get(config.api + '?action=admin_logout&token=' + token)
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
-    }
-    this.getUsers = function(cb){
-        $http.get(config.api + '?action=admin_getUsers&token=' + token)
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(error, status){
-            cb('requestError');
-        });
+        $timeout(function(){
+            $rootScope.messages.shift();
+            if (cb){
+                cb();
+            }
+        }, delay ? delay : 4000);
     }
 });
 
 
 
-moneyApp.service('messagesServ', function($timeout){
-    var self = this;
-    this.messages = [];
-    this.delay = 4000;
-    this.showMessages = function(status, text, delay, cb){
-        self.messages.push({
-            status: status,
-            class: status == 'error' ? 'alert-danger' : 'alert-success',
-            text: text
-        });
-        $timeout(function(){
-            self.messages.shift();
-            if (cb){
-                cb();
+moneyApp.service('requestServ', function($http, localStorageService, messagesServ){
+    var token = localStorageService.get('token');
+    var link  = this;
+    this.sendRequest = function(method, action, data, cb){
+        angular.element(document).find('#loaderPage').css('display', 'flex');
+        let url = config.api + '?token=' + token;
+        if (method === 'get'){
+            url += '&action=' + action;
+            for (let key in data){
+                url += '&'+key+'=' + data[key];
+                delete data[key];
             }
-        }, delay ? delay : this.delay);
+            $http.get(url)
+                .success(function(data){
+                    link.getResponse(data, cb);
+                })
+                .error(function(error, status){
+                    link.getResponse('requestError', cb);
+                });
+        }
+        else if (method === 'post'){
+            data.action = action;
+            $http.post(url, data)
+                 .success(function(data){
+                     link.getResponse(data, cb);
+                 })
+                 .error(function(error, status){
+                     link.getResponse('requestError', cb);
+                 });
+        }
+        else{
+            link.getResponse('requestError', cb);
+        }
+    }
+    this.getResponse = function(data, cb){
+        angular.element(document).find('#loaderPage').css('display', 'none');
+        if (data == 'requestError'){
+            messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+        }
+        else{
+            cb(data);
+        }
+    }
+});
+
+
+
+moneyApp.service('usersServ', function(requestServ){
+    this.signin = function(user, cb){
+        requestServ.sendRequest('post', 'admin_signin', {
+            email:    user.email,
+            password: user.password
+        }, cb);
+    }
+    this.logout = function(cb){
+        requestServ.sendRequest('get', 'admin_logout', {}, cb);
+    }
+    this.getUsers = function(cb){
+        requestServ.sendRequest('get', 'admin_getUsers', {}, cb);
     }
 });

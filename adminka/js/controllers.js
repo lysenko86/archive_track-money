@@ -30,7 +30,6 @@ moneyApp.controller('homeCtrl', function($scope){
 
 moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if ($scope.isAuth){
 			$location.url('home');
@@ -46,18 +45,13 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 		}
 		else{
 			usersServ.signin($scope.user, function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					$scope.user.email = $scope.user.password = '';
-					messagesServ.showMessages(data.status, data.msg, 2000, function(){
-						if (data.status == 'success'){
-							localStorageService.set('token', data.arr.token);
-							$window.location.href = '/';
-						}
-					});
-				}
+				$scope.user.email = $scope.user.password = '';
+				messagesServ.showMessages(data.status, data.msg, 2000, function(){
+					if (data.status == 'success'){
+						localStorageService.set('token', data.arr.token);
+						$window.location.href = '/';
+					}
+				});
             });
 		}
 	}
@@ -69,24 +63,18 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 
 moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesServ, localStorageService, usersServ){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
 		else{
 			usersServ.logout(function(data){
-				if (data == 'requestError'){
-					messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg, 2000, function(){
-						if (data.status == 'success'){
-							localStorageService.remove('token');
-							$window.location.href = '/';
-						}
-					});
-				}
+				messagesServ.showMessages(data.status, data.msg, 2000, function(){
+					if (data.status == 'success'){
+						localStorageService.remove('token');
+						$window.location.href = '/';
+					}
+				});
 			});
 		}
 	}
@@ -98,27 +86,19 @@ moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesS
 
 moneyApp.controller('usersCtrl', function($location, $scope, messagesServ, usersServ, localStorageService){
 	this.init = function(){
-		$scope.messages = messagesServ.messages;
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
 		$scope.users = [];
-		$scope.getUsers();
-	}
-	$scope.getUsers = function(){
+
 		usersServ.getUsers(function(data){
-			if (data == 'requestError'){
-				messagesServ.showMessages('error', 'Помилка! Не вдалося з\'єднатися з сервером, можливо проблема з підключенням до мережі Інтернет!', 6000);
+			if (data.status == 'success'){
+				data.arr     = data.arr ? data.arr : [];
+				$scope.users = data.arr;
 			}
 			else{
-				if (data.status == 'success'){
-					data.arr = data.arr ? data.arr : [];
-					$scope.users = data.arr;
-				}
-				else{
-					messagesServ.showMessages(data.status, data.msg);
-				}
+				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
 	}
