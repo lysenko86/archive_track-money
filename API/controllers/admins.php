@@ -34,7 +34,7 @@ class Admins{
         $this->data['msg']    = "Готово! Ви успішно вийшли зі свого аккаунту.";
     }
     function getUsers(){
-        $this->data['arr']    = $this->db->query("SELECT *, DATE_FORMAT(`created`, '%d.%m.%Y %H:%i:%s') AS `created` FROM `users` ORDER BY `created` DESC, `id` DESC", []);
+        $this->data['arr']    = $this->db->query("SELECT *, DATE_FORMAT(`created`, '%d.%m.%Y %H:%i:%s') AS `created` FROM `users` ORDER BY `id` DESC", []);
         $this->data['status'] = 'success';
         $this->data['msg']    = "";
     }
