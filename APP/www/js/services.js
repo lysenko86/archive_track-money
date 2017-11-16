@@ -1,12 +1,20 @@
 "use strict";
 
+var isDev  = location.href.indexOf('http://192.168.0') > -1;
+var config = {
+    isDev : isDev,
+    api: isDev ? 'http://api.trackmoney/api.php' : 'http://api.trackmoney.com.ua/api.php'
+};
+
+
+
 angular.module('moneyApp.services', [])
 
 
 
 .service('connectionServ', function($http){
     this.testConnection = function(cb){
-        $http.get('http://trackmoney.com.ua/server.php?action=testConnection')
+        $http.get(config.api + '?action=testConnection')
 		.success(function(data){
             cb(true, data.arr.count >= 0 ? true : false);
         })

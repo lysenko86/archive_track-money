@@ -16,6 +16,47 @@
 
 
 
+.ionViewHome{}
+.ionViewHome .blockLogo{
+    width: 255px;
+    margin: 70px auto 0px;
+}
+.ionViewHome .blockLogo:after{
+    content: ' ';
+    display: block;
+    clear: both;
+}
+.ionViewHome .blockLogo .logo{
+    width: 72px;
+    float: left;
+}
+.ionViewHome .blockLogo .title{
+    width: 175px;
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1.25;
+    padding-top: 13px;
+    margin-left: 7px;
+}
+.ionViewHome .blockDescr{
+    width: 255px;
+    margin: 0px auto;
+}
+.ionViewHome .blockAuth{
+    margin-top: 30px;
+}
+.ionViewHome .blockAuth .title{
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+
+
+
+/*
 label.item-radio{
     border: none;
     display: inline-block;
@@ -89,3 +130,4 @@ label.item-radio .radio-content .radio-icon{
 .budgetsPage .totalSum{
     font-weight: bold;
 }
+*/

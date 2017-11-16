@@ -1,6 +1,25 @@
-<ion-view view-title="Головна">
+<ion-view view-title="Головна" class="ionViewHome">
     <ion-content class="padding">
-        <h1 class="title">Вітаємо в сервісі TrackMoney!</h1>
-        Цей сервіс створено, щоб допомогти кожному керувати своїми фінансами.
+        <div class="blockLogo">
+            <div class="logo"><img src="img/logo.png"></div>
+            <div class="title">Вітаємо в сервісі TrackMoney!</div>
+        </div>
+        <div class="blockDescr">Цей сервіс створено, щоб допомогти кожному керувати своїми фінансами.</div>
+        <div class="blockAuth">
+            <div class="title">Авторизуйтесь</div>
+            <form ng-submit="signin()">
+                <ion-list>
+                    <label class="item item-input">
+                        <span class="input-label">Email:</span>
+                        <input type="text" ng-model="user.email" placeholder="email@email.com" />
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Пароль:</span>
+                        <input type="password" ng-model="user.password" />
+                    </label>
+                    <button class="button button-block button-positive" type="submit">Увійти</button>
+                </ion-list>
+            </form>
+        </div>
     </ion-content>
 </ion-view>

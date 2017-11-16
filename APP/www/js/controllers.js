@@ -21,8 +21,43 @@ angular.module('moneyApp.controllers', [])
 
 
 
-.controller('homeCtrl', function($scope, $ionicPopup, connectionServ){
-    connectionServ.testConnection(testConnection($ionicPopup));
+.controller('homeCtrl', function($location, $window, $scope, $ionicPopup, localStorageService, usersServ){
+    this.init = function(){
+		$scope.isAuth = localStorageService.get('token');
+		if ($scope.isAuth){
+			$location.url('home');
+		}
+		$scope.user = {
+			email: '',
+			password: ''
+		};
+		$scope.auth = {
+			notConfirmed: false,
+			email: ''
+		};
+	}
+    $scope.signin = function(){
+		if (!$scope.user.email || !$scope.user.password){
+			$scope.auth.notConfirmed = false;
+			$scope.auth.email        = '';
+			messagesServ.showMessages('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
+		}
+		else{
+			usersServ.signin($scope.user, function(data){
+				$scope.user.email        = $scope.user.password = '';
+				$scope.auth.notConfirmed = data.notConfirmed;
+				$scope.auth.email        = data.email;
+				messagesServ.showMessages(data.status, data.msg, 2000, function(){
+					if (data.status == 'success'){
+						localStorageService.set('token', data.arr.token);
+						$window.location.href = '/';
+					}
+				});
+            });
+		}
+	}
+
+    this.init();
 })
 
 
@@ -251,4 +286,4 @@ angular.module('moneyApp.controllers', [])
         $scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
         $scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
 	});
-})
+});
