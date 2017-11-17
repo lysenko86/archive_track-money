@@ -5,7 +5,7 @@
             <div class="title">Вітаємо в сервісі TrackMoney!</div>
         </div>
         <div class="blockDescr">Цей сервіс створено, щоб допомогти кожному керувати своїми фінансами.</div>
-        <div class="blockAuth">
+        <div class="blockAuth" ng-if="!isAuth">
             <div class="title">Авторизуйтесь</div>
             <form ng-submit="signin()">
                 <ion-list>

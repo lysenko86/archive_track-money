@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module('moneyApp', ['ionic', 'moneyApp.controllers', 'moneyApp.services'])
+var moneyApp = angular.module('moneyApp', ['ionic', 'LocalStorageModule', 'moneyApp.controllers', 'moneyApp.services']);
 
-.run(function($ionicPlatform) {
+moneyApp.run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
         if(window.cordova && window.cordova.plugins.Keyboard) {
             cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -12,9 +12,11 @@ angular.module('moneyApp', ['ionic', 'moneyApp.controllers', 'moneyApp.services'
             StatusBar.styleDefault();
         }
     });
-})
+});
 
-.config(function($stateProvider, $urlRouterProvider) {
+moneyApp.config(function($stateProvider, $urlRouterProvider, localStorageServiceProvider) {
+    localStorageServiceProvider.setPrefix('TrackMoney');
+
     $stateProvider
     .state('home', {
         url: '/home',
@@ -22,7 +24,7 @@ angular.module('moneyApp', ['ionic', 'moneyApp.controllers', 'moneyApp.services'
         templateUrl: 'templates/home.html',
         controller: 'homeCtrl'
     })
-    .state('actions', {
+    /*.state('actions', {
         url: '/actions',
         cache: false,
         templateUrl: 'templates/actions.html',
@@ -39,6 +41,6 @@ angular.module('moneyApp', ['ionic', 'moneyApp.controllers', 'moneyApp.services'
         cache: false,
         templateUrl: 'templates/budgets.html',
         controller: 'budgetsCtrl'
-    })
+    })*/
     $urlRouterProvider.otherwise('/home');
 });

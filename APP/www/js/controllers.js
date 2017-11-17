@@ -1,68 +1,50 @@
 "use strict";
 
-function testConnection(serv){
-    return function(host, base){
-        if (!host){
-            serv.alert({
-                title: 'Помилка!',
-                template: 'Відсутнє підключення до мережі Інтернет.'
-            });
-        }
-        else if(!base){
-            serv.alert({
-                title: 'Помилка!',
-                template: 'Відсутнє підключення до бази данних.'
-            });
-        }
-    }
-}
-
-angular.module('moneyApp.controllers', [])
+angular.module('moneyApp.controllers', []);
 
 
 
-.controller('homeCtrl', function($location, $window, $scope, $ionicPopup, localStorageService, usersServ){
+moneyApp.controller('homeCtrl', function($location, $window, $scope, $rootScope, $ionicPopup, localStorageService, usersServ){
     this.init = function(){
-		$scope.isAuth = localStorageService.get('token');
-		if ($scope.isAuth){
-			$location.url('home');
-		}
+		$rootScope.isAuth = localStorageService.get('token');
 		$scope.user = {
 			email: '',
 			password: ''
 		};
-		$scope.auth = {
-			notConfirmed: false,
-			email: ''
-		};
 	}
     $scope.signin = function(){
 		if (!$scope.user.email || !$scope.user.password){
-			$scope.auth.notConfirmed = false;
-			$scope.auth.email        = '';
-			messagesServ.showMessages('error', 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!');
+            $ionicPopup.alert({
+                title: 'Помилка!',
+                template: 'Помилка! Поля "Email" та "Пароль" обов\'язкові для заповнення!'
+            });
 		}
 		else{
 			usersServ.signin($scope.user, function(data){
-				$scope.user.email        = $scope.user.password = '';
-				$scope.auth.notConfirmed = data.notConfirmed;
-				$scope.auth.email        = data.email;
-				messagesServ.showMessages(data.status, data.msg, 2000, function(){
-					if (data.status == 'success'){
-						localStorageService.set('token', data.arr.token);
-						$window.location.href = '/';
-					}
-				});
+				$scope.user.email = $scope.user.password = '';
+                if (data.status == 'error'){
+                    $ionicPopup.alert({
+                        title: 'Помилка!',
+                        template: data.msg
+                    });
+                }
+				else if (data.status == 'success'){
+					localStorageService.set('token', data.arr.token);
+					$window.location.href = '/';
+				}
             });
 		}
 	}
 
     this.init();
-})
+});
 
 
-
+/*
 .controller('actionsCtrl', function($scope, $state, $ionicModal, $ionicPopup, connectionServ, actionsServ, categoriesServ, accountsServ){
+if (!$rootScope.isAuth){
+    $location.url('home');
+}
     connectionServ.testConnection(testConnection($ionicPopup));
     var obj = new Date();
 	var d = '0' + obj.getDate();
@@ -287,3 +269,4 @@ angular.module('moneyApp.controllers', [])
         $scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
 	});
 });
+*/
