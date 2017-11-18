@@ -1,6 +1,7 @@
-<ion-view view-title="Рахунки">
-    <ion-content class="accountsPage">
-        <ion-list>
+<ion-view view-title="Рахунки" class="ionViewAccounts headerMarginTop">
+    <ion-content>
+        <div class="emptyListText" ng-if="!accounts.length">Немає записів</div>
+        <ion-list ng-if="accounts.length">
             <ion-item ng-repeat="item in accounts">{{item.title}}<span class="item-note{{item.balance >= 0 ? ' colorPlus' : ' colorMinus'}}">{{item.balance}}</span></ion-item>
         </ion-list>
     </ion-content>

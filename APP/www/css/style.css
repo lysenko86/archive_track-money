@@ -18,6 +18,33 @@
 
 
 
+.headerMarginTop{
+    margin-top: 40px;
+}
+.emptyListText{
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 2;
+    text-align: center;
+    color: #444;
+    margin-top: 30px;
+}
+
+
+
+
+
+ion-header-bar.bar.bar-header{
+  background: linear-gradient(180deg, #678c40 0%, #678c40 90%, transparent 100%);
+}
+ion-header-bar.bar.bar-header .title{
+    color: #fff;
+}
+
+
+
+
+
 .ionViewHome{}
 .ionViewHome .blockLogo{
     width: 255px;
@@ -54,6 +81,12 @@
     font-weight: bold;
     margin-bottom: 7px;
 }
+
+
+
+
+
+.ionViewAccounts{}
 
 
 
@@ -143,20 +176,11 @@ label.item-radio .radio-content .radio-icon{
 
 
 
-.nav-bar-block ion-header-bar.bar-header{
-  background-color: #678c40;
-  border-color: #555555;
-  background-image: linear-gradient(0deg, #555555, #555555 50%, transparent 50%);
-}
 
 
 
-.bar > .button:nth-last-child(2){
-    position: absolute;
-    top: 5px;
-    right: 40px;
-    bottom: 5px;
-}
+
+
 
 
 

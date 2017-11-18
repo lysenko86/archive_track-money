@@ -127,22 +127,19 @@ moneyApp.service('usersServ', function(requestServ){
             cb(data);
         });
     }
-})
+})*/
 
 
 
-.service('accountsServ', function($http){
-	this.getAccounts = function(cb){
-		$http.get('http://trackmoney.com.ua/server.php?action=getAccounts')
-		.success(function(data){
-			cb(data);
-		});
-	}
-})
+moneyApp.service('accountsServ', function(requestServ){
+    this.getAccounts = function(cb){
+        requestServ.sendRequest('get', 'getAccounts', {}, cb);
+    }
+});
 
 
 
-.service('budgetsServ', function($http){
+/*.service('budgetsServ', function($http){
 	this.getBudget = function(month, year, cb){
 		$http.get('http://trackmoney.com.ua/server.php?action=getBudget&month=' + month + '&year=' + year)
 		.success(function(data){

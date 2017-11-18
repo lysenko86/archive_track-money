@@ -218,24 +218,37 @@ if (!$rootScope.isAuth){
             }
         });
 	}
-})
+})*/
 
 
 
-.controller('accountsCtrl', function($scope, $ionicPopup, connectionServ, accountsServ){
-    connectionServ.testConnection(testConnection($ionicPopup));
-    $scope.accounts = [];
-    accountsServ.getAccounts(function(data){
-		if (data.status == 'success'){
-			data.arr = data.arr ? data.arr : [];
-			$scope.accounts = data.arr;
+moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, accountsServ, localStorageService){
+    this.init = function(){
+		$rootScope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
 		}
-	});
-})
+		$scope.accounts = [];
+		$scope.getAccounts();
+	}
+    $scope.getAccounts = function(){
+		accountsServ.getAccounts(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.accounts = data.arr;
+			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+    }
+
+	this.init();
+});
 
 
 
-.controller('budgetsCtrl', function($scope, $ionicPopup, connectionServ, budgetsServ){
+/*.controller('budgetsCtrl', function($scope, $ionicPopup, connectionServ, budgetsServ){
     connectionServ.testConnection(testConnection($ionicPopup));
     $scope.budget = {
 		categories: [],

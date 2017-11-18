@@ -29,14 +29,14 @@ moneyApp.config(function($stateProvider, $urlRouterProvider, localStorageService
         cache: false,
         templateUrl: 'templates/actions.html',
         controller: 'actionsCtrl'
-    })
+    })*/
     .state('accounts', {
         url: '/accounts',
         cache: false,
         templateUrl: 'templates/accounts.html',
         controller: 'accountsCtrl'
     })
-    .state('budgets', {
+    /*.state('budgets', {
         url: '/budgets',
         cache: false,
         templateUrl: 'templates/budgets.html',
