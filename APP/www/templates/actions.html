@@ -1,7 +1,8 @@
 <ion-view view-title="Транзакції">
-    <ion-content class="actionsPage">
-        <ion-list>
-            <ion-item class="tableItem" ng-repeat="item in actions">
+    <ion-content class="ionViewActions headerMarginTop">
+        <div class="emptyListText" ng-if="!actions.length">Немає записів</div>
+        <ion-list ng-if="actions.length">
+            <ion-item class="listItem" ng-repeat="item in actions">
                 <div class="row rowDate" ng-show="item.date != actions[$index-1].date">
                     <div class="col">{{item.date}}</div>
                 </div>
@@ -14,7 +15,7 @@
                 <div class="row rowDescr" ng-show="item.description">{{item.description}}</div>
             </ion-item>
         </ion-list>
-        <div class="row">
+        <div class="row" ng-if="actions.length">
         	<div class="col">
         		<button class="button button-block button-positive" ng-click="getActions()" ng-show="isShowMoreButton">Показати щє 20 транзакцій</button>
         	</div>

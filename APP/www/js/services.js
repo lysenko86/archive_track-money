@@ -70,64 +70,45 @@ moneyApp.service('usersServ', function(requestServ){
 });
 
 
-/*
-.service('actionsServ', function($http){
+
+moneyApp.service('actionsServ', function(requestServ){
     this.getActions = function(from, count, cb){
-        $http.get('http://trackmoney.com.ua/server.php?action=getActions&from=' + from + '&count=' + count)
-		.success(function(data){
-            cb(data);
-        });
+        requestServ.sendRequest('get', 'getActions', {
+            from:  from,
+            count: count
+        }, cb);
     }
     this.getAction = function(id, cb){
-        $http.get('http://trackmoney.com.ua/server.php?action=getAction&id=' + id)
-		.success(function(data){
-			data.arr.date = data.arr.date.substr(8,2) + '.' + data.arr.date.substr(5,2) + '.' + data.arr.date.substr(0,4);
-            cb(data);
-        });
+        requestServ.sendRequest('get', 'getAction', {
+            id: id
+        }, cb);
     }
-    this.editAction = function(id, action, cb){
-		$http.post('http://trackmoney.com.ua/server.php', {
-			action: 'editAction',
-            id: id,
-			date: action.date.substr(6,4) + '-' + action.date.substr(3,2) + '-' + action.date.substr(0,2),
-			type: action.type,
+    this.editAction = function(action, cb){
+        requestServ.sendRequest('post', 'editAction', {
+            id:             action.id,
+			date:           action.date,
+			type:           action.type,
 			accountFrom_id: action.accountFrom_id,
-			accountTo_id: action.accountTo_id,
-			category_id: action.category_id,
-			sum: action.sum,
-			description: action.description
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(){
-			cb(false);
-		});
+			accountTo_id:   action.accountTo_id,
+			category_id:    action.category_id,
+			sum:            action.sum,
+			description:    action.description
+        }, cb);
 	}
-    this.deleteAction = function(id, cb){
-		$http.post('http://trackmoney.com.ua/server.php', {
-			action: 'delAction',
+    this.delAction = function(id, cb){
+        requestServ.sendRequest('post', 'delAction', {
 			id: id
-		})
-		.success(function(data){
-            cb(data);
-        })
-        .error(function(){
-			cb(false);
-		});
+        }, cb);
     }
-})
+});
 
 
 
-.service('categoriesServ', function($http){
+moneyApp.service('categoriesServ', function(requestServ){
     this.getCategories = function(cb){
-        $http.get('http://trackmoney.com.ua/server.php?action=getCategories')
-		.success(function(data){
-            cb(data);
-        });
+        requestServ.sendRequest('get', 'getCategories', {}, cb);
     }
-})*/
+});
 
 
 

@@ -92,6 +92,32 @@ ion-header-bar.bar.bar-header .title{
 
 
 
+.ionViewActions{}
+.ionViewActions .listItem{
+    padding: 0px;
+}
+.ionViewActions .listItem .rowDate{
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+}
+.ionViewActions .listItem .rowData{
+    margin-top: 5px;
+}
+.ionViewActions .listItem .rowDescr{
+    color: #aaa;
+    font-size: 80%;
+    line-height: 1.2;
+    white-space: normal;
+    margin-top: -9px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+
+
+
 #loaderPage{
     position: fixed;
     justify-content: center;
@@ -153,32 +179,6 @@ label.item-radio .radio-content .radio-icon{
     border-bottom: 1px solid #eee;
     margin-top: 5px;
 }
-.tableItem{
-    padding: 0px;
-}
-.tableItem .rowDate{
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
-    color: #bbb;
-}
-.tableItem .rowData{
-    margin-top: 5px;
-}
-.tableItem .rowDescr{
-    color: #aaa;
-    font-size: 80%;
-    line-height: 1.2;
-    white-space: normal;
-    margin-top: -9px;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-
-
-
-
-
 
 
 

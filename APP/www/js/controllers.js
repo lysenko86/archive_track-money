@@ -23,10 +23,7 @@ moneyApp.controller('homeCtrl', function($location, $window, $scope, $rootScope,
 			usersServ.signin($scope.user, function(data){
 				$scope.user.email = $scope.user.password = '';
                 if (data.status == 'error'){
-                    $ionicPopup.alert({
-                        title: 'Помилка!',
-                        template: data.msg
-                    });
+                    $ionicPopup.alert({title:'Помилка!', template: data.msg});
                 }
 				else if (data.status == 'success'){
 					localStorageService.set('token', data.arr.token);
@@ -40,56 +37,69 @@ moneyApp.controller('homeCtrl', function($location, $window, $scope, $rootScope,
 });
 
 
-/*
-.controller('actionsCtrl', function($scope, $state, $ionicModal, $ionicPopup, connectionServ, actionsServ, categoriesServ, accountsServ){
-if (!$rootScope.isAuth){
-    $location.url('home');
-}
-    connectionServ.testConnection(testConnection($ionicPopup));
-    var obj = new Date();
-	var d = '0' + obj.getDate();
-	var m = '0' + (obj.getMonth()+1);
-	$scope.today = d.substr(d.length-2, 2) + '.' + m.substr(m.length-2, 2) + '.' + obj.getFullYear();
-    $scope.action = {
-		date: $scope.today,
-		type: '',
-		accountFrom_id: '',
-		accountTo_id: '',
-		category_id: '',
-		sum: '',
-		description: ''
-	};
-    $scope.types = {
-		plus: 'Доходи',
-		minus: 'Витрати',
-		move: 'Переказ'
-	};
-    $scope.actions = $scope.categories = $scope.accounts = [];
-    $scope.isShowMoreButton = true;
-    $scope.modal = false;
-    $scope.editID = false;
 
-    accountsServ.getAccounts(function(data){
-        if (data.status == 'success'){
-            data.arr = data.arr ? data.arr : [];
-            $scope.accounts = data.arr;
-        }
-    });
-    categoriesServ.getCategories(function(data){
-        if (data.status == 'success'){
-            data.arr = data.arr ? data.arr : [];
-            $scope.categories = data.arr;
-        }
-    });
-
-    $ionicModal.fromTemplateUrl('templates/actionForm.html', {
-        scope: $scope
-    }).then(function(modal){
-        $scope.modal = modal;
-    });
+moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $state, $ionicModal, $ionicPopup, actionsServ, categoriesServ, accountsServ, localStorageService){
+    this.init = function(){
+		$rootScope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
+        $scope.action = {
+			id: false,
+			date: $scope.getToday(),
+			type: '',
+			accountFrom_id: '',
+			accountTo_id: '',
+			category_id: '',
+			sum: '',
+			description: ''
+		};
+        $scope.actions = $scope.categories = $scope.accounts = [];
+        $scope.types   = {
+			plus: 'Доходи',
+			minus: 'Витрати',
+			move: 'Переказ'
+		};
+        $scope.isShowMoreButton = true;
+        $scope.modal = false;
+        $ionicModal.fromTemplateUrl('templates/actionForm.html', {
+            scope: $scope
+        }).then(function(modal){
+            $scope.modal = modal;
+        });
+        categoriesServ.getCategories(function(data){
+            if (data.status == 'success'){
+                $scope.categories = data.arr ? data.arr : [];
+            }
+            else{
+                $ionicPopup.alert({title:'Помилка!', template: data.msg});
+            }
+        });
+        accountsServ.getAccounts(function(data){
+			if (data.status == 'success'){
+				$scope.accounts = data.arr ? data.arr : [];
+			}
+			else{
+				$ionicPopup.alert({title:'Помилка!', template: data.msg});
+			}
+		});
+        $scope.getActions();
+	}
+    $scope.getToday = function(){
+        let obj = new Date();
+        let d = '0' + obj.getDate();
+        let m = '0' + (obj.getMonth()+1);
+        return d.substr(d.length-2, 2) + '.' + m.substr(m.length-2, 2) + '.' + obj.getFullYear();
+    }
+    $scope.dateToWEB = function(date){
+		return date.substr(8,2) + '.' + date.substr(5,2) + '.' + date.substr(0,4);
+	}
+    $scope.dateToAPI = function(date){
+		return date.substr(6,4) + '-' + date.substr(3,2) + '-' + date.substr(0,2);
+	}
     $scope.editActionOpenModal = function(id){
         if (id){
-            $scope.editID = id;
+            //$scope.editID = id;
             actionsServ.getAction(id, function(data){
                 $scope.action.date = data.arr.date;
                 $scope.action.type = data.arr.type;
@@ -98,69 +108,76 @@ if (!$rootScope.isAuth){
                 $scope.action.category_id = data.arr.category_id;
                 $scope.action.sum = data.arr.sum;
                 $scope.action.description = data.arr.description;
-                $scope.modal.show();
             });
         }
         else{
-            $scope.editID = false;
+            //$scope.editID = false;
             $scope.action.date = $scope.today;
-            $scope.modal.show();
         }
+        $scope.modal.show();
     }
     $scope.editActionCloseModal = function(){
         $scope.modal.remove();
         $scope.action.date = $scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
-        $scope.editID = false;
+        //$scope.editID = false;
         $ionicModal.fromTemplateUrl('templates/actionForm.html', {
             scope: $scope
         }).then(function(modal){
             $scope.modal = modal;
         });
     }
-
     $scope.getActions = function(data){
 		actionsServ.getActions($scope.actions.length, 20, function(data){
 			if (data.status == 'success'){
-				data.arr = data.arr ? data.arr : [];
-				$scope.actions = $scope.actions.concat(data.arr);
+				$scope.actions = $scope.actions.concat(data.arr ? data.arr : []);
 				if (!data.arr.length){
 					$scope.isShowMoreButton = false;
 				}
 			}
+			else{
+				$ionicPopup.alert({title:'Помилка!', template: data.msg});
+			}
 		});
 	}
-	$scope.getActions();
-
+    $scope.getAction = function(id){
+		if (!id){
+			$scope.action.id   = false;
+			$scope.action.date = $scope.getToday();
+			$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
+		}
+		else{
+			actionsServ.getAction(id, function(data){
+				if (data.status == 'success'){
+					$scope.action.id             = data.arr.id;
+					$scope.action.date           = $scope.dateToWEB(data.arr.date);
+					$scope.action.type           = data.arr.type;
+					$scope.action.accountFrom_id = data.arr.accountFrom_id;
+					$scope.action.accountTo_id   = data.arr.accountTo_id;
+					$scope.action.category_id    = data.arr.category_id;
+					$scope.action.sum            = data.arr.sum;
+					$scope.action.description    = data.arr.description;
+				}
+				else{
+					$ionicPopup.alert({title:'Помилка!', template: data.msg});
+				}
+			});
+		}
+	}
     $scope.editAction = function(){
 		if (!$scope.action.type){
-            $ionicPopup.alert({
-                title: 'Помилка!',
-                template: 'Поле "Тип" обов\'язкове для заповнення!'
-            });
+            $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Поле "Тип" обов\'язкове для заповнення!'});
 		}
 		else if ($scope.action.type == 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.accountTo_id || !$scope.action.sum)){
-            $ionicPopup.alert({
-                title: 'Помилка!',
-                template: 'Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!'
-            });
+            $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!'});
 		}
 		else if ($scope.action.type != 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.category_id || !$scope.action.sum)){
-            $ionicPopup.alert({
-                title: 'Помилка!',
-                template: 'Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!'
-            });
+            $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!'});
 		}
 		else if (!/^\d{2}\.\d{2}\.\d{4}$/.test($scope.action.date)){
-            $ionicPopup.alert({
-                title: 'Помилка!',
-                template: 'Значення поля "Дата" має бути наступного формату: 01.01.2017!'
-            });
+            $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!'});
 		}
 		else if (!/^[\d\.]+$/.test($scope.action.sum)){
-            $ionicPopup.alert({
-                title: 'Помилка!',
-                template: 'Значення поля "Сума" має бути числовим!'
-            });
+            $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Значення поля "Сума" має бути числовим!'});
 		}
 		else{
 			if ($scope.action.type == 'move'){
@@ -169,56 +186,52 @@ if (!$rootScope.isAuth){
 			else if ($scope.action.type != 'move'){
 				$scope.action.accountTo_id = '0';
 			}
-			actionsServ.editAction($scope.editID, $scope.action, function(data){
-                if (data === false){
-                    $ionicPopup.alert({
-                        title: 'Помилка!',
-                        template: 'Відсутнє підключення до мережі Інтернет.'
-                    });
-                }
-                else if (data.status == 'error'){
-                    $ionicPopup.alert({
-                        title: 'Помилка!',
-                        template: data.msg
-                    });
-                }
-				else if (data.status == 'success'){
-                    $scope.editActionCloseModal();
-                    $state.go('actions', {}, {reload: true});
+			$scope.action.date = $scope.dateToAPI($scope.action.date);
+			actionsServ.editAction($scope.action, function(data){
+				data.arr.date = $scope.dateToWEB(data.arr.date);
+				if (data.status == 'success'){
+                    //$scope.editActionCloseModal();
+                    //$state.go('actions', {}, {reload: true});
+					if ($scope.action.id){     // edit transaction
+						for (var i=0; i<$scope.actions.length; i++){
+							if ($scope.actions[i].id == $scope.action.id){
+								$scope.actions[i] = data.arr;
+							}
+						}
+					}
+					else{     // add transaction
+						$scope.actions.unshift(data.arr);
+					}
+					//accountsServ.getAccountsPanel();
 				}
+				$ionicPopup.alert({title:'Помилка!', template: data.msg});
             });
 		}
 	}
-    $scope.deleteAction = function(){
-        $ionicPopup.confirm({
-            title: 'Увага!',
-            template: 'Ви дійсно хочете видалити цю транзакцію?'
-        }).then(function(res){
+    $scope.delAction = function(id){
+        $ionicPopup.confirm({title: 'Увага!', template: 'Ви дійсно хочете видалити цю транзакцію?'}).then(function(res){
             if (res){
-                actionsServ.deleteAction($scope.editID, function(data){
-                    if (data === false){
-                        $ionicPopup.alert({
-                            title: 'Помилка!',
-                            template: 'Відсутнє підключення до мережі Інтернет.'
-                        });
-                    }
-                    else if (data.status == 'error'){
-                        $ionicPopup.alert({
-                            title: 'Помилка!',
-                            template: data.msg
-                        });
-                    }
-    				else if (data.status == 'success'){
-                        $scope.editActionCloseModal();
-                        if ($state.current.url == '/actions'){
-                            $state.go('actions', {}, {reload: true});
-                        }
+                actionsServ.deleteAction(id, function(data){
+                    if (data.status == 'success'){
+                        //$scope.editActionCloseModal();
+                        //if ($state.current.url == '/actions'){
+                            //$state.go('actions', {}, {reload: true});
+                        //}
+    					for (var i=0; i<$scope.actions.length; i++){
+    						if ($scope.actions[i].id == id){
+    							$scope.actions.splice(i, 1);
+    						}
+    					}
+    					//accountsServ.getAccountsPanel();
     				}
+    				$ionicPopup.alert({title:'Помилка!', template: data.msg});
     			});
             }
         });
 	}
-})*/
+
+	this.init();
+});
 
 
 
