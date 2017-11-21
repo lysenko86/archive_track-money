@@ -1,16 +1,17 @@
-<ion-modal-view>
+<ion-modal-view class="ionViewActionForm">
     <ion-header-bar class="bar-positive">
         <button class="button button-icon button-clear ion-backspace" ng-click="editActionCloseModal()"></button>
-        <h1 class="title">{{editID ? 'Редагування' : 'Додавання'}} транзакції</h1>
-        <button class="button button-icon button-clear ion-close-circled" ng-if="editID" ng-click="deleteAction()"></button>
+        <h1 class="title">{{action.id ? 'Редагування' : 'Додавання'}} транзакції</h1>
+        <button class="button button-icon button-clear ion-close-circled" ng-if="action.id" ng-click="delAction(action.id)"></button>
         <button class="button button-icon button-clear ion-checkmark-circled" type="submit" form="editAction"></button>
     </ion-header-bar>
     <ion-content>
         <form ng-submit="editAction()" id="editAction">
+            <input type="hidden" ng-model="action.id" />
             <ion-list>
                 <label class="item item-input">
                     <span class="input-label">Дата:</span>
-                    <input type="text" ng-model="action.date" placeholder="01.01.2017" maxLength="10" />
+                    <input type="text" ng-model="action.date" placeholder="XX.XX.XXXX" maxLength="10" />
                 </label>
                 <label class="item item-input">
                     <span class="input-label">Тип:</span>

@@ -118,6 +118,28 @@ ion-header-bar.bar.bar-header .title{
 
 
 
+.ionViewActionForm{}
+.ionViewActionForm .item-radio{
+    border: none;
+}
+.ionViewActionForm .item-radio .item-content{
+    padding: 1px 5px;
+    margin-right: 7px;
+    font-size: 90%;
+}
+.ionViewActionForm .item-radio input:checked + .radio-content .item-content{
+    background-color: #00f;
+    color: #fff;
+    border-radius: 4px;
+}
+.ionViewActionForm .item-radio .radio-icon{
+    display: none;
+}
+
+
+
+
+
 #loaderPage{
     position: fixed;
     justify-content: center;
@@ -149,24 +171,8 @@ ion-header-bar.bar.bar-header .title{
 
 
 /*
-label.item-radio{
-    border: none;
-    display: inline-block;
-}
-label.item-radio .radio-content .item-content{
-    padding: 4px 15px 4px 0px;
-    margin-right: 13px;
-    font-size: 90%;
-}
-label.item-radio input:checked + .radio-content .item-content{
-    background-color: #fff;
-}
-label.item-radio .radio-content .radio-icon{
-    right: 12px;
-    top: 3px;
-    padding: 0px;
-    font-size: 18px;
-}
+
+
 
 
 

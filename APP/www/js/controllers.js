@@ -62,11 +62,6 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 		};
         $scope.isShowMoreButton = true;
         $scope.modal = false;
-        $ionicModal.fromTemplateUrl('templates/actionForm.html', {
-            scope: $scope
-        }).then(function(modal){
-            $scope.modal = modal;
-        });
         categoriesServ.getCategories(function(data){
             if (data.status == 'success'){
                 $scope.categories = data.arr ? data.arr : [];
@@ -98,33 +93,18 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 		return date.substr(6,4) + '-' + date.substr(3,2) + '-' + date.substr(0,2);
 	}
     $scope.editActionOpenModal = function(id){
-        if (id){
-            //$scope.editID = id;
-            actionsServ.getAction(id, function(data){
-                $scope.action.date = data.arr.date;
-                $scope.action.type = data.arr.type;
-                $scope.action.accountFrom_id = data.arr.accountFrom_id;
-                $scope.action.accountTo_id = data.arr.accountTo_id;
-                $scope.action.category_id = data.arr.category_id;
-                $scope.action.sum = data.arr.sum;
-                $scope.action.description = data.arr.description;
+        $scope.getAction(id, function(){
+            $ionicModal.fromTemplateUrl('templates/actionForm.html', {
+                scope: $scope
+            }).then(function(modal){
+                $scope.modal = modal;
+                $scope.modal.show();
             });
-        }
-        else{
-            //$scope.editID = false;
-            $scope.action.date = $scope.today;
-        }
-        $scope.modal.show();
+        });
     }
     $scope.editActionCloseModal = function(){
         $scope.modal.remove();
         $scope.action.date = $scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
-        //$scope.editID = false;
-        $ionicModal.fromTemplateUrl('templates/actionForm.html', {
-            scope: $scope
-        }).then(function(modal){
-            $scope.modal = modal;
-        });
     }
     $scope.getActions = function(data){
 		actionsServ.getActions($scope.actions.length, 20, function(data){
@@ -139,11 +119,14 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 			}
 		});
 	}
-    $scope.getAction = function(id){
+    $scope.getAction = function(id, cb){
 		if (!id){
 			$scope.action.id   = false;
 			$scope.action.date = $scope.getToday();
 			$scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
+            if (!angular.isUndefined(cb)){
+                cb();
+            }
 		}
 		else{
 			actionsServ.getAction(id, function(data){
@@ -156,6 +139,9 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 					$scope.action.category_id    = data.arr.category_id;
 					$scope.action.sum            = data.arr.sum;
 					$scope.action.description    = data.arr.description;
+                    if (!angular.isUndefined(cb)){
+                        cb();
+                    }
 				}
 				else{
 					$ionicPopup.alert({title:'Помилка!', template: data.msg});
@@ -190,9 +176,8 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 			actionsServ.editAction($scope.action, function(data){
 				data.arr.date = $scope.dateToWEB(data.arr.date);
 				if (data.status == 'success'){
-                    //$scope.editActionCloseModal();
-                    //$state.go('actions', {}, {reload: true});
-					if ($scope.action.id){     // edit transaction
+                    $scope.editActionCloseModal();
+                    if ($scope.action.id){     // edit transaction
 						for (var i=0; i<$scope.actions.length; i++){
 							if ($scope.actions[i].id == $scope.action.id){
 								$scope.actions[i] = data.arr;
@@ -200,23 +185,22 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 						}
 					}
 					else{     // add transaction
-						$scope.actions.unshift(data.arr);
+                        $scope.actions.unshift(data.arr); // Не додає вперед масиву елемент
 					}
 					//accountsServ.getAccountsPanel();
 				}
-				$ionicPopup.alert({title:'Помилка!', template: data.msg});
+                else if(data.status == 'error'){
+                    $ionicPopup.alert({title: 'Помилка!', template: data.msg});
+                }
             });
 		}
 	}
     $scope.delAction = function(id){
         $ionicPopup.confirm({title: 'Увага!', template: 'Ви дійсно хочете видалити цю транзакцію?'}).then(function(res){
             if (res){
-                actionsServ.deleteAction(id, function(data){
+                actionsServ.delAction(id, function(data){
                     if (data.status == 'success'){
-                        //$scope.editActionCloseModal();
-                        //if ($state.current.url == '/actions'){
-                            //$state.go('actions', {}, {reload: true});
-                        //}
+                        $scope.editActionCloseModal();
     					for (var i=0; i<$scope.actions.length; i++){
     						if ($scope.actions[i].id == id){
     							$scope.actions.splice(i, 1);
@@ -224,7 +208,9 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
     					}
     					//accountsServ.getAccountsPanel();
     				}
-    				$ionicPopup.alert({title:'Помилка!', template: data.msg});
+                    else if(data.status == 'error'){
+		                $ionicPopup.alert({title:'Помилка!', template: data.msg});
+                    }
     			});
             }
         });
