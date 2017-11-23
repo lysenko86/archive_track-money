@@ -72,6 +72,9 @@ ion-header-bar.bar.bar-header .title{
     width: 255px;
     margin: 0px auto;
 }
+.ionViewHome .blockDescr strong{
+    color: #f00;
+}
 .ionViewHome .blockAuth{
     margin-top: 50px;
 }
@@ -140,6 +143,32 @@ ion-header-bar.bar.bar-header .title{
 
 
 
+.ionViewBudgets{}
+.ionViewBudgets .select-years, .ionViewBudgets .select-months{
+    padding: 15px 0px;
+}
+.ionViewBudgets .select-years select, .ionViewBudgets .select-months select{
+    max-width: none;
+    left: 0px;
+    width: 100%;
+}
+.ionViewBudgets .totalSum{
+    font-weight: bold;
+}
+.ionViewBudgets .tableHead{
+    background-color: #387ef5;
+    color: #fff;
+    padding-top: 5px;
+}
+.ionViewBudgets .tableRow{
+    border-bottom: 1px solid #eee;
+    margin-top: 5px;
+}
+
+
+
+
+
 #loaderPage{
     position: fixed;
     justify-content: center;
@@ -166,31 +195,3 @@ ion-header-bar.bar.bar-header .title{
     background-color: #DDDDDD;
     z-index: 1105;
 }
-
-
-
-
-/*
-
-
-
-
-
-.row.tableHead{
-    background-color: #387ef5;
-    color: #fff;
-    padding-top: 5px;
-}
-.row.tableRow{
-    border-bottom: 1px solid #eee;
-    margin-top: 5px;
-}
-
-
-
-
-
-.budgetsPage .totalSum{
-    font-weight: bold;
-}
-*/

@@ -120,12 +120,11 @@ moneyApp.service('accountsServ', function(requestServ){
 
 
 
-/*.service('budgetsServ', function($http){
-	this.getBudget = function(month, year, cb){
-		$http.get('http://trackmoney.com.ua/server.php?action=getBudget&month=' + month + '&year=' + year)
-		.success(function(data){
-			cb(data);
-		});
-	}
+moneyApp.service('budgetsServ', function(requestServ){
+    this.getBudget = function(budget, cb){
+        requestServ.sendRequest('get', 'getBudget', {
+            month: budget.month,
+            year:  budget.year
+        }, cb);
+    }
 });
-*/

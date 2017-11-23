@@ -185,9 +185,9 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 						}
 					}
 					else{     // add transaction
-                        $scope.actions.unshift(data.arr); // Не додає вперед масиву елемент
+                        $scope.actions.unshift(data.arr);
+                        $state.go('actions', {}, {reload: true});
 					}
-					//accountsServ.getAccountsPanel();
 				}
                 else if(data.status == 'error'){
                     $ionicPopup.alert({title: 'Помилка!', template: data.msg});
@@ -206,7 +206,6 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
     							$scope.actions.splice(i, 1);
     						}
     					}
-    					//accountsServ.getAccountsPanel();
     				}
                     else if(data.status == 'error'){
 		                $ionicPopup.alert({title:'Помилка!', template: data.msg});
@@ -237,7 +236,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, acco
 				$scope.accounts = data.arr;
 			}
 			else{
-				messagesServ.showMessages(data.status, data.msg);
+                $ionicPopup.alert({title:'Помилка!', template: data.msg});
 			}
 		});
     }
@@ -247,24 +246,34 @@ moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, acco
 
 
 
-/*.controller('budgetsCtrl', function($scope, $ionicPopup, connectionServ, budgetsServ){
-    connectionServ.testConnection(testConnection($ionicPopup));
-    $scope.budget = {
-		categories: [],
-		plusPlan: '',
-		plusFact: '',
-        plusRest: '',
-		minusPlan: '',
-		minusFact: '',
-        minusRest: '',
-        balancePlan: '',
-        balanceFact: ''
-	};
-    var obj = new Date();
-    $scope.mathAbs = window.Math.abs;
-	budgetsServ.getBudget(obj.getMonth()+1+'', obj.getFullYear(), function(data){
-		$scope.budget.categories = data.arr;
-        $scope.budget.plusPlan = $scope.budget.plusFact = $scope.budget.plusRest = $scope.budget.minusPlan = $scope.budget.minusFact = $scope.budget.minusRest = $scope.budget.balancePlan = $scope.budget.balanceFact = '';
+moneyApp.controller('budgetsCtrl', function($location, $scope, $rootScope, $ionicPopup, budgetsServ, localStorageService){
+    this.init = function(){
+		$rootScope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
+        let obj        = new Date();
+		var activeYear = obj.getFullYear();
+		$scope.years   = [activeYear-1, activeYear, activeYear+1];
+		$scope.months  = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+		$scope.budget  = {
+			month: obj.getMonth()+1,
+			year: activeYear,
+			categories: [],
+			plusPlan: '',
+			plusFact: '',
+	        plusRest: '',
+			minusPlan: '',
+			minusFact: '',
+	        minusRest: '',
+	        balancePlan: '',
+	        balanceFact: ''
+		};
+        $scope.mathAbs = window.Math.abs;
+        $scope.getBudget($scope.budget.year, $scope.budget.month);
+	}
+    $scope.calculateTotalSum = function(){
+		$scope.budget.plusPlan = $scope.budget.plusFact = $scope.budget.plusRest = $scope.budget.minusPlan = $scope.budget.minusFact = $scope.budget.minusRest = $scope.budget.balancePlan = $scope.budget.balanceFact = '';
 		for (var i=0; i<$scope.budget.categories.length; i++){
 			if ($scope.budget.categories[i].type == 'plus'){
 				$scope.budget.plusPlan = $scope.budget.plusPlan*1 + $scope.budget.categories[i].plan*1;
@@ -275,10 +284,22 @@ moneyApp.controller('accountsCtrl', function($location, $scope, $rootScope, acco
 				$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
 			}
 		}
-        $scope.budget.plusRest = $scope.budget.plusPlan - $scope.budget.plusFact;
-        $scope.budget.minusRest = $scope.budget.minusPlan - $scope.budget.minusFact;
-        $scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
-        $scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
-	});
+		$scope.budget.plusRest    = $scope.budget.plusPlan - $scope.budget.plusFact;
+		$scope.budget.minusRest   = $scope.budget.minusPlan - $scope.budget.minusFact;
+		$scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
+		$scope.budget.balanceFact = $scope.budget.plusFact - $scope.budget.minusFact;
+	}
+    $scope.getBudget = function(){
+		budgetsServ.getBudget($scope.budget, function(data){
+			if (data.status == 'success'){
+				$scope.budget.categories = data.arr;
+				$scope.calculateTotalSum();
+			}
+			else{
+                $ionicPopup.alert({title:'Помилка!', template: data.msg});
+			}
+		});
+	}
+
+	this.init();
 });
-*/

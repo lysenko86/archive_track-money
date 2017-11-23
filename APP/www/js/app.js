@@ -36,11 +36,11 @@ moneyApp.config(function($stateProvider, $urlRouterProvider, localStorageService
         templateUrl: 'templates/accounts.html',
         controller: 'accountsCtrl'
     })
-    /*.state('budgets', {
+    .state('budgets', {
         url: '/budgets',
         cache: false,
         templateUrl: 'templates/budgets.html',
         controller: 'budgetsCtrl'
-    })*/
+    })
     $urlRouterProvider.otherwise('/home');
 });
