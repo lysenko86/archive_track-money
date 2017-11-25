@@ -185,8 +185,14 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 						}
 					}
 					else{     // add transaction
-                        $scope.actions.unshift(data.arr);
-                        $state.go('actions', {}, {reload: true});
+                        if ($location.$$path == '/actions'){
+                            if ($scope.$parent.$$prevSibling){
+                                $scope.$parent.$$prevSibling.actions.unshift(data.arr);
+                            }
+                            else if ($scope.$parent.$$nextSibling){
+                                $scope.$parent.$$nextSibling.actions.unshift(data.arr);
+                            }
+                        }
 					}
 				}
                 else if(data.status == 'error'){
