@@ -21,6 +21,9 @@
 .headerMarginTop{
     margin-top: 40px;
 }
+.marginForAccountsTop{
+    margin-top: 80px;
+}
 .emptyListText{
     font-size: 20px;
     font-weight: bold;
@@ -40,18 +43,22 @@ ion-header-bar.bar.bar-header{
 ion-header-bar.bar.bar-header .title{
     color: #fff;
 }
-ion-nav-bar .accountsTopPanel{
-    position: relative;
-    top: 40px;
+.accountsTopPanel{
+    position: absolute;
+    top: 45px;
     z-index: 10;
+    overflow: hidden;
+    height: 36px;
+    background-color: #fff;
 }
-ion-nav-bar .accountsTopPanel ul li{
+.accountsTopPanel ul li{
     display: block;
     float: left;
     padding: 0px 10px;
     font-size: 12px;
+    line-height: 16px;
 }
-ion-nav-bar .accountsTopPanel ul:after{
+.accountsTopPanel ul:after{
     content: ' ';
     display: block;
     clear: both;

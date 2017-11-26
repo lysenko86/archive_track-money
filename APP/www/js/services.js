@@ -1,6 +1,6 @@
 "use strict";
 
-var isDev  = location.href.indexOf('http://192.168') > -1;
+var isDev  = location.href.indexOf('http://192.168') > -1 || location.href.indexOf('http://localhost:') > -1;
 var config = {
     isDev : isDev,
     api: isDev ? 'http://api.trackmoney/api.php' : 'http://api.trackmoney.com.ua/api.php'
@@ -124,7 +124,9 @@ moneyApp.service('accountsServ', function($rootScope, requestServ, $ionicPopup){
                     template: data.msg
                 });
 			}
-            $rootScope.accountsPanel = data.arr ? data.arr : [];
+            else{
+                $rootScope.accountsPanel = data.arr ? data.arr.filter(a=>a.panel == 1) : [];
+            }
         });
     }
 });

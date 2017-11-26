@@ -1,5 +1,5 @@
 <ion-view view-title="Транзакції">
-    <ion-content class="ionViewActions headerMarginTop">
+    <ion-content ng-class="{ionViewActions: true, headerMarginTop: true, marginForAccountsTop: accountsPanel.length}">
         <div class="emptyListText" ng-if="!actions.length">Немає записів</div>
         <ion-list ng-if="actions.length">
             <ion-item class="listItem" ng-repeat="item in actions">

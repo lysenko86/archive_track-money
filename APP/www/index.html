@@ -35,9 +35,9 @@
                     <ion-nav-buttons side="right">
                         <button class="button button-icon button-clear ion-plus-circled" ng-click="editActionOpenModal()"></button>
                     </ion-nav-buttons>
-                    <div class="accountsTopPanel">
+                    <div class="accountsTopPanel" ng-if="accountsPanel.length">
                         <ul>
-                            <li ng-repeat="item in accountsPanel" ng-if="item.panel == '1'">{{item.title}}: {{item.balance}}</li>
+                            <li ng-repeat="item in accountsPanel">{{item.title}}: {{item.balance}}</li>
                         </ul>
                     </div>
                 </ion-nav-bar>
