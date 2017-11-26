@@ -210,12 +210,6 @@ nav.navbar{
     .main .home-working{
         padding-top: 10px;
     }
-    .main .home-worked{
-        padding-top: 30px;
-    }
-        .main .home-worked .well{
-            margin-top: 20px;
-        }
     .main .home-help{
         float: left;
         padding-top: 40px;
@@ -270,6 +264,9 @@ nav.navbar{
             }
     .main .barMonthYear{
         margin-bottom: 30px;
+    }
+    .main blockquote p{
+        font-size: 14px;
     }
 
 
