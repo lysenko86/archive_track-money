@@ -112,9 +112,20 @@ moneyApp.service('categoriesServ', function(requestServ){
 
 
 
-moneyApp.service('accountsServ', function(requestServ){
+moneyApp.service('accountsServ', function($rootScope, requestServ, $ionicPopup){
     this.getAccounts = function(cb){
         requestServ.sendRequest('get', 'getAccounts', {}, cb);
+    }
+    this.getAccountsPanel = function(){
+        requestServ.sendRequest('get', 'getAccounts', {}, function(data){
+            if (data.status != 'success'){
+                $ionicPopup.alert({
+                    title: 'Помилка!',
+                    template: data.msg
+                });
+			}
+            $rootScope.accountsPanel = data.arr ? data.arr : [];
+        });
     }
 });
 

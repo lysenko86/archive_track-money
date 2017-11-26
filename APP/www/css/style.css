@@ -40,6 +40,22 @@ ion-header-bar.bar.bar-header{
 ion-header-bar.bar.bar-header .title{
     color: #fff;
 }
+ion-nav-bar .accountsTopPanel{
+    position: relative;
+    top: 40px;
+    z-index: 10;
+}
+ion-nav-bar .accountsTopPanel ul li{
+    display: block;
+    float: left;
+    padding: 0px 10px;
+    font-size: 12px;
+}
+ion-nav-bar .accountsTopPanel ul:after{
+    content: ' ';
+    display: block;
+    clear: both;
+}
 
 
 

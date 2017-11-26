@@ -4,13 +4,14 @@ angular.module('moneyApp.controllers', []);
 
 
 
-moneyApp.controller('homeCtrl', function($location, $window, $scope, $rootScope, $ionicPopup, localStorageService, usersServ){
+moneyApp.controller('homeCtrl', function($location, $window, $scope, $rootScope, $ionicPopup, localStorageService, usersServ, accountsServ){
     this.init = function(){
 		$rootScope.isAuth = localStorageService.get('token');
 		$scope.user = {
 			email: '',
 			password: ''
 		};
+        accountsServ.getAccountsPanel();
 	}
     $scope.signin = function(){
 		if (!$scope.user.email || !$scope.user.password){
@@ -194,6 +195,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
                             }
                         }
 					}
+                    accountsServ.getAccountsPanel();
 				}
                 else if(data.status == 'error'){
                     $ionicPopup.alert({title: 'Помилка!', template: data.msg});
@@ -212,6 +214,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
     							$scope.actions.splice(i, 1);
     						}
     					}
+                        accountsServ.getAccountsPanel();
     				}
                     else if(data.status == 'error'){
 		                $ionicPopup.alert({title:'Помилка!', template: data.msg});
