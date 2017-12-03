@@ -193,6 +193,13 @@ nav.navbar{
         padding: 10px 20px;
         text-align: justify;
     }
+    .main .home-btnGooglePlay{
+        padding: 10px 20px;
+        text-align: center;
+    }
+        .main .home-btnGooglePlay img{
+            width: 300px;
+        }
     .main .home-countUser{
         padding: 20px;
         font-size: 16px;
