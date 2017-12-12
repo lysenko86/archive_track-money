@@ -34,7 +34,8 @@
 				            <ul class="nav navbar-nav navbar-right">
 				                <li ng-class="setActive('/home')"><a href="#/home">Головна</a></li>
 				                <li ng-class="setActive('/signin')" ng-hide="isAuth"><a href="#/signin">Вхід</a></li>
-				                <li ng-class="setActive('/users')" ng-show="isAuth"><a href="#/users">Користувачі</a></li>
+								<li ng-class="setActive('/users')" ng-show="isAuth"><a href="#/users">Користувачі</a></li>
+								<li ng-class="setActive('/mailing')" ng-show="isAuth"><a href="#/mailing">Розсилка</a></li>
 				                <li ng-class="setActive('/logout')" ng-show="isAuth"><a href="#/logout">Вихід</a></li>
 				            </ul>
 				        </div>

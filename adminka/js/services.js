@@ -88,3 +88,30 @@ moneyApp.service('usersServ', function(requestServ){
         requestServ.sendRequest('get', 'admin_getUsers', {}, cb);
     }
 });
+
+
+
+moneyApp.service('mailingServ', function(requestServ){
+    this.getMails = function(cb){
+        requestServ.sendRequest('get', 'admin_getMails', {}, cb);
+    }
+    this.getMail = function(id, cb){
+        requestServ.sendRequest('get', 'admin_getMail', {
+            id: id
+        }, cb);
+    }
+    this.mailSave = function(mail, cb){
+        requestServ.sendRequest('post', 'admin_mailSave', {
+            id:      mail.id,
+            theme:   mail.theme,
+			content: mail.content
+        }, cb);
+	}
+    this.mailTest = function(mail, cb){
+        requestServ.sendRequest('post', 'admin_mailTest', {
+            id:      mail.id,
+            theme:   mail.theme,
+			content: mail.content
+        }, cb);
+	}
+});

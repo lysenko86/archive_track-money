@@ -1,0 +1,30 @@
+<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages">{{message.text}}</div>
+<div class="row page-mailing">
+	<div class="col-xs-12">
+        <form>
+			<input type="hidden" id="id" ng-model="mail.id" />
+			<div class="form-group">
+                <label for="mails">Листи:</label>
+                <select class="form-control" id="mails" ng-model="mail.id" ng-change="getMail(mail.id)">
+                    <option value=''>- Створити новий -</option>
+                    <option ng-repeat="item in mails" value='{{item.id}}'>{{item.date ? item.date : 'не відправлено'}} - {{item.theme}}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="theme">Тема:</label>
+                <input type="text" class="form-control" id="theme" ng-model="mail.theme" />
+            </div>
+            <div class="form-group">
+                <label for="content">Вміст:</label>
+                <textarea class="form-control" id="content" ng-model="mail.content"></textarea>
+            </div>
+			<div class="text-center">
+				<div class="btn-group">
+					<button type="button" class="btn btn-primary" ng-click="mailSave()">{{mail.id ? 'Зберегти' : 'Створити'}}</button>
+					<button type="button" class="btn btn-primary" ng-click="mailTest()">Тест</button>
+					<button type="button" class="btn btn-primary" ng-click="mailSend()">Розіслати</button>
+				</div>
+			</div>
+        </form>
+	</div>
+</div>
