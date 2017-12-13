@@ -1,6 +1,5 @@
 <?php
 class Forum{
-    private $forumEmail = 'lysenkoa86@gmail.com';
     private $params     = [];
     private $data       = [];
     private $db         = NULL;
@@ -99,7 +98,8 @@ class Forum{
             $this->data['arr'] = $this->data['arr'][0];
             $subject           = 'TrackMoney.com.ua - Нове повідомлення на форумі';
             $mail              = 'Новий пост на форумі, для перегляду перейдіть за посиланням: http://trackmoney.com.ua/#/forum/'.$id;
-            mail($this->forumEmail, $subject, $mail);
+            global $officialEmail;
+            mail($officialEmail, $subject, $mail);
             $this->data['status'] = 'success';
             $this->data['msg']    = "Готово! Пост успішно доданий.";
         }
@@ -133,7 +133,7 @@ class Forum{
             $this->data['arr'] = $this->data['arr'][0];
             $subject           = 'TrackMoney.com.ua - Нове повідомлення на форумі';
             $mail              = 'Нове повідомлення на форумі, для перегляду перейдіть за посиланням: http://trackmoney.com.ua/#/forum/'.$this->params['fid'];
-            mail($this->forumEmail, $subject, $mail);
+            mail($officialEmail, $subject, $mail);
             mail($this->data['arr']['email_created'], $subject, $mail);
             $this->data['status'] = 'success';
             $this->data['msg']    = "Готово! Коментар успішно доданий.";

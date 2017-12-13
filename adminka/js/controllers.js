@@ -179,7 +179,23 @@ moneyApp.controller('mailingCtrl', function($location, $scope, messagesServ, mai
 		}
 	}
 	$scope.mailSend = function(){
-		console.log('Send');
+		if (!$scope.mail.theme || !$scope.mail.content){
+			messagesServ.showMessages('error', 'Помилка! Поля "Тема" та "Вміст" обов\'язкові для заповнення!');
+		}
+		else{
+			mailingServ.mailSend($scope.mail, function(data){
+				if (data.status == 'success'){
+					if ($scope.mail.id){
+						for (var i=0; i<$scope.mails.length; i++){
+							if ($scope.mails[i].id == $scope.mail.id){
+								$scope.mails[i] = data.arr;
+							}
+						}
+					}
+				}
+				messagesServ.showMessages(data.status, data.msg);
+			});
+		}
 	}
 
 	this.init();

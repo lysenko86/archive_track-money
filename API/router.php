@@ -15,6 +15,7 @@ class Router{
         'admin_getMail'  => ['ctrl' => 'Admins', 'method' => 'getMail',  'access' => ['super']],
         'admin_mailSave' => ['ctrl' => 'Admins', 'method' => 'mailSave', 'access' => ['super']],
         'admin_mailTest' => ['ctrl' => 'Admins', 'method' => 'mailTest', 'access' => ['super']],
+        'admin_mailSend' => ['ctrl' => 'Admins', 'method' => 'mailSend', 'access' => ['super']],
 
         'getCountUsers'    => ['ctrl' => 'Users', 'method' => 'getCountUsers',    'access' => ['guest', 'user', 'admin']],
         'signin'           => ['ctrl' => 'Users', 'method' => 'signin',           'access' => ['guest']],

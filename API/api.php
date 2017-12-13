@@ -12,6 +12,7 @@
 
 
 
+    $officialEmail = 'INFO@TrackMoney.com.ua';
     $data   = ['status' => '', 'msg' => '', 'arr' => []];
     $db     = new Db;
     $router = new Router;

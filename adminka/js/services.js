@@ -114,4 +114,11 @@ moneyApp.service('mailingServ', function(requestServ){
 			content: mail.content
         }, cb);
 	}
+    this.mailSend = function(mail, cb){
+        requestServ.sendRequest('post', 'admin_mailSend', {
+            id:      mail.id,
+            theme:   mail.theme,
+			content: mail.content
+        }, cb);
+	}
 });
