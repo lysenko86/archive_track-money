@@ -2,7 +2,7 @@
 <widget id="com.OleksandrLysenko.TrackMoney" version="1.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>TrackMoney</name>
     <description>The service for tracking your money.</description>
-    <author email="lysenkoa86@gmail.com" href="http://trackmoney.com.ua">Oleksandr Lysenko</author>
+    <author email="INFO@TrackMoney.com.ua" href="http://trackmoney.com.ua">Oleksandr Lysenko</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-navigation href="http://ionic.local/*" />
