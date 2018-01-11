@@ -71,6 +71,41 @@ moneyApp.service('usersServ', function(requestServ){
 
 
 
+moneyApp.service('forumServ', function(requestServ){
+    this.getPosts = function(from, count, cb){
+        requestServ.sendRequest('get', 'getPosts', {
+            from:  from,
+            count: count
+        }, cb);
+    }
+    this.getPost = function(id, cb){
+        requestServ.sendRequest('get', 'getPost', {
+            id: id
+        }, cb);
+    }
+    this.addPost = function(post, cb){
+        requestServ.sendRequest('post', 'addPost', {
+            title:    post.title,
+			category: post.category,
+			comment:  post.comment
+        }, cb);
+	}
+    this.addComment = function(fid, comment, cb){
+        requestServ.sendRequest('post', 'addComment', {
+            fid:     fid,
+			comment: comment
+        }, cb);
+	}
+    this.setPostStatus = function(id, status, cb){
+        requestServ.sendRequest('post', 'setPostStatus', {
+            id:     id,
+			status: status
+        }, cb);
+	}
+});
+
+
+
 moneyApp.service('actionsServ', function(requestServ){
     this.getActions = function(from, count, cb){
         requestServ.sendRequest('get', 'getActions', {

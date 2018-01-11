@@ -42,5 +42,17 @@ moneyApp.config(function($stateProvider, $urlRouterProvider, localStorageService
         templateUrl: 'templates/budgets.html',
         controller: 'budgetsCtrl'
     })
+    .state('forum', {
+        url: '/forum',
+        cache: false,
+        templateUrl: 'templates/forum.html',
+        controller: 'forumCtrl'
+    })
+    .state('post', {
+        url: '/forum/:post',
+        cache: false,
+        templateUrl: 'templates/post.html',
+        controller: 'forumCtrl'
+    })
     $urlRouterProvider.otherwise('/home');
 });

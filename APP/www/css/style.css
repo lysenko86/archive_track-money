@@ -192,6 +192,21 @@ ion-header-bar.bar.bar-header .title{
 
 
 
+.ionViewForum{}
+
+
+
+
+
+.ionViewPostForm{}
+.ionViewPostForm textarea{
+    height: 80px;
+}
+
+
+
+
+
 #loaderPage{
     position: fixed;
     justify-content: center;

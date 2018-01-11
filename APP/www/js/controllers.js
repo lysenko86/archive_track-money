@@ -312,3 +312,131 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, $rootScope, $ioni
 
 	this.init();
 });
+
+
+
+moneyApp.controller('forumCtrl', function($location, $scope, $rootScope, $state, $stateParams, $ionicModal, $ionicPopup, localStorageService, forumServ){
+    this.init = function(){
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
+		$scope.categories = {
+			public: 'Паблік',
+			bug: 'Помилки',
+			feature: 'Ідеї',
+			thank: 'Подяки',
+			question: 'Питання',
+			forAdmin: 'Адміну'
+		};
+		$scope.statuses = {
+			created: 'Створено',
+			viewed: 'Переглянуто',
+			fixed: 'Виправлено',
+			closed: 'Закрито'
+		};
+		$scope.post = {
+			title: '',
+			category: '',
+			comment: ''
+		};
+        $scope.modal       = false;
+		$scope.comment     = '';
+		$scope.posts       = $scope.comments = [];
+		$scope.fid         = $stateParams.post;
+		$scope.isAdmin     = false;
+		if (!$scope.fid){
+			forumServ.getPosts($scope.posts.length, 20, function(data){
+				if (data.status == 'success'){
+					data.arr       = data.arr ? data.arr : [];
+					$scope.posts   = data.arr;
+					$scope.isAdmin = data.isAdmin;
+				}
+				else{
+                    $ionicPopup.alert({title:'Помилка!', template: data.msg});
+				}
+			});
+		}
+		else{
+			forumServ.getPost($scope.fid, function(data){
+				if (data.status == 'success'){
+					$scope.post.id        = data.arr.id;
+					$scope.post.title     = data.arr.title;
+					$scope.post.category  = data.arr.category;
+					$scope.post.status    = data.arr.status;
+					$scope.post.created   = data.arr.created;
+					$scope.post.updated   = data.arr.updated;
+					$scope.post.email     = data.arr.email;
+					$scope.post.admin     = data.arr.admin;
+					$scope.post.email_upd = data.arr.email_upd;
+					$scope.post.admin_upd = data.arr.admin_upd;
+					$scope.post.count     = data.arr.count;
+					$scope.comments       = data.arr.comments;
+					$scope.isAdmin        = data.isAdmin;
+				}
+				else{
+					$ionicPopup.alert({title:'Помилка!', template: data.msg});
+				}
+			});
+		}
+	}
+    $scope.editPostOpenModal = function(){
+        $ionicModal.fromTemplateUrl('templates/postForm.html', {scope: $scope}).then(function(modal){
+            $scope.modal = modal;
+            $scope.modal.show();
+        });
+    }
+    $scope.editPostCloseModal = function(){
+        $scope.modal.remove();
+        $scope.post.title = $scope.post.category = $scope.post.comment = '';
+    }
+    $scope.editPost = function(){
+		if (!$scope.post.title || !$scope.post.category || !$scope.post.comment){
+            $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Поля "Тема", "Категорія" та "Перший коментар" обов\'язкові для заповнення!'});
+		}
+		else{
+			forumServ.addPost($scope.post, function(data){
+				if (data.status == 'success'){
+					$scope.posts.unshift(data.arr);
+					$scope.post.title  = $scope.post.category = $scope.post.comment = '';
+                    $scope.editActionCloseModal();
+				}
+            });
+		}
+	}
+
+
+
+
+	$scope.addComment = function(){
+		if (!$scope.comment){
+			messagesServ.showMessages('error', 'Помилка! Поле "Коментар" обов\'язкове для заповнення!');
+		}
+		else{
+			$scope.fid = $stateParams.post;
+			forumServ.addComment($scope.fid, $scope.comment, function(data){
+				if (data.status == 'success'){
+					$scope.comments.push(data.arr);
+					$scope.post.count     = $scope.comments.length;
+					$scope.post.updated   = data.arr.created;
+					$scope.post.email_upd = data.arr.email;
+					$scope.comment        = '';
+					angular.element(document).find('#popupEditForm').modal('hide');
+				}
+				messagesServ.showMessages(data.status, data.msg);
+            });
+		}
+	}
+	$scope.setPostStatus = function(id, status){
+		forumServ.setPostStatus(id, status, function(data){
+			if (data.status == 'success'){
+				$scope.post.status = data.arr.status;
+			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
+			}
+        });
+	}
+
+	this.init();
+});

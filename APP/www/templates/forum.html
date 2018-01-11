@@ -1,0 +1,16 @@
+<ion-view view-title="Форум">
+    <ion-content ng-class="{ionViewForum: true, headerMarginTop: true, marginForAccountsTop: accountsPanel.length}">
+        <button type="button" class="button button-small button-positive" ng-click="editPostOpenModal()">Додати</button>
+        <ion-list class="forum-list">
+            <ion-item ng-repeat="(catKey, catTitle) in categories" ng-if="catKey != 'forAdmin' || isAdmin">
+                <h3><strong>{{catTitle}}</strong></h3>
+                <div class="list-group">
+                    <a href="#/forum/{{item.id}}" class="list-group-item" ng-repeat="item in posts" ng-if="item.category == catKey">
+                        <h4 class="list-group-item-heading">{{item.title}}<span class="label-status {{item.status}}">{{statuses[item.status]}}</span></h4>
+                        <p class="list-group-item-text">Створено: {{item.admin*1 ? 'Admin' : item.email}} ({{item.created}}), Оновлено: {{item.admin_upd*1 ? 'Admin' : item.email_upd}} ({{item.updated}}), {{item.count}} коментарів</p>
+                    </a>
+                </div>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

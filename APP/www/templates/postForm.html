@@ -1,0 +1,33 @@
+<ion-modal-view class="ionViewPostForm">
+    <ion-header-bar class="bar-positive">
+        <button class="button button-icon button-clear ion-backspace" ng-click="editPostCloseModal()"></button>
+        <h1 class="title">Додавання посту</h1>
+        <button class="button button-icon button-clear ion-checkmark-circled" type="submit" form="editPost"></button>
+    </ion-header-bar>
+    <ion-content>
+        <form ng-submit="editPost()" id="editPost">
+            <ion-list>
+                <label class="item item-input">
+                    <span class="input-label">Тема:</span>
+                    <input type="text" ng-model="post.title" placeholder="Тема" />
+                </label>
+                <label class="item item-input item-select">
+                    <span class="input-label">Категорія:</span>
+                    <select ng-model="post.category">
+                        <option value=''>- Оберіть -</option>
+                        <option value='public'>Паблік</option>
+                        <option value='bug'>Помилка</option>
+                        <option value='feature'>Ідея</option>
+                        <option value='thank'>Подяка</option>
+                        <option value='question'>Питання</option>
+                        <option value='forAdmin'>Адміну</option>
+                    </select>
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Перший коментар:</span>
+                    <textarea ng-model="post.comment" placeholder="Коментар"></textarea>
+                </label>
+            </ion-list>
+        </form>
+    </ion-content>
+</ion-modal-view>
