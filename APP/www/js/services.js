@@ -96,12 +96,6 @@ moneyApp.service('forumServ', function(requestServ){
 			comment: comment
         }, cb);
 	}
-    this.setPostStatus = function(id, status, cb){
-        requestServ.sendRequest('post', 'setPostStatus', {
-            id:     id,
-			status: status
-        }, cb);
-	}
 });
 
 

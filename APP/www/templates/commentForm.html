@@ -1,0 +1,17 @@
+<ion-modal-view class="ionViewCommentForm">
+    <ion-header-bar class="bar-positive">
+        <button class="button button-icon button-clear ion-backspace" ng-click="editCommentCloseModal()"></button>
+        <h1 class="title">Додавання комменту</h1>
+        <button class="button button-icon button-clear ion-checkmark-circled" type="submit" form="editComment"></button>
+    </ion-header-bar>
+    <ion-content>
+        <form ng-submit="editComment()" id="editComment">
+            <ion-list>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Коментар:</span>
+                    <textarea ng-model="comment.text" placeholder="Коментар"></textarea>
+                </label>
+            </ion-list>
+        </form>
+    </ion-content>
+</ion-modal-view>

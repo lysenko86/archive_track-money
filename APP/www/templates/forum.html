@@ -3,16 +3,17 @@
         <div class="button-bar padding">
             <button type="button" class="button button-block button-positive" ng-click="editPostOpenModal()">Додати</button>
         </div>
-        <ion-list class="forum-list">
-            <ion-item ng-repeat="category in categories" ng-if="category.key != 'forAdmin' || isAdmin">
-                <ion-item class="item-devider">{{category.title}}</ion-item>
-                <div class="list-group">
-                    <a href="#/forum/{{item.id}}" class="list-group-item" ng-repeat="item in posts" ng-if="item.category == catKey">
-                        <h4 class="list-group-item-heading">{{item.title}}<span class="label-status {{item.status}}">{{statuses[item.status]}}</span></h4>
-                        <p class="list-group-item-text">Створено: {{item.admin*1 ? 'Admin' : item.email}} ({{item.created}}), Оновлено: {{item.admin_upd*1 ? 'Admin' : item.email_upd}} ({{item.updated}}), {{item.count}} коментарів</p>
-                    </a>
-                </div>
-            </ion-item>
+        <ion-list>
+            <div ng-repeat="item in posts">
+                <ion-item ng-if="item.catKey" class="item-divider">{{item.catTitle}}</ion-item>
+                <a ng-if="item.category" class="item" href="#/forum/{{item.id}}">
+                    {{item.title}}<span class="label-status {{item.status}}">{{item.statusTitle}}</span>
+                    <p>
+                        Створено: {{item.admin*1 ? 'Admin' : item.email}} ({{item.created}})
+                        <br>Оновлено: {{item.admin_upd*1 ? 'Admin' : item.email_upd}} ({{item.updated}}), {{item.count}} коментарів
+                    </p>
+                </a>
+            </div>
         </ion-list>
     </ion-content>
 </ion-view>

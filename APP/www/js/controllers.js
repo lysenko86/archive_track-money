@@ -340,23 +340,29 @@ moneyApp.controller('forumCtrl', function($location, $scope, $rootScope, $state,
 			category: '',
 			comment: ''
 		};
-        $scope.modal       = false;
-		$scope.comment     = '';
-		$scope.posts       = $scope.comments = [];
-		$scope.fid         = $stateParams.post;
-		$scope.isAdmin     = false;
+        $scope.modal   = false;
+		$scope.comment = {text: ''};
+		$scope.posts   = $scope.comments = [];
+		$scope.fid     = $stateParams.post;
+		$scope.isAdmin = false;
 		if (!$scope.fid){
 			forumServ.getPosts($scope.posts.length, 20, function(data){
 				if (data.status == 'success'){
 					data.arr       = data.arr ? data.arr : [];
-                    $scope.categories.map(function(category){
-                        console.log(data.arr.filter(post=>post.category == category.key));
+                    $scope.categories.forEach(function(category){
+                        if (data.isAdmin || category.key != 'forAdmin'){
+                            $scope.posts.push({
+                                catKey: category.key,
+                                catTitle: category.title
+                            });
+                        }
+                        data.arr.filter(post=>post.category == category.key).forEach(function(post){
+                            if (data.isAdmin || post.category != 'forAdmin'){
+                                post.statusTitle = $scope.statuses.find(status=>status.key == post.status).title;
+                                $scope.posts.push(post);
+                            }
+                        });
                     });
-                    /*for (let i=0; i<$scope.categories.length; i++){
-                        console.log(data.arr.filter(item=>item.category == $scope.categories[]));
-                    }*/
-					//$scope.posts   = data.arr;
-                    //console.log($scope.posts);
 					$scope.isAdmin = data.isAdmin;
 				}
 				else{
@@ -367,19 +373,20 @@ moneyApp.controller('forumCtrl', function($location, $scope, $rootScope, $state,
 		else{
 			forumServ.getPost($scope.fid, function(data){
 				if (data.status == 'success'){
-					$scope.post.id        = data.arr.id;
-					$scope.post.title     = data.arr.title;
-					$scope.post.category  = data.arr.category;
-					$scope.post.status    = data.arr.status;
-					$scope.post.created   = data.arr.created;
-					$scope.post.updated   = data.arr.updated;
-					$scope.post.email     = data.arr.email;
-					$scope.post.admin     = data.arr.admin;
-					$scope.post.email_upd = data.arr.email_upd;
-					$scope.post.admin_upd = data.arr.admin_upd;
-					$scope.post.count     = data.arr.count;
-					$scope.comments       = data.arr.comments;
-					$scope.isAdmin        = data.isAdmin;
+					$scope.post.id          = data.arr.id;
+					$scope.post.title       = data.arr.title;
+					$scope.post.category    = data.arr.category;
+					$scope.post.status      = data.arr.status;
+                    $scope.post.statusTitle = $scope.statuses.find(status=>status.key == data.arr.status).title;
+					$scope.post.created     = data.arr.created;
+					$scope.post.updated     = data.arr.updated;
+					$scope.post.email       = data.arr.email;
+					$scope.post.admin       = data.arr.admin;
+					$scope.post.email_upd   = data.arr.email_upd;
+					$scope.post.admin_upd   = data.arr.admin_upd;
+					$scope.post.count       = data.arr.count;
+					$scope.comments         = data.arr.comments;
+					$scope.isAdmin          = data.isAdmin;
 				}
 				else{
 					$ionicPopup.alert({title:'Помилка!', template: data.msg});
@@ -404,45 +411,44 @@ moneyApp.controller('forumCtrl', function($location, $scope, $rootScope, $state,
 		else{
 			forumServ.addPost($scope.post, function(data){
 				if (data.status == 'success'){
-					$scope.posts.unshift(data.arr);
-					$scope.post.title  = $scope.post.category = $scope.post.comment = '';
-                    $scope.editActionCloseModal();
+                    let index = $scope.posts.findIndex(item=>item.catKey == data.arr.category);
+                    if (index > -1){
+                        data.arr.statusTitle = $scope.statuses.find(status=>status.key == data.arr.status).title;
+                        $scope.posts.splice(++index, 0, data.arr);
+                    }
+					$scope.post.title = $scope.post.category = $scope.post.comment = '';
+                    $scope.editPostCloseModal();
 				}
             });
 		}
 	}
-
-
-
-
-	$scope.addComment = function(){
-		if (!$scope.comment){
-			messagesServ.showMessages('error', 'Помилка! Поле "Коментар" обов\'язкове для заповнення!');
+    $scope.editCommentOpenModal = function(){
+        $ionicModal.fromTemplateUrl('templates/commentForm.html', {scope: $scope}).then(function(modal){
+            $scope.modal = modal;
+            $scope.modal.show();
+        });
+    }
+    $scope.editCommentCloseModal = function(){
+        $scope.modal.remove();
+        $scope.comment.text = '';
+    }
+	$scope.editComment = function(){
+		if (!$scope.comment.text){
+            $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Поле "Коментар" обов\'язкове для заповнення!'});
 		}
 		else{
 			$scope.fid = $stateParams.post;
-			forumServ.addComment($scope.fid, $scope.comment, function(data){
+			forumServ.addComment($scope.fid, $scope.comment.text, function(data){
 				if (data.status == 'success'){
 					$scope.comments.push(data.arr);
 					$scope.post.count     = $scope.comments.length;
 					$scope.post.updated   = data.arr.created;
 					$scope.post.email_upd = data.arr.email;
-					$scope.comment        = '';
-					angular.element(document).find('#popupEditForm').modal('hide');
+					$scope.comment.text   = '';
+                    $scope.editCommentCloseModal();
 				}
-				messagesServ.showMessages(data.status, data.msg);
             });
 		}
-	}
-	$scope.setPostStatus = function(id, status){
-		forumServ.setPostStatus(id, status, function(data){
-			if (data.status == 'success'){
-				$scope.post.status = data.arr.status;
-			}
-			else{
-				messagesServ.showMessages(data.status, data.msg);
-			}
-        });
 	}
 
 	this.init();

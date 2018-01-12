@@ -1,1 +1,20 @@
-TEST ADD POST
+<ion-view view-title="Форум">
+    <ion-content ng-class="{ionViewPost: true, headerMarginTop: true, marginForAccountsTop: accountsPanel.length}">
+        <div class="button-bar padding" ng-show="post.category">
+            <button type="button" class="button button-block button-positive" ng-click="editCommentOpenModal()">Додати</button>
+        </div>
+        <div class="postTitleBlock" ng-show="post.category">
+            <div>{{post.title}}<span class="label-status {{post.status}}">{{post.statusTitle}}</span></div>
+            <p>
+                Створено: {{post.admin*1 ? 'Admin' : post.email}} ({{post.created}})
+                <br>Оновлено: {{post.admin_upd*1 ? 'Admin' : post.email_upd}} ({{post.updated}}), {{post.count}} коментарів
+            </p>
+        </div>
+        <ion-list>
+            <ion-item ng-repeat="comment in comments" ng-if="comments.length">
+                {{comment.comment}}
+                <p>{{comment.admin*1 ? 'Admin' : comment.email}} ({{comment.created}})</p>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

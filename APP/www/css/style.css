@@ -193,6 +193,43 @@ ion-header-bar.bar.bar-header .title{
 
 
 .ionViewForum{}
+.ionViewForum .ionViewForum{
+    font-weight: bold;
+}
+.ionViewForum .item{
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+}
+.ionViewForum .item-divider{
+    font-weight: bold;
+}
+.ionViewForum p{
+    font-size: 12px;
+    line-height: 1.3;
+    color: #999;
+    padding-top: 5px;
+}
+.ionViewForum .label-status{
+    color: #fff;
+    border-radius: 5px;
+    padding: 1px 4px;
+    font-weight: bold;
+    font-size: 12px;
+    margin-left: 15px;
+}
+.ionViewForum .label-status.created{
+    background-color: #ff7777;
+}
+.ionViewForum .label-status.viewed{
+    background-color: #6666ff;
+}
+.ionViewForum .label-status.fixed{
+    background-color: #44cc44;
+}
+.ionViewForum .label-status.closed{
+    background-color: #aaaaaa;
+}
 
 
 
@@ -202,6 +239,60 @@ ion-header-bar.bar.bar-header .title{
 .ionViewPostForm textarea{
     height: 80px;
 }
+
+
+
+
+
+.ionViewPost{}
+.ionViewPost .postTitleBlock{
+    padding: 0px 10px 10px;
+}
+.ionViewPost .postTitleBlock div{
+    font-size: 16px;
+    font-weight: bold;
+}
+.ionViewPost p{
+    font-size: 12px;
+    line-height: 1.3;
+    color: #999;
+    padding-top: 5px;
+}
+.ionViewPost .label-status{
+    color: #fff;
+    border-radius: 5px;
+    padding: 1px 4px;
+    font-weight: bold;
+    font-size: 12px;
+    margin-left: 15px;
+}
+.ionViewPost .label-status.created{
+    background-color: #ff7777;
+}
+.ionViewPost .label-status.viewed{
+    background-color: #6666ff;
+}
+.ionViewPost .label-status.fixed{
+    background-color: #44cc44;
+}
+.ionViewPost .label-status.closed{
+    background-color: #aaaaaa;
+}
+.ionViewPost .item{
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+    font-size: 14px;
+}
+
+
+
+
+
+.ionViewCommentForm{}
+    .ionViewCommentForm textarea{
+        height: 80px;
+    }
 
 
 

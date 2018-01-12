@@ -15,12 +15,7 @@
                     <span class="input-label">Категорія:</span>
                     <select ng-model="post.category">
                         <option value=''>- Оберіть -</option>
-                        <option value='public'>Паблік</option>
-                        <option value='bug'>Помилка</option>
-                        <option value='feature'>Ідея</option>
-                        <option value='thank'>Подяка</option>
-                        <option value='question'>Питання</option>
-                        <option value='forAdmin'>Адміну</option>
+                        <option ng-repeat="category in categories" value='{{category.key}}'>{{category.title}}</option>
                     </select>
                 </label>
                 <label class="item item-input item-stacked-label">
