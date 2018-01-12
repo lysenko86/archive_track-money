@@ -1,9 +1,11 @@
 <ion-view view-title="Форум">
     <ion-content ng-class="{ionViewForum: true, headerMarginTop: true, marginForAccountsTop: accountsPanel.length}">
-        <button type="button" class="button button-small button-positive" ng-click="editPostOpenModal()">Додати</button>
+        <div class="button-bar padding">
+            <button type="button" class="button button-block button-positive" ng-click="editPostOpenModal()">Додати</button>
+        </div>
         <ion-list class="forum-list">
-            <ion-item ng-repeat="(catKey, catTitle) in categories" ng-if="catKey != 'forAdmin' || isAdmin">
-                <h3><strong>{{catTitle}}</strong></h3>
+            <ion-item ng-repeat="category in categories" ng-if="category.key != 'forAdmin' || isAdmin">
+                <ion-item class="item-devider">{{category.title}}</ion-item>
                 <div class="list-group">
                     <a href="#/forum/{{item.id}}" class="list-group-item" ng-repeat="item in posts" ng-if="item.category == catKey">
                         <h4 class="list-group-item-heading">{{item.title}}<span class="label-status {{item.status}}">{{statuses[item.status]}}</span></h4>

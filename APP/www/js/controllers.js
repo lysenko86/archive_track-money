@@ -321,20 +321,20 @@ moneyApp.controller('forumCtrl', function($location, $scope, $rootScope, $state,
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
-		$scope.categories = {
-			public: 'Паблік',
-			bug: 'Помилки',
-			feature: 'Ідеї',
-			thank: 'Подяки',
-			question: 'Питання',
-			forAdmin: 'Адміну'
-		};
-		$scope.statuses = {
-			created: 'Створено',
-			viewed: 'Переглянуто',
-			fixed: 'Виправлено',
-			closed: 'Закрито'
-		};
+		$scope.categories = [
+			{key: 'public', title: 'Паблік'},
+			{key: 'bug', title: 'Помилки'},
+			{key: 'feature', title: 'Ідеї'},
+			{key: 'thank', title: 'Подяки'},
+			{key: 'question', title: 'Питання'},
+			{key: 'forAdmin', title: 'Адміну'}
+		];
+		$scope.statuses = [
+			{key: 'created', title: 'Створено'},
+			{key: 'viewed', title: 'Переглянуто'},
+			{key: 'fixed', title: 'Виправлено'},
+			{key: 'closed', title: 'Закрито'}
+		];
 		$scope.post = {
 			title: '',
 			category: '',
@@ -349,7 +349,14 @@ moneyApp.controller('forumCtrl', function($location, $scope, $rootScope, $state,
 			forumServ.getPosts($scope.posts.length, 20, function(data){
 				if (data.status == 'success'){
 					data.arr       = data.arr ? data.arr : [];
-					$scope.posts   = data.arr;
+                    $scope.categories.map(function(category){
+                        console.log(data.arr.filter(post=>post.category == category.key));
+                    });
+                    /*for (let i=0; i<$scope.categories.length; i++){
+                        console.log(data.arr.filter(item=>item.category == $scope.categories[]));
+                    }*/
+					//$scope.posts   = data.arr;
+                    //console.log($scope.posts);
 					$scope.isAdmin = data.isAdmin;
 				}
 				else{
