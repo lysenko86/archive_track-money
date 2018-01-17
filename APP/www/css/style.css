@@ -63,6 +63,11 @@ ion-header-bar.bar.bar-header .title{
     display: block;
     clear: both;
 }
+.buttonMoney{
+    color: #fff;
+    background-color: #678c40;
+    border-color: #608040;
+}
 
 
 
