@@ -123,7 +123,7 @@ class Users{
                     [$this->params['email'], $hash, $date], NULL, true
                 );
                 $subject = 'TrackMoney.com.ua - Підтвердження Email';
-                $mail    = "Вітаємо в сервісі TrackMoney.com.ua, маємо надію, що вам все сподобається.\nВаш логін: $email\nВаш пароль: $password\n\nДля підтвердження Email перейдіть будь ласка за посиланням: http://trackmoney.com.ua/#/confirm/".$id.'.'.$hash;
+                $mail    = "Вітаємо в сервісі TrackMoney.com.ua, маємо надію, що вам все сподобається.\nВаш логін: {$this->params['email']}\nВаш пароль: {$this->params['password']}\n\nДля підтвердження Email перейдіть будь ласка за посиланням: http://trackmoney.com.ua/#/confirm/".$id.'.'.$hash;
                 mail($this->params['email'], $subject, $mail);
                 $this->data['status'] = 'success';
                 $this->data['msg']    = "Готово! Реєстрація пройшла успішно. На вказану вами пошту вислано листа, для підтвердження Email - перейдіть по посиланню.";
