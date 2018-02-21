@@ -15,7 +15,22 @@
 
     <!-- ionic/angularjs js -->
         <script src="lib/ionic/js/ionic.bundle.js"></script>
+        <script src="lib/ionic/js/ionic-datepicker.bundle.min.js"></script>
         <script src="lib/angular-local-storage.min.js"></script>
+        <style>
+            .ionic_datepicker_popup .popup-body .selected_date_full{
+                background-color: #678c40;
+            }
+            .ionic_datepicker_popup .popup-buttons button, .ionic_datepicker_popup .selected_date{
+                background-color: #387ef5;
+            }
+            .ionic_datepicker_popup .popup-body .button-clear, .ionic_datepicker_popup .popup-body .month_select:after, .ionic_datepicker_popup .popup-body .year_select:after{
+                color: #387ef5;
+            }
+            .ionic_datepicker_popup .popup-body .month_select, .ionic_datepicker_popup .popup-body .year_select{
+                border-bottom-color: #387ef5;
+            }
+        </style>
     <!-- cordova script (this will be a 404 during development) -->
         <script src="cordova.js"></script>
     <!-- your app's js -->

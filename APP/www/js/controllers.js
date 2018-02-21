@@ -39,7 +39,7 @@ moneyApp.controller('homeCtrl', function($location, $window, $scope, $rootScope,
 
 
 
-moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $state, $ionicModal, $ionicPopup, actionsServ, categoriesServ, accountsServ, localStorageService){
+moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $state, $ionicModal, $ionicPopup, $filter, actionsServ, categoriesServ, accountsServ, localStorageService, ionicDatePicker){
     this.init = function(){
 		$rootScope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
@@ -107,6 +107,13 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
         $scope.modal.remove();
         $scope.action.date = $scope.action.type = $scope.action.accountFrom_id = $scope.action.accountTo_id = $scope.action.category_id = $scope.action.sum = $scope.action.description = '';
     }
+    $scope.openDatePicker = function(){
+        ionicDatePicker.openDatePicker({
+            callback: function (val) {
+                $scope.action.date = $filter('date')(val, 'dd.MM.yyyy');
+            }
+        });
+    };
     $scope.getActions = function(data){
 		actionsServ.getActions($scope.actions.length, 20, function(data){
 			if (data.status == 'success'){

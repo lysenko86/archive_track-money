@@ -1,6 +1,6 @@
 "use strict";
 
-var moneyApp = angular.module('moneyApp', ['ionic', 'LocalStorageModule', 'moneyApp.controllers', 'moneyApp.services']);
+var moneyApp = angular.module('moneyApp', ['ionic', 'ionic-datepicker', 'LocalStorageModule', 'moneyApp.controllers', 'moneyApp.services']);
 
 moneyApp.run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -14,8 +14,19 @@ moneyApp.run(function($ionicPlatform) {
     });
 });
 
-moneyApp.config(function($stateProvider, $urlRouterProvider, localStorageServiceProvider) {
+moneyApp.config(function($stateProvider, $urlRouterProvider, localStorageServiceProvider, ionicDatePickerProvider) {
     localStorageServiceProvider.setPrefix('TrackMoney');
+
+    ionicDatePickerProvider.configDatePicker({ // https://github.com/rajeshwarpatlolla/ionic-datepicker
+        titleLabel: 'дд.мм.рррр',
+        todayLabel: 'Сьогодні',
+        closeLabel: 'Скасувати',
+        mondayFirst: true,
+        weeksList: ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+        monthsList: ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"],
+        templateType: 'popup',
+        closeOnSelect: true
+    });
 
     $stateProvider
     .state('home', {
@@ -53,6 +64,7 @@ moneyApp.config(function($stateProvider, $urlRouterProvider, localStorageService
         cache: false,
         templateUrl: 'templates/post.html',
         controller: 'forumCtrl'
-    })
+    });
+
     $urlRouterProvider.otherwise('/home');
 });
