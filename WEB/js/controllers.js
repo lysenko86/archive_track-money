@@ -478,6 +478,11 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 			}
 		});
 		$scope.getActions();
+		$('#editForm input#date').datepicker({
+			format: "dd.mm.yyyy",
+			todayHighlight: true,
+			autoclose: true
+		});
 	};
 	$scope.getToday = function(){
 		let obj = new Date();
