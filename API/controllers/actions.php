@@ -49,7 +49,7 @@ class Actions{
         }
         elseif (!preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $this->params['date'])){
             $this->data['status'] = 'error';
-            $this->data['msg']    = 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!';
+            $this->data['msg']    = 'Помилка! Значення поля "Дата" має бути наступного формату: дд.мм.рррр!';
         }
         elseif (!preg_match('/^[\d\.]+$/', $this->params['sum'])){
             $this->data['status'] = 'error';

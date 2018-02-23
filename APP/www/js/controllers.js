@@ -168,7 +168,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
             $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!'});
 		}
 		else if (!/^\d{2}\.\d{2}\.\d{4}$/.test($scope.action.date)){
-            $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!'});
+            $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Значення поля "Дата" має бути наступного формату: дд.мм.рррр!'});
 		}
 		else if (!/^[\d\.]+$/.test($scope.action.sum)){
             $ionicPopup.alert({title:'Помилка!', template: 'Помилка! Значення поля "Сума" має бути числовим!'});
@@ -182,8 +182,8 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 			}
 			$scope.action.date = $scope.dateToAPI($scope.action.date);
 			actionsServ.editAction($scope.action, function(data){
-				data.arr.date = $scope.dateToWEB(data.arr.date);
 				if (data.status == 'success'){
+                    data.arr.date = $scope.dateToWEB(data.arr.date);
                     $scope.editActionCloseModal();
                     if ($scope.action.id){     // edit transaction
 						for (var i=0; i<$scope.actions.length; i++){
@@ -205,6 +205,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
                     accountsServ.getAccountsPanel();
 				}
                 else if(data.status == 'error'){
+                    $scope.action.date = $scope.dateToWEB($scope.action.date);
                     $ionicPopup.alert({title: 'Помилка!', template: data.msg});
                 }
             });

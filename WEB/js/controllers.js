@@ -541,7 +541,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!');
 		}
 		else if (!/^\d{2}\.\d{2}\.\d{4}$/.test($scope.action.date)){
-			messagesServ.showMessages('error', 'Помилка! Значення поля "Дата" має бути наступного формату: 01.01.2017!');
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Дата" має бути наступного формату: дд.мм.рррр!');
 		}
 		else if (!/^[\d\.]+$/.test($scope.action.sum)){
 			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим!');
@@ -555,8 +555,8 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 			}
 			$scope.action.date = $scope.dateToAPI($scope.action.date);
 			actionsServ.editAction($scope.action, function(data){
-				data.arr.date = $scope.dateToWEB(data.arr.date);
 				if (data.status == 'success'){
+					data.arr.date = $scope.dateToWEB(data.arr.date);
 					if ($scope.action.id){     // edit transaction
 						for (var i=0; i<$scope.actions.length; i++){
 							if ($scope.actions[i].id == $scope.action.id){
@@ -570,6 +570,9 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 					accountsServ.getAccountsPanel();
 					angular.element(document).find('#popupEditForm').modal('hide');
 					$scope.formIsShown = false;
+				}
+				else if(data.status == 'error'){
+					$scope.action.date = $scope.dateToWEB($scope.action.date);
 				}
 				messagesServ.showMessages(data.status, data.msg);
             });
