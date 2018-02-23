@@ -491,6 +491,24 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 	$scope.dateToAPI = function(date){
 		return date.substr(6,4) + '-' + date.substr(3,2) + '-' + date.substr(0,2);
 	}
+	$scope.parseSum = function(sum){
+        var result = 0;
+        if (!/^[\d\.\+\-]+$/.test(sum)){
+            result = NaN;
+        }
+        if (result === 0){
+            var number = '';
+            for (let i=0; i<sum.length; i++){
+                if (number && (sum[i] == '+' || sum[i] == '-')){
+                    result += parseInt(number);
+                    number = '';
+                }
+                number += sum[i];
+            }
+            result += parseInt(number);
+        }
+        return result != 0 ? result : NaN;
+    }
 	$scope.getActions = function(data){
 		actionsServ.getActions($scope.actions.length, 20, function(data){
 			if (data.status == 'success'){
@@ -534,19 +552,20 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 		if (!$scope.action.type){
 			messagesServ.showMessages('error', 'Помилка! Поле "Тип" обов\'язкове для заповнення!');
 		}
-		else if ($scope.action.type == 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.accountTo_id || !$scope.action.sum)){
-			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Звідки", "Куди" та "Сума" обов\'язкові для заповнення!');
+		else if ($scope.action.type == 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.accountTo_id)){
+			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Звідки" та "Куди" обов\'язкові для заповнення!');
 		}
-		else if ($scope.action.type != 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.category_id || !$scope.action.sum)){
-			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Рахунок", "Категорія" та "Сума" обов\'язкові для заповнення!');
+		else if ($scope.action.type != 'move' && (!$scope.action.date || !$scope.action.accountFrom_id || !$scope.action.category_id)){
+			messagesServ.showMessages('error', 'Помилка! Поля "Дата", "Рахунок" та "Категорія" обов\'язкові для заповнення!');
 		}
 		else if (!/^\d{2}\.\d{2}\.\d{4}$/.test($scope.action.date)){
 			messagesServ.showMessages('error', 'Помилка! Значення поля "Дата" має бути наступного формату: дд.мм.рррр!');
 		}
-		else if (!/^[\d\.]+$/.test($scope.action.sum)){
-			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим!');
+		else if (Number.isNaN($scope.parseSum($scope.action.sum))){
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Сума" має бути числовим і не нуль!');
 		}
 		else{
+			$scope.action.sum = $scope.parseSum($scope.action.sum);
 			if ($scope.action.type == 'move'){
 				$scope.action.category_id = '0';
 			}
