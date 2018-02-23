@@ -39,21 +39,21 @@ class Actions{
             $this->data['status'] = 'error';
             $this->data['msg']    = 'Помилка! Значення поля "Тип" не може бути пустим!';
         }
-        elseif ($this->params['type'] == 'move' && (!$this->params['date'] || !$this->params['accountFrom_id'] || !$this->params['accountTo_id'] || !$this->params['sum'])){
+        elseif ($this->params['type'] == 'move' && (!$this->params['date'] || !$this->params['accountFrom_id'] || !$this->params['accountTo_id'])){
             $this->data['status'] = 'error';
-            $this->data['msg']    = 'Помилка! Значення полів "Дата", "Звідки", "Куди" та "Сума" не може бути пустим!';
+            $this->data['msg']    = 'Помилка! Значення полів "Дата", "Звідки" та "Куди" не може бути пустим!';
         }
-        elseif ($this->params['type'] != 'move' && (!$this->params['date'] || !$this->params['accountFrom_id'] || !$this->params['category_id'] || !$this->params['sum'])){
+        elseif ($this->params['type'] != 'move' && (!$this->params['date'] || !$this->params['accountFrom_id'] || !$this->params['category_id'])){
             $this->data['status'] = 'error';
-            $this->data['msg']    = 'Помилка! Значення полів "Дата", "Рахунок", "Категорія" та "Сума" не може бути пустим!';
+            $this->data['msg']    = 'Помилка! Значення полів "Дата", "Рахунок" та "Категорія" не може бути пустим!';
         }
         elseif (!preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $this->params['date'])){
             $this->data['status'] = 'error';
             $this->data['msg']    = 'Помилка! Значення поля "Дата" має бути наступного формату: дд.мм.рррр!';
         }
-        elseif (!preg_match('/^[\d\.]+$/', $this->params['sum'])){
+        elseif (!preg_match('/^[\d\.\+\-]+$/', $this->params['sum']) || $this->params['sum'] == '0'){
             $this->data['status'] = 'error';
-            $this->data['msg']    = 'Помилка! Значення поля "Сума" має бути числовим!';
+            $this->data['msg']    = 'Помилка! Значення поля "Сума" має бути числовим і не нуль!';
         }
         elseif (!in_array($this->params['type'], ['plus', 'minus', 'move'])){
             $this->data['status'] = 'error';
