@@ -290,11 +290,11 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, $rootScope, $ioni
 		}
         let obj        = new Date();
 		var activeYear = obj.getFullYear();
-		$scope.years   = [activeYear-1, activeYear, activeYear+1];
+		$scope.years   = [String(activeYear-1), String(activeYear), String(activeYear+1)];
 		$scope.months  = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
 		$scope.budget  = {
-			month: obj.getMonth()+1,
-			year: activeYear,
+			month: String(obj.getMonth()+1),
+			year: String(activeYear),
 			categories: [],
 			plusPlan: '',
 			plusFact: '',
