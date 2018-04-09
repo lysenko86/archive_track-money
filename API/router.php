@@ -54,7 +54,8 @@ class Router{
         'getBudget'          => ['ctrl' => 'Budgets', 'method' => 'getBudget',    'access' => ['user', 'admin']],
         'getBudgetCategory'  => ['ctrl' => 'Budgets', 'method' => 'getCategory',  'access' => ['user', 'admin']],
         'editBudgetCategory' => ['ctrl' => 'Budgets', 'method' => 'editCategory', 'access' => ['user', 'admin']],
-        'delBudgetCategory'  => ['ctrl' => 'Budgets', 'method' => 'delCategory',  'access' => ['user', 'admin']]
+        'delBudgetCategory'  => ['ctrl' => 'Budgets', 'method' => 'delCategory',  'access' => ['user', 'admin']],
+        'copyBudget'         => ['ctrl' => 'Budgets', 'method' => 'copyBudget',   'access' => ['user', 'admin']]
     ];
 
 

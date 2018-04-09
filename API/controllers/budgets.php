@@ -94,5 +94,15 @@ class Budgets{
         $this->data['status'] = 'success';
         $this->data['msg']    = "Готово! Категорія успішно видалена.";
     }
+    function copyBudget(){
+        $this->db->query("DELETE FROM `budgets` WHERE `uid` = ? AND `month` = ? AND `year` = ?", [$this->params['uid'], $this->params['monthTo'], $this->params['yearTo']]);
+        $this->db->query("
+            INSERT INTO `budgets` (`uid`, `month`, `year`, `category_id`, `sum`)
+            SELECT `uid`, REPLACE(`month`, `month`, ?), REPLACE(`year`, `year`, ?), `category_id`, `sum` FROM `budgets`
+                WHERE `uid` = ? AND `month` = ? AND `year` = ?
+        ", [$this->params['monthTo'], $this->params['yearTo'], $this->params['uid'], $this->params['monthFrom'], $this->params['yearFrom']]);
+        $this->data['status'] = 'success';
+        $this->data['msg']    = "Готово! Бюджет минулого місяція успішно скопійовано в бюджет цього місяця.";
+    }
 }
 ?>
