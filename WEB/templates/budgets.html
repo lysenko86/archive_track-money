@@ -14,7 +14,7 @@
 						<label for="category_id">Категорія:</label>
 						<select class="form-control" id="category_id" ng-model="category.category_id">
 							<option value=''>- Оберіть -</option>
-							<option ng-repeat="item in categories" value='{{item.id}}'>{{item.title}}</option>
+							<option ng-repeat="item in categories" value='{{item.id}}' class="{{item.type == 'plus' ? ' colorPlus' : ' colorMinus'}}">{{item.title}}</option>
 						</select>
 					</div>
 					<div class="form-group">
