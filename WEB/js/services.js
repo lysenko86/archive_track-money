@@ -287,4 +287,12 @@ moneyApp.service('budgetsServ', function(requestServ){
 			id: id
         }, cb);
     }
+    this.copyBudget = function(dateFrom, dateTo, cb){
+        requestServ.sendRequest('get', 'copyBudget', {
+            monthFrom: dateFrom.getMonth() + 1,
+            yearFrom:  dateFrom.getFullYear(),
+            monthTo: dateTo.getMonth() + 1,
+            yearTo:  dateTo.getFullYear()
+        }, cb);
+    }
 });

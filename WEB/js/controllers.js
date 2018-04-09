@@ -969,6 +969,22 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 			});
 		}
 	}
+	$scope.copyBudget = function(){
+		let months = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+		let dateTo = new Date();
+		let currentMonth = months[dateTo.getMonth()] + ' ' + dateTo.getFullYear();
+		let dateFrom = new Date();
+		dateFrom.setMonth(dateTo.getMonth() - 1);
+		let prevMonth = months[dateFrom.getMonth()] + ' ' + dateFrom.getFullYear();
+		if (confirm('Ви точно хочете скопіювати бюджет минулого місяця (' + prevMonth + ') в бюджет цього місяця (' + currentMonth + ')? Будьте уважні, якщо в цьому місяці у вас є заповнені якісь категорії - все видалиться і буде точна копія категорій і сум минулого місяця.')){
+			budgetsServ.copyBudget(dateFrom, dateTo, function(data){
+				if (data.status == 'success'){
+					$scope.getBudget(dateTo.getFullYear(), dateTo.getMonth() + 1);
+				}
+				messagesServ.showMessages(data.status, data.msg);
+			});
+		}
+	}
 
 	this.init();
 });
