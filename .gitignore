@@ -1,10 +1,4 @@
-API/access.log
-API/error.log
-
-
-
-WEB/access.log
-WEB/error.log
+API/db_trackmoney.sql
 
 
 
@@ -13,11 +7,6 @@ APP/node_modules
 APP/platforms
 APP/plugins
 APP/package-lock.json
-
-
-
-adminka/access.log
-adminka/error.log
 
 
 
