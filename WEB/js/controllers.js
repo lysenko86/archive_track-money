@@ -96,15 +96,16 @@ moneyApp.controller('signinCtrl', function($location, $window, $scope, messagesS
 		}
 		else{
 			usersServ.signin($scope.user, function(data){
-				$scope.user.email        = $scope.user.password = '';
+				$scope.user.password = '';
 				$scope.auth.notConfirmed = data.notConfirmed;
 				$scope.auth.email        = data.email;
-				messagesServ.showMessages(data.status, data.msg, 2000, function(){
-					if (data.status == 'success'){
-						localStorageService.set('token', data.arr.token);
-						$window.location.href = '/';
-					}
-				});
+				if (data.status == 'success'){
+					localStorageService.set('token', data.arr.token);
+					$window.location.href = '/';
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
             });
 		}
 	}
@@ -168,12 +169,13 @@ moneyApp.controller('logoutCtrl', function($location, $window, $scope, messagesS
 		}
 		else{
 			usersServ.logout(function(data){
-				messagesServ.showMessages(data.status, data.msg, 2000, function(){
-					if (data.status == 'success'){
-						localStorageService.remove('token');
-						$window.location.href = '/';
-					}
-				});
+				if (data.status == 'success'){
+					localStorageService.remove('token');
+					$window.location.href = '/';
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
 			});
 		}
 	}
