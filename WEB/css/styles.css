@@ -348,3 +348,34 @@ nav.navbar{
             float: none;
         }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.printMode{}
+    .printMode button{
+        display: none;
+    }
+    .printMode .navbar, .printMode .footer{
+        display: none;
+    }
+    .printMode .main{
+        border: 1px solid #000000;
+        padding: 0px 10px;
+    }
+    .printMode #printModeButton{
+        display: inline-block!important;
+        position: absolute;
+        z-index: 1;
+        right: -50px;
+    }

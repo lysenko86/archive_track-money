@@ -434,7 +434,7 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 
 
 
-moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, actionsServ, categoriesServ, accountsServ, localStorageService){
+moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, actionsServ, categoriesServ, accountsServ, printServ, localStorageService){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
@@ -461,6 +461,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
 			$scope.formIsShown = false;
 		});
+		$scope.printMode = false;
 		categoriesServ.getCategories(function(data){
 			if (data.status == 'success'){
 				data.arr          = data.arr ? data.arr : [];
@@ -619,6 +620,9 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
+	}
+	$scope.togglePrintMode = function(){
+		printServ.togglePrintMode();
 	}
 
 	this.init();
@@ -826,7 +830,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 
 
 
-moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, budgetsServ, categoriesServ, localStorageService){
+moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, budgetsServ, categoriesServ, printServ, localStorageService){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
@@ -988,6 +992,9 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
+	}
+	$scope.togglePrintMode = function(){
+		printServ.togglePrintMode();
 	}
 
 	this.init();

@@ -74,6 +74,15 @@ moneyApp.service('requestServ', function($http, localStorageService, messagesSer
 
 
 
+moneyApp.service('printServ', function($rootScope){
+    $rootScope.printMode = false;
+    this.togglePrintMode = function(){
+		$rootScope.printMode = !$rootScope.printMode;
+	}
+});
+
+
+
 moneyApp.service('usersServ', function(requestServ){
     this.getCount = function(cb){
         requestServ.sendRequest('get', 'getCountUsers', {}, cb);
