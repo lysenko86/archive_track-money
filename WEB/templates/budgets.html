@@ -37,7 +37,7 @@
 			<div class="btn-group" role="group">
 				<button type="button" class="btn btn-default{{year == budget.year ? ' active' : ''}}" ng-repeat="year in years" ng-click="getBudget(year, budget.month)">{{year}}</button>
 			</div>
-			<div class="btn-group" role="group">
+			<div class="btn-group pull-right" role="group">
 				<button type="button" class="btn btn-default{{$index+1 == budget.month ? ' active' : ''}}" ng-repeat="month in months" ng-click="getBudget(budget.year, $index+1)">{{months[$index]}}</button>
 			</div>
 		</div>
