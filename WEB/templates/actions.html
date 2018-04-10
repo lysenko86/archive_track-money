@@ -71,7 +71,7 @@
 			<li class="list-group-item" ng-repeat="item in actions">
 				<div class="rowDate" ng-show="item.date != actions[$index-1].date">{{item.date}}</div>
 				<div class="rowData" data-toggle="modal" data-target="#popupEditForm" ng-click="getAction(item.id)">
-                    {{item.accountFrom_title}} <span class="glyphicon {{item.type == 'plus' ? 'glyphicon-arrow-left' : 'glyphicon glyphicon-arrow-right'}}{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}" aria-hidden="true"></span> {{item.type == 'move' ? item.accountTo_title : item.category_title}}
+                    {{item.accountFrom_title}} <span class="glyphicon {{item.type == 'plus' ? 'glyphicon-arrow-left' : 'glyphicon-arrow-right'}}{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}" aria-hidden="true"></span> {{item.type == 'move' ? item.accountTo_title : item.category_title}}
                     <span class="sum pull-right{{item.type == 'plus' ? ' colorPlus' : (item.type == 'minus' ? ' colorMinus' : ' colorMove')}}">{{item.sum}}</span>
 					<div class="rowDescr" ng-show="item.description">{{item.description}}</div>
                 </div>
