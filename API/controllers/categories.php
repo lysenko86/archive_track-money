@@ -22,18 +22,22 @@ class Categories{
             $this->data['status'] = 'error';
             $this->data['msg']    = 'Помилка! Значення полів "Назва" та "Тип" не може бути пустим!';
         }
+        else if ($this->params['type'] == 'minus' && !$this->params['cat']){
+            $this->data['status'] = 'error';
+            $this->data['msg']    = 'Помилка! Значення поля "Категорія" не можу бути пустим!';
+        }
         else{
             if ($this->params['id']){     // edit category
                 $this->db->query(
-                    "UPDATE `categories` SET `title` = ?, `type` = ? WHERE `id` = ? AND `uid` = ?",
-                    [$this->params['title'], $this->params['type'], $this->params['id'], $this->params['uid']]
+                    "UPDATE `categories` SET `title` = ?, `type` = ? , `cat` = ? WHERE `id` = ? AND `uid` = ?",
+                    [$this->params['title'], $this->params['type'], $this->params['cat'] ? $this->params['cat'] : NULL, $this->params['id'], $this->params['uid']]
                 );
                 $this->data['msg'] = "Готово! Категорія успішно змінена.";
             }
             else{     // add category
                 $id = $this->db->query(
-                    "INSERT INTO `categories` (`uid`, `title`, `type`) VALUES(?, ?, ?)",
-                    [$this->params['uid'], $this->params['title'], $this->params['type']], NULL, true
+                    "INSERT INTO `categories` (`uid`, `title`, `type`, `cat`) VALUES(?, ?, ?, ?)",
+                    [$this->params['uid'], $this->params['title'], $this->params['type'], $this->params['cat'] ? $this->params['cat'] : NULL], NULL, true
                 );
                 $this->data['msg'] = "Готово! Категорія успішно додана.";
             }
@@ -42,7 +46,8 @@ class Categories{
                 id    => $id,
                 uid   => $this->params['uid'],
                 title => $this->params['title'],
-                type  => $this->params['type']
+                type  => $this->params['type'],
+                cat   => $this->params['cat']
             ];
             $this->data['status'] = 'success';
         }
