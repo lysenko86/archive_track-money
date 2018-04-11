@@ -22,6 +22,15 @@
 							<option value='minus'>Витрати</option>
 						</select>
 					</div>
+					<div class="form-group" ng-if="category.type == 'minus'">
+						<label for="type">Категорія:</label>
+						<select class="form-control" id="cat" ng-model="category.cat">
+							<option value=''>- Оберіть -</option>
+							<option value='need'>Те, що потребуємо</option>
+							<option value='want'>Те, що хочемо</option>
+							<option value='save'>Те, що відкладаємо</option>
+						</select>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -40,7 +49,7 @@
 			<li class="list-group-item" ng-repeat="item in categories">
 				<div class="rowDate" ng-show="item.type != categories[$index-1].type">{{types[item.type]}}</div>
 				<div class="rowData" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
-                    <span class="{{item.type == 'plus' ? 'colorPlus' : 'colorMinus'}}" aria-hidden="true">{{item.title}}</span>
+                    <span class="{{item.type == 'plus' ? 'colorPlus' : 'colorMinus'}}" aria-hidden="true">{{item.title}}{{item.cat ? ' (' + cats[item.cat] + ')' : ''}}</span>
                 </div>
 			</li>
 		</ul>

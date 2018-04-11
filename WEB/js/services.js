@@ -221,7 +221,8 @@ moneyApp.service('categoriesServ', function(requestServ){
         requestServ.sendRequest('post', 'editCategory', {
             id:    category.id,
 			title: category.title,
-			type:  category.type
+			type:  category.type,
+            cat:   category.type == 'minus' ? category.cat : ''
         }, cb);
 	}
     this.delCategory = function(id, cb){

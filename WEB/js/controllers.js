@@ -639,12 +639,18 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 		$scope.category = {
 			id:    false,
 			title: '',
-			type:  ''
+			type:  '',
+			cat: ''
 		};
 		$scope.categories = [];
 		$scope.types = {
 			plus: 'Доходи',
 			minus: 'Витрати'
+		};
+		$scope.cats = {
+			need: 'Те, що потребуємо',
+			want: 'Те, що хочемо',
+			save: 'Те, що відкладаємо'
 		};
 		$scope.getCategories();
 		$scope.formIsShown = false;
@@ -675,6 +681,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 					$scope.category.id    = data.arr.id;
 					$scope.category.title = data.arr.title;
 					$scope.category.type  = data.arr.type;
+					$scope.category.cat   = data.arr.cat;
 				}
 				else{
 					messagesServ.showMessages(data.status, data.msg);
@@ -685,6 +692,9 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 	$scope.editCategory = function(){
 		if (!$scope.category.title || !$scope.category.type){
 			messagesServ.showMessages('error', 'Помилка! Поля "Назва" та "Тип" обов\'язкові для заповнення!');
+		}
+		else if($scope.category.type == 'minus' && !$scope.category.cat){
+			messagesServ.showMessages('error', 'Помилка! Поле "Категорія" обов\'язкове для заповнення!');
 		}
 		else{
 			categoriesServ.editCategory($scope.category, function(data){
