@@ -15,6 +15,7 @@ class Budgets{
                 `b`.`category_id`,
                 IFNULL(`c`.`title`, 'Категорія видалена') AS `category_title`,
                 `c`.`type`,
+                `c`.`cat`,
                 ROUND(`b`.`sum`) AS `plan`,
                 ROUND(IFNULL((SELECT SUM(`sum`) FROM `actions` WHERE `uid` = ? AND `category_id` = `b`.`category_id` AND MONTH(`date`) = ? AND YEAR(`date`) = ?), 0)) AS `fact`
             FROM `budgets` AS `b`
