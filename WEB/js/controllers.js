@@ -648,9 +648,9 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 			minus: 'Витрати'
 		};
 		$scope.cats = {
-			need: 'Те, що потребуємо',
-			want: 'Те, що хочемо',
-			save: 'Те, що відкладаємо'
+			need: 'Обов\'язкові витрати',
+			want: 'Не обов\'язкові витрати',
+			save: 'Збережені кошти'
 		};
 		$scope.getCategories();
 		$scope.formIsShown = false;
@@ -845,7 +845,13 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
 			$location.url('home');
-		}
+		};
+		$scope.cats = {
+			need: 'Обов\'язкові витрати',
+			want: 'Не обов\'язкові витрати',
+			save: 'Збережені кошти'
+		};
+		$scope.catPercent = 0;
 		let obj        = new Date();
 		var activeYear = obj.getFullYear();
 		$scope.years   = [activeYear-1, activeYear, activeYear+1];

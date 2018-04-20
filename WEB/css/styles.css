@@ -131,6 +131,9 @@ nav.navbar{
         		padding: 2px;
         		font-size: 20px;
         	}
+        .main .table .under-head{
+        	font-weight: bold;
+        }
         .main .table tbody>tr{
         	cursor: pointer;
         }
