@@ -328,7 +328,10 @@ moneyApp.controller('forumCtrl', function($location, $scope, $routeParams, messa
 		$scope.statuses = {
 			created: 'Створено',
 			viewed: 'Переглянуто',
+			progress: 'У розробці',
 			fixed: 'Виправлено',
+			cancel: 'Відхилено',
+			done: 'Зроблено',
 			closed: 'Закрито'
 		};
 		$scope.post = {

@@ -169,10 +169,13 @@ nav.navbar{
             .main .forum-list .label-status.viewed{
                 background-color: #6666ff;
             }
-            .main .forum-list .label-status.fixed{
+            .main .forum-list .label-status.progress{
+                background-color: #FFD700;
+            }
+            .main .forum-list .label-status.fixed, .main .forum-list .label-status.done{
                 background-color: #44cc44;
             }
-            .main .forum-list .label-status.closed{
+            .main .forum-list .label-status.closed, .main .forum-list .label-status.cancel{
                 background-color: #aaaaaa;
             }
         .main .forum-list .statusesMenu{
