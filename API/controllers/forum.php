@@ -133,6 +133,7 @@ class Forum{
             $this->data['arr'] = $this->data['arr'][0];
             $subject           = 'TrackMoney.com.ua - Нове повідомлення на форумі';
             $mail              = 'Нове повідомлення на форумі, для перегляду перейдіть за посиланням: http://trackmoney.com.ua/#/forum/'.$this->params['fid'];
+            global $officialEmail;
             mail($officialEmail, $subject, $mail);
             mail($this->data['arr']['email_created'], $subject, $mail);
             $this->data['status'] = 'success';
