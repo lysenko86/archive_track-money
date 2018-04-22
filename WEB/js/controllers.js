@@ -481,10 +481,20 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 			}
 		});
 		$scope.getActions();
+		$.fn.datepicker.dates['ua'] = {
+    		days: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота", "Неділя"],
+    		daysShort: ["Нед", "Пон", "Вів", "Сер", "Чет", "П'я", "Суб", "Нед"],
+			daysMin: ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"],
+    		months: ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"],
+    		monthsShort: ["Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"],
+    		today: "Сьогодні"
+		};
 		$('#editForm input#date').datepicker({
 			format: "dd.mm.yyyy",
 			todayHighlight: true,
-			autoclose: true
+			autoclose: true,
+			language: 'ua',
+			weekStart: 1
 		});
 	};
 	$scope.getToday = function(){
