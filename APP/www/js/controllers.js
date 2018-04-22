@@ -359,7 +359,10 @@ moneyApp.controller('forumCtrl', function($location, $scope, $rootScope, $state,
 		$scope.statuses = [
 			{key: 'created', title: 'Створено'},
 			{key: 'viewed', title: 'Переглянуто'},
+            {key: 'progress', title: 'У розробці'},
 			{key: 'fixed', title: 'Виправлено'},
+            {key: 'cancel', title: 'Відхилено'},
+            {key: 'done', title: 'Зроблено'},
 			{key: 'closed', title: 'Закрито'}
 		];
 		$scope.post = {

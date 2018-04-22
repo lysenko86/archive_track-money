@@ -229,10 +229,13 @@ ion-header-bar.bar.bar-header .title{
 .ionViewForum .label-status.viewed{
     background-color: #6666ff;
 }
-.ionViewForum .label-status.fixed{
+.ionViewForum .label-status.progress{
+    background-color: #FFD700;
+}
+.ionViewForum .label-status.fixed, .ionViewForum .label-status.done{
     background-color: #44cc44;
 }
-.ionViewForum .label-status.closed{
+.ionViewForum .label-status.closed, .ionViewForum .label-status.cancel{
     background-color: #aaaaaa;
 }
 
