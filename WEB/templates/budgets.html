@@ -109,22 +109,21 @@
 				<th width="110px">Залишок</th>
 			</tr></thead>
 			<tbody>
-				<tr><td colspan="4" class="under-head">{{cats.need}} = {{catPercent}}%</td></tr>
+				<tr><td colspan="4" class="under-head">{{cats.need}} = {{budget.catsNeedPercent}}%</td></tr>
 				<tr ng-repeat="item in budget.categories" ng-if="item.type=='minus' && item.cat=='need'" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
 					<td>{{item.category_title}}</td>
 					<td>{{item.plan}}</td>
 					<td>{{item.fact}}</td>
 					<td class="{{item.plan - item.fact < 0 ? 'colorOverMinus' : '' }}">{{item.plan - item.fact < 0 ? '-' : ''}}{{mathAbs(item.plan - item.fact)}}</td>
-					{catPercent = catPercent + item.fact}
 				</tr>
-				<tr><td colspan="4" class="under-head">{{cats.want}} = {{catPercent}}%</td></tr>
+				<tr><td colspan="4" class="under-head">{{cats.want}} = {{budget.catsWantPercent}}%</td></tr>
 				<tr ng-repeat="item in budget.categories" ng-if="item.type=='minus' && item.cat=='want'" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
 					<td>{{item.category_title}}</td>
 					<td>{{item.plan}}</td>
 					<td>{{item.fact}}</td>
 					<td class="{{item.plan - item.fact < 0 ? 'colorOverMinus' : '' }}">{{item.plan - item.fact < 0 ? '-' : ''}}{{mathAbs(item.plan - item.fact)}}</td>
 				</tr>
-				<tr><td colspan="4" class="under-head">{{cats.save}} = {{catPercent}}%</td></tr>
+				<tr><td colspan="4" class="under-head">{{cats.save}} = {{budget.catsSavePercent}}%</td></tr>
 				<tr ng-repeat="item in budget.categories" ng-if="item.type=='minus' && item.cat=='save'" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
 					<td>{{item.category_title}}</td>
 					<td>{{item.plan}}</td>

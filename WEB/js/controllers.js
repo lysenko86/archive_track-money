@@ -910,6 +910,7 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 	}
 	$scope.calculateTotalSum = function(){
 		$scope.budget.plusPlan = $scope.budget.plusFact = $scope.budget.plusRest = $scope.budget.minusPlan = $scope.budget.minusFact = $scope.budget.minusRest = $scope.budget.balancePlan = $scope.budget.balanceFact = '';
+		$scope.budget.catsNeedPercent = $scope.budget.catsWantPercent = $scope.budget.catsSavePercent = '';
 		for (var i=0; i<$scope.budget.categories.length; i++){
 			if ($scope.budget.categories[i].type == 'plus'){
 				$scope.budget.plusPlan = $scope.budget.plusPlan*1 + $scope.budget.categories[i].plan*1;
@@ -918,8 +919,16 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 			else{
 				$scope.budget.minusPlan = $scope.budget.minusPlan*1 + $scope.budget.categories[i].plan*1;
 				$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
+				switch ($scope.budget.categories[i].cat){
+					case 'need': $scope.budget.catsNeedPercent = $scope.budget.catsNeedPercent*1 + $scope.budget.categories[i].fact*1; break;
+					case 'want': $scope.budget.catsWantPercent = $scope.budget.catsWantPercent*1 + $scope.budget.categories[i].fact*1; break;
+					case 'save': $scope.budget.catsSavePercent = $scope.budget.catsSavePercent*1 + $scope.budget.categories[i].fact*1; break;
+				}
 			}
 		}
+		$scope.budget.catsNeedPercent = Math.round($scope.budget.catsNeedPercent * 100 / $scope.budget.minusFact*1) || 0;
+		$scope.budget.catsWantPercent = Math.round($scope.budget.catsWantPercent * 100 / $scope.budget.minusFact*1) || 0;
+		$scope.budget.catsSavePercent = Math.round($scope.budget.catsSavePercent * 100 / $scope.budget.minusFact*1) || 0;
 		$scope.budget.plusRest    = $scope.budget.plusPlan - $scope.budget.plusFact;
 		$scope.budget.minusRest   = $scope.budget.minusPlan - $scope.budget.minusFact;
 		$scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;

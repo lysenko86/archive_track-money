@@ -4,6 +4,10 @@
 .colorMinus{
     color: #F80;
 }
+    .colorMinus .descr{
+        color: #B0B0B0;
+        font-size: 85%;
+    }
 .colorOverPlus{
     color: #390;
 }
