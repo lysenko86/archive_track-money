@@ -1,0 +1,46 @@
+<div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-hide="formIsShown">{{message.text}}</div>
+<h3><strong>Статичні дані</strong></h3>
+<div class="row">
+	<div class="col-xs-12 col-md-6">
+		<div class="well" ng-if="!budget.categories.length">Немає записів</div>
+		<table class="table table-bordered table-hover" ng-if="budget.categories.length">
+			<thead class="over-head"><tr>
+				<th>Доходи</th>
+				<th>{{budget.plusPlan}}</th>
+				<th>{{budget.plusFact}}</th>
+				<th class="{{budget.plusRest < 0 ? ' colorOverPlus' : '' }}">{{budget.plusRest < 0 ? '+' : ''}}{{mathAbs(budget.plusRest)}}</th>
+			</tr></thead>
+			<thead class="bg-primary"><tr>
+				<th>Категорія</th>
+				<th width="90px">План</th>
+				<th width="90px">Факт</th>
+				<th width="110px">Залишок</th>
+			</tr></thead>
+			<tbody>
+				<tr ng-repeat="item in budget.categories" ng-if="item.type=='plus'" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
+					<td>{{item.category_title}}</td>
+					<td>{{item.plan}}</td>
+					<td>{{item.fact}}</td>
+					<td class="{{item.plan - item.fact < 0 ? 'colorOverPlus' : '' }}">{{item.plan - item.fact < 0 ? '+' : ''}}{{mathAbs(item.plan - item.fact)}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="col-xs-12 col-md-6">Пасиви</div>
+</div>
+<h3><strong>Динамічні дані</strong></h3>
+<div class="row">
+	<div class="col-xs-12">Капітал</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">Активи</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">Пасиви</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">Доходи</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">Витрати</div>
+</div>

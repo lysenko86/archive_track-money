@@ -882,7 +882,6 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 	        balancePlan: '',
 	        balanceFact: ''
 		};
-
 		$scope.category = {
 			id: false,
 			month: '',
@@ -896,7 +895,6 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
 			$scope.formIsShown = false;
 		});
-
 		categoriesServ.getCategories(function(data){
 			if (data.status == 'success'){
 				data.arr = data.arr ? data.arr : [];
@@ -1033,6 +1031,20 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 	}
 	$scope.togglePrintMode = function(){
 		printServ.togglePrintMode();
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, budgetsServ, categoriesServ, printServ, localStorageService){
+	this.init = function(){
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		};
+		// init
 	}
 
 	this.init();
