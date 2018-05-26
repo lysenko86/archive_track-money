@@ -55,7 +55,12 @@ class Router{
         'getBudgetCategory'  => ['ctrl' => 'Budgets', 'method' => 'getCategory',  'access' => ['user', 'admin']],
         'editBudgetCategory' => ['ctrl' => 'Budgets', 'method' => 'editCategory', 'access' => ['user', 'admin']],
         'delBudgetCategory'  => ['ctrl' => 'Budgets', 'method' => 'delCategory',  'access' => ['user', 'admin']],
-        'copyBudget'         => ['ctrl' => 'Budgets', 'method' => 'copyBudget',   'access' => ['user', 'admin']]
+        'copyBudget'         => ['ctrl' => 'Budgets', 'method' => 'copyBudget',   'access' => ['user', 'admin']],
+
+        'getProperties' => ['ctrl' => 'Properties', 'method' => 'getProperties', 'access' => ['user', 'admin']],
+        'getProperty'   => ['ctrl' => 'Properties', 'method' => 'getProperty',   'access' => ['user', 'admin']],
+        'editProperty'  => ['ctrl' => 'Properties', 'method' => 'editProperty',  'access' => ['user', 'admin']],
+        'delProperty'   => ['ctrl' => 'Properties', 'method' => 'delProperty',   'access' => ['user', 'admin']]
     ];
 
 

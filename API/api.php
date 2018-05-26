@@ -9,6 +9,7 @@
     require_once('controllers/categories.php');
     require_once('controllers/accounts.php');
     require_once('controllers/budgets.php');
+    require_once('controllers/properties.php');
 
 
 
