@@ -31,6 +31,10 @@
 							<option value='save'>{{cats.save}}</option>
 						</select>
 					</div>
+					<div class="form-group">
+						<div class="checkbox"><label><input type="checkbox" ng-model="isGoal" ng-click="category.goal=0" /> Ціль:</label></div>
+						<input type="text" class="form-control" ng-model="category.goal" placeholder="0.00" ng-disabled="!isGoal"/>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -49,7 +53,7 @@
 			<li class="list-group-item" ng-repeat="item in categories">
 				<div class="rowDate" ng-show="item.type != categories[$index-1].type">{{types[item.type]}}</div>
 				<div class="rowData" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
-                    <span class="{{item.type == 'plus' ? 'colorPlus' : 'colorMinus'}}" aria-hidden="true">{{item.title}}<span class="descr">{{item.cat ? ' (' + cats[item.cat] + ')' : ''}}</span></span>
+                    <span class="{{item.type == 'plus' ? 'colorPlus' : 'colorMinus'}}" aria-hidden="true">{{item.title}}{{item.goal != 0 ? ' (ціль: ' + item.goal + ')' : ''}}<span class="descr">{{item.cat ? ' (' + cats[item.cat] + ')' : ''}}</span></span>
                 </div>
 			</li>
 		</ul>

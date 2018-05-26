@@ -222,7 +222,8 @@ moneyApp.service('categoriesServ', function(requestServ){
             id:    category.id,
 			title: category.title,
 			type:  category.type,
-            cat:   category.type == 'minus' ? category.cat : ''
+            cat:   category.type == 'minus' ? category.cat : '',
+            goal:  category.goal
         }, cb);
 	}
     this.delCategory = function(id, cb){

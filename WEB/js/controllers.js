@@ -653,8 +653,10 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 			id:    false,
 			title: '',
 			type:  '',
-			cat: ''
+			cat: '',
+			goal: ''
 		};
+		$scope.isGoal = false;
 		$scope.categories = [];
 		$scope.types = {
 			plus: 'Доходи',
@@ -685,7 +687,7 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 	$scope.getCategory = function(id){
 		$scope.formIsShown = true;
 		if (!id){
-			$scope.category.id = false;
+			$scope.category.id = $scope.isGoal = false;
 			$scope.category.title = $scope.category.type = '';
 		}
 		else{
@@ -695,6 +697,8 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 					$scope.category.title = data.arr.title;
 					$scope.category.type  = data.arr.type;
 					$scope.category.cat   = data.arr.cat;
+					$scope.category.goal  = data.arr.goal;
+					$scope.isGoal         = data.arr.goal != 0;
 				}
 				else{
 					messagesServ.showMessages(data.status, data.msg);
@@ -708,6 +712,9 @@ moneyApp.controller('categoriesCtrl', function($location, $scope, messagesServ, 
 		}
 		else if($scope.category.type == 'minus' && !$scope.category.cat){
 			messagesServ.showMessages('error', 'Помилка! Поле "Категорія" обов\'язкове для заповнення!');
+		}
+		else if ($scope.category.goal && Number.isNaN($scope.category.goal)){
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Ціль" має бути або числовим, або пустим!');
 		}
 		else{
 			categoriesServ.editCategory($scope.category, function(data){
