@@ -327,3 +327,9 @@ moneyApp.service('propertiesServ', function(requestServ){
         }, cb);
     }
 });
+
+
+
+moneyApp.service('analyticsServ', function(requestServ){
+    // some code :)
+});
