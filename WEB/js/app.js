@@ -56,6 +56,10 @@ moneyApp.config(function($routeProvider, localStorageServiceProvider){
 		templateUrl: 'templates/budgets.html',
 		controller: 'budgetsCtrl'
 	})
+    .when('/properties', {
+		templateUrl: 'templates/properties.html',
+		controller: 'propertiesCtrl'
+	})
     .when('/analytics', {
 		templateUrl: 'templates/analytics.html',
 		controller: 'analyticsCtrl'

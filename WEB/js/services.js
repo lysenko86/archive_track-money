@@ -301,3 +301,28 @@ moneyApp.service('budgetsServ', function(requestServ){
         requestServ.sendRequest('get', 'copyBudget', data, cb);
     }
 });
+
+
+
+moneyApp.service('propertiesServ', function(requestServ){
+    this.getProperties = function(cb){
+        requestServ.sendRequest('get', 'getProperties', {}, cb);
+    }
+    this.getProperty = function(id, cb){
+        requestServ.sendRequest('get', 'getProperty', {
+            id: id
+        }, cb);
+    }
+    this.editProperty = function(property, cb){
+        requestServ.sendRequest('post', 'editProperty', {
+            id:    property.id,
+			title: property.title,
+            price: property.price
+        }, cb);
+	}
+    this.delProperty = function(id, cb){
+        requestServ.sendRequest('post', 'delProperty', {
+			id: id
+        }, cb);
+    }
+});

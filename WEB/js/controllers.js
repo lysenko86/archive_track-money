@@ -1038,7 +1038,102 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 
 
 
-moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, budgetsServ, categoriesServ, printServ, localStorageService){
+moneyApp.controller('propertiesCtrl', function($location, $scope, messagesServ, propertiesServ, localStorageService){
+	this.init = function(){
+		$scope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
+		$scope.property = {
+			id: false,
+			title: '',
+			price: ''
+		};
+		$scope.properties = [];
+		$scope.getProperties();
+		$scope.formIsShown = false;
+		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
+			$scope.formIsShown = false;
+		});
+	}
+	$scope.getProperties = function(){
+		propertiesServ.getProperties(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.properties = data.arr;
+			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+	}
+	$scope.getProperty = function(id){
+		$scope.formIsShown = true;
+		if (!id){
+			$scope.property.id    = false;
+			$scope.property.title = $scope.property.price = '';
+		}
+		else{
+			propertiesServ.getProperty(id, function(data){
+				if (data.status == 'success'){
+					$scope.property.id    = data.arr.id;
+					$scope.property.title = data.arr.title;
+					$scope.property.price = data.arr.price;
+				}
+				else{
+					messagesServ.showMessages(data.status, data.msg);
+				}
+			});
+		}
+	}
+	$scope.editProperty = function(){
+		if (!$scope.property.title){
+			messagesServ.showMessages('error', 'Помилка! Поле "Назва" обов\'язкове для заповнення!');
+		}
+		else if (Number.isNaN($scope.property.price)){
+			messagesServ.showMessages('error', 'Помилка! Значення поля "Ціна" має бути числовим і не нуль!');
+		}
+		else{
+			propertiesServ.editProperty($scope.property, function(data){
+				if (data.status == 'success'){
+					if ($scope.property.id){     // edit property
+						for (var i=0; i<$scope.properties.length; i++){
+							if ($scope.properties[i].id == $scope.property.id){
+								$scope.properties[i] = data.arr;
+							}
+						}
+					}
+					else{     // add account
+						$scope.properties.push(data.arr);
+					}
+					angular.element(document).find('#popupEditForm').modal('hide');
+					$scope.formIsShown = false;
+				}
+				messagesServ.showMessages(data.status, data.msg);
+            });
+		}
+	}
+	$scope.delProperty = function(id){
+		if (confirm('Ви точно хочете видалити це майно?')){
+			propertiesServ.delProperty(id, function(data){
+				if (data.status == 'success'){
+					for (var i=0; i<$scope.properties.length; i++){
+						if ($scope.properties[i].id == id){
+							$scope.properties.splice(i, 1);
+						}
+					}
+				}
+				messagesServ.showMessages(data.status, data.msg);
+			});
+		}
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, analyticsServ, printServ, localStorageService){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
