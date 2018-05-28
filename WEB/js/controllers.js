@@ -1140,7 +1140,7 @@ moneyApp.controller('propertiesCtrl', function($location, $scope, messagesServ, 
 
 
 
-moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, analyticsServ, printServ, localStorageService){
+moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, analyticsServ, propertiesServ, accountsServ, categoriesServ, printServ, localStorageService){
 	this.init = function(){
 		$scope.isAuth = localStorageService.get('token');
 		if (!$scope.isAuth){
@@ -1148,6 +1148,38 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 		};
 		analyticsServ.getExchangeRateFromNBU(function(data){
 			$scope.exchangeRate = data;
+		});
+		$scope.mathRound  = window.Math.round;
+		$scope.properties = $scope.accounts = $scope.goals = [];
+		$scope.totalPlus = $scope.totalMinus = 0;
+		propertiesServ.getProperties(function(data){
+			if (data.status == 'success'){
+				$scope.properties = data.arr || [];
+				$scope.properties.map(item => {
+					if (item.price >= 0){
+						$scope.totalPlus += item.price * 1;
+					} else {
+						$scope.totalMinus += item.price * 1;
+					}
+				});
+			}
+			else{
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+		accountsServ.getAccounts(function(data){
+			if (data.status == 'success'){
+				$scope.accounts = data.arr || [];
+				$scope.accounts.map(item => {
+					if (item.balance >= 0){
+						$scope.totalPlus += item.balance * 1;
+					} else {
+						$scope.totalMinus += item.balance * 1;
+					}
+				});
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
 		});
 	}
 

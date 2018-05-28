@@ -6,38 +6,74 @@
 </div>
 <div class="row">
 	<div class="col-xs-12 col-md-6">
-		<div class="well" ng-if="!budget.categories.length">Немає записів</div>
-		<table class="table table-bordered table-hover" ng-if="budget.categories.length">
-			<thead class="over-head"><tr>
-				<th>Доходи</th>
-				<th>{{budget.plusPlan}}</th>
-				<th>{{budget.plusFact}}</th>
-				<th class="{{budget.plusRest < 0 ? ' colorOverPlus' : '' }}">{{budget.plusRest < 0 ? '+' : ''}}{{mathAbs(budget.plusRest)}}</th>
-			</tr></thead>
+		<h3><strong>Активи</strong></h3>
+		<div class="well" ng-if="!properties.length">Немає записів</div>
+		<table class="table table-bordered table-hover" ng-if="properties.length">
 			<thead class="bg-primary"><tr>
-				<th>Категорія</th>
-				<th width="90px">План</th>
-				<th width="90px">Факт</th>
-				<th width="110px">Залишок</th>
+				<th>Назва</th>
+				<th width="90px">Ціна, грн</th>
+				<th width="90px">Ціна, $</th>
+				<th width="90px">Ціна, €</th>
 			</tr></thead>
 			<tbody>
-				<tr ng-repeat="item in budget.categories" ng-if="item.type=='plus'" data-toggle="modal" data-target="#popupEditForm" ng-click="getCategory(item.id)">
-					<td>{{item.category_title}}</td>
-					<td>{{item.plan}}</td>
-					<td>{{item.fact}}</td>
-					<td class="{{item.plan - item.fact < 0 ? 'colorOverPlus' : '' }}">{{item.plan - item.fact < 0 ? '+' : ''}}{{mathAbs(item.plan - item.fact)}}</td>
+				<tr ng-repeat="item in properties" ng-if="item.price >= 0">
+					<td>{{item.title}}</td>
+					<td class="colorPlus">{{item.price}}</td>
+					<td class="colorPlus">{{mathRound(item.price / exchangeRate.USD)}}.00</td>
+					<td class="colorPlus">{{mathRound(item.price / exchangeRate.EUR)}}.00</td>
+				</tr>
+				<tr ng-repeat="item in accounts" ng-if="item.balance >= 0">
+					<td>{{item.title}}</td>
+					<td class="colorPlus">{{item.balance}}</td>
+					<td class="colorPlus">{{mathRound(item.balance / exchangeRate.USD)}}.00</td>
+					<td class="colorPlus">{{mathRound(item.balance / exchangeRate.EUR)}}.00</td>
+				</tr>
+				<tr ng-if="properties.length">
+					<td><strong>Всього</strong></td>
+					<td><strong>{{totalPlus}}.00</strong></td>
+					<td><strong>{{mathRound(totalPlus / exchangeRate.USD)}}.00</strong></td>
+					<td><strong>{{mathRound(totalPlus / exchangeRate.EUR)}}.00</strong></td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
-	<div class="col-xs-12 col-md-6">Пасиви</div>
+	<div class="col-xs-12 col-md-6">
+		<h3><strong>Пасиви</strong></h3>
+		<div class="well" ng-if="!properties.length">Немає записів</div>
+		<table class="table table-bordered table-hover" ng-if="properties.length">
+			<thead class="bg-primary"><tr>
+				<th>Назва</th>
+				<th width="90px">Ціна, грн</th>
+				<th width="90px">Ціна, $</th>
+				<th width="90px">Ціна, €</th>
+			</tr></thead>
+			<tbody>
+				<tr ng-repeat="item in properties" ng-if="item.price < 0">
+					<td>{{item.title}}</td>
+					<td class="colorMinus">{{item.price}}</td>
+					<td class="colorMinus">{{mathRound(item.price / exchangeRate.USD)}}.00</td>
+					<td class="colorMinus">{{mathRound(item.price / exchangeRate.EUR)}}.00</td>
+				</tr>
+				<tr ng-repeat="item in accounts" ng-if="item.balance < 0">
+					<td>{{item.title}}</td>
+					<td class="colorMinus">{{item.balance}}</td>
+					<td class="colorMinus">{{mathRound(item.balance / exchangeRate.USD)}}.00</td>
+					<td class="colorMinus">{{mathRound(item.balance / exchangeRate.EUR)}}.00</td>
+				</tr>
+				<tr ng-if="properties.length">
+					<td><strong>Всього</strong></td>
+					<td><strong>{{totalMinus}}.00</strong></td>
+					<td><strong>{{mathRound(totalMinus / exchangeRate.USD)}}.00</strong></td>
+					<td><strong>{{mathRound(totalMinus / exchangeRate.EUR)}}.00</strong></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
-<h3><strong>Динамічні дані</strong></h3>
 <div class="row">
-	<div class="col-xs-12">Капітал</div>
+	<div class="col-xs-12"><h3><strong>Капітал складає: <span class="{{totalPlus - totalMinus >=0 ? 'colorPlus' : 'colorMinus'}}">{{totalPlus - totalMinus}}.00грн (${{mathRound((totalPlus - totalMinus) / exchangeRate.USD)}}.00, €{{mathRound((totalPlus - totalMinus) / exchangeRate.EUR)}}.00)</span></strong></h3></div>
 </div>
 <div class="row">
-	<div class="col-xs-12">Активи</div>
 </div>
 <div class="row">
 	<div class="col-xs-12">Пасиви</div>
