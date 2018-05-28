@@ -1181,6 +1181,13 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
+		categoriesServ.getGoals(function(data){
+			if (data.status == 'success'){
+				$scope.goals = data.arr || [];
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
 	}
 
 	this.init();

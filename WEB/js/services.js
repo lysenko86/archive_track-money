@@ -212,6 +212,9 @@ moneyApp.service('categoriesServ', function(requestServ){
     this.getCategories = function(cb){
         requestServ.sendRequest('get', 'getCategories', {}, cb);
     }
+    this.getGoals = function(cb){
+        requestServ.sendRequest('get', 'getGoals', {}, cb);
+    }
     this.getCategory = function(id, cb){
         requestServ.sendRequest('get', 'getCategory', {
             id: id

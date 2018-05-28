@@ -283,6 +283,19 @@ nav.navbar{
     .main blockquote p{
         font-size: 14px;
     }
+    .main .progress{
+        margin-top: 30px;
+        height: 30px;
+    }
+        .main .progress .progress-bar{
+            line-height: 30px;
+            font-weight: bold;
+        }
+        .main .progress span{
+            position: absolute;
+            margin-top: -20px;
+            font-weight: bold;
+        }
 
 
 
