@@ -1146,7 +1146,9 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 		if (!$scope.isAuth){
 			$location.url('home');
 		};
-		// init
+		analyticsServ.getExchangeRateFromNBU(function(data){
+			$scope.exchangeRate = data;
+		});
 	}
 
 	this.init();

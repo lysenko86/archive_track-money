@@ -330,6 +330,21 @@ moneyApp.service('propertiesServ', function(requestServ){
 
 
 
-moneyApp.service('analyticsServ', function(requestServ){
-    // some code :)
+moneyApp.service('analyticsServ', function($http, requestServ){
+    this.getExchangeRateFromNBU = function(cb){
+        angular.element(document).find('#loaderPage').css('display', 'flex');
+        $http.get('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json')
+            .success(function(data){
+                let rate = {};
+                data.map(item => {
+                    if (item.cc == 'USD' || item.cc == 'EUR'){
+                        rate[item.cc] = Math.round(item.rate * 100) / 100;
+                    }
+                });
+                requestServ.getResponse(rate, cb);
+            })
+            .error(function(error, status){
+                requestServ.getResponse('requestError', cb);
+            });
+    }
 });
