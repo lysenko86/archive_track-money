@@ -1188,6 +1188,54 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
+		$('#gisto-dohod, #gisto-vytraty, #gisto-actyvy, #gisto-pasyvy').tufteBar({
+			data: [
+				[20000, {label: 'Січ'}],
+				[30000, {label: 'Лют'}],
+				[35000, {label: 'Бер'}],
+				[15000, {label: 'Кві'}],
+				[20000, {label: 'Тра'}],
+				[40000, {label: 'Чер'}],
+				[40000, {label: 'Лип'}],
+				[43000, {label: 'Сер'}],
+				[44000, {label: 'Вер'}],
+				[47000, {label: 'Жов'}],
+				[50000, {label: 'Лис'}],
+				[52000, {label: 'Гру'}]
+			],
+			axisLabel: function(index) { return this[1].label },
+			colors: ['#337ab7']
+		});
+		$('#gisto-capital').tufteBar({
+			data: [
+				[20000, {label: 'Січ'}],
+				[30000, {label: 'Лют'}],
+				[35000, {label: 'Бер'}],
+				[15000, {label: 'Кві'}],
+				[20000, {label: 'Тра'}],
+				[40000, {label: 'Чер'}],
+				[40000, {label: 'Лип'}],
+				[43000, {label: 'Сер'}],
+				[44000, {label: 'Вер'}],
+				[47000, {label: 'Жов'}],
+				[50000, {label: 'Лис'}],
+				[52000, {label: 'Гру'}],
+				[20000, {label: 'Січ'}],
+				[30000, {label: 'Лют'}],
+				[35000, {label: 'Бер'}],
+				[15000, {label: 'Кві'}],
+				[20000, {label: 'Тра'}],
+				[40000, {label: 'Чер'}],
+				[40000, {label: 'Лип'}],
+				[43000, {label: 'Сер'}],
+				[44000, {label: 'Вер'}],
+				[47000, {label: 'Жов'}],
+				[50000, {label: 'Лис'}],
+				[52000, {label: 'Гру'}]
+			],
+			axisLabel: function(index) { return this[1].label },
+			colors: ['#337ab7']
+		});
 	}
 
 	this.init();
