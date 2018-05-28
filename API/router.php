@@ -41,6 +41,7 @@ class Router{
         'delAction'  => ['ctrl' => 'Actions', 'method' => 'delAction',  'access' => ['user', 'admin']],
 
         'getCategories' => ['ctrl' => 'Categories', 'method' => 'getCategories', 'access' => ['user', 'admin']],
+        'getGoals'      => ['ctrl' => 'Categories', 'method' => 'getGoals',      'access' => ['user', 'admin']],
         'getCategory'   => ['ctrl' => 'Categories', 'method' => 'getCategory',   'access' => ['user', 'admin']],
         'editCategory'  => ['ctrl' => 'Categories', 'method' => 'editCategory',  'access' => ['user', 'admin']],
         'delCategory'   => ['ctrl' => 'Categories', 'method' => 'delCategory',   'access' => ['user', 'admin']],

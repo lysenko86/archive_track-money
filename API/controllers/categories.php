@@ -12,6 +12,18 @@ class Categories{
         $this->data['arr']    = $this->db->query("SELECT * FROM `categories` WHERE `uid` = ? ORDER BY `type` ASC, `title` ASC", [$this->params['uid']]);
         $this->data['status'] = 'success';
     }
+    function getGoals(){
+        $this->data['arr'] = $this->db->query("
+            SELECT
+                `c`.*,
+                (ROUND(IFNULL((SELECT SUM(sum) FROM `actions` WHERE `uid` = ? AND `category_id` = `c`.`id`), 0), 2)) AS `paid`,
+                (ROUND(IFNULL((SELECT SUM(sum) FROM `actions` WHERE `uid` = ? AND `category_id` = `c`.`id`), 0) * 100 / `c`.`goal`, 2)) AS `paidPercent`
+            FROM `categories` AS `c`
+            WHERE `c`.`uid` = ? AND `c`.`goal` <> 0
+            ORDER BY `c`.`title` ASC
+        ", [$this->params['uid'], $this->params['uid'], $this->params['uid']]);
+        $this->data['status'] = 'success';
+    }
     function getCategory(){
         $this->data['arr']    = $this->db->query("SELECT * FROM `categories` WHERE `id` = ? AND `uid` = ?", [$this->params['id'], $this->params['uid']]);
         $this->data['arr']    = $this->data['arr'][0];
