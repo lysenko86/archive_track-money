@@ -350,4 +350,36 @@ moneyApp.service('analyticsServ', function($http, requestServ){
                 requestServ.getResponse('requestError', cb);
             });
     }
+    this.getIncomeByMonth = function(cb){
+        let dateFrom = new Date();
+        let dateTo = new Date();
+        dateTo.setDate(0);
+        dateFrom.setDate(1);
+        dateFrom.setMonth(dateTo.getMonth() + 1);
+        dateFrom.setFullYear(dateTo.getFullYear() - 1);
+        let dateToMonth = (dateTo.getMonth() + 1 < 10 ? '0' : '') + (dateTo.getMonth() + 1);
+        let dateFromMonth = (dateFrom.getMonth() + 1 < 10 ? '0' : '') + (dateFrom.getMonth() + 1);
+        let dateToDay = (dateTo.getDate() < 10 ? '0' : '') + dateTo.getDate();
+        let dateFromDay = (dateFrom.getDate() < 10 ? '0' : '') + dateFrom.getDate();
+        requestServ.sendRequest('get', 'getIncomeByMonth', {
+            dateFrom: dateFrom.getFullYear() + '-' + dateFromMonth + '-' + dateFromDay,
+            dateTo: dateTo.getFullYear() + '-' + dateToMonth + '-' + dateToDay
+        }, cb);
+    }
+    this.getCostByMonth = function(cb){
+        let dateFrom = new Date();
+        let dateTo = new Date();
+        dateTo.setDate(0);
+        dateFrom.setDate(1);
+        dateFrom.setMonth(dateTo.getMonth() + 1);
+        dateFrom.setFullYear(dateTo.getFullYear() - 1);
+        let dateToMonth = (dateTo.getMonth() + 1 < 10 ? '0' : '') + (dateTo.getMonth() + 1);
+        let dateFromMonth = (dateFrom.getMonth() + 1 < 10 ? '0' : '') + (dateFrom.getMonth() + 1);
+        let dateToDay = (dateTo.getDate() < 10 ? '0' : '') + dateTo.getDate();
+        let dateFromDay = (dateFrom.getDate() < 10 ? '0' : '') + dateFrom.getDate();
+        requestServ.sendRequest('get', 'getCostByMonth', {
+            dateFrom: dateFrom.getFullYear() + '-' + dateFromMonth + '-' + dateFromDay,
+            dateTo: dateTo.getFullYear() + '-' + dateToMonth + '-' + dateToDay
+        }, cb);
+    }
 });

@@ -1146,6 +1146,7 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 		if (!$scope.isAuth){
 			$location.url('home');
 		};
+		$scope.months = ["Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"];
 		analyticsServ.getExchangeRateFromNBU(function(data){
 			$scope.exchangeRate = data;
 		});
@@ -1188,7 +1189,39 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
-		$('#gisto-dohod, #gisto-vytraty, #gisto-actyvy, #gisto-pasyvy').tufteBar({
+		analyticsServ.getIncomeByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.value, {label: $scope.months[--item.month]}]);
+				});
+				$('#gisto-income').tufteBar({
+					data: gistoData,
+					axisLabel: function(index) { return this[1].label },
+					colors: ['#337ab7']
+				});
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+		analyticsServ.getCostByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.value, {label: $scope.months[--item.month]}]);
+				});
+				$('#gisto-cost').tufteBar({
+					data: gistoData,
+					axisLabel: function(index) { return this[1].label },
+					colors: ['#337ab7']
+				});
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+		$('#gisto-actyvy, #gisto-pasyvy').tufteBar({
 			data: [
 				[20000, {label: 'Січ'}],
 				[30000, {label: 'Лют'}],
