@@ -39,6 +39,8 @@ class Router{
         'getAction'  => ['ctrl' => 'Actions', 'method' => 'getAction',  'access' => ['user', 'admin']],
         'editAction' => ['ctrl' => 'Actions', 'method' => 'editAction', 'access' => ['user', 'admin']],
         'delAction'  => ['ctrl' => 'Actions', 'method' => 'delAction',  'access' => ['user', 'admin']],
+        'getIncomeByMonth' => ['ctrl' => 'Actions', 'method' => 'getIncomeByMonth', 'access' => ['user', 'admin']],
+        'getCostByMonth' => ['ctrl' => 'Actions', 'method' => 'getCostByMonth', 'access' => ['user', 'admin']],
 
         'getCategories' => ['ctrl' => 'Categories', 'method' => 'getCategories', 'access' => ['user', 'admin']],
         'getGoals'      => ['ctrl' => 'Categories', 'method' => 'getGoals',      'access' => ['user', 'admin']],

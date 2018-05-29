@@ -145,5 +145,23 @@ class Actions{
         $this->data['status'] = 'success';
         $this->data['msg']    = "Готово! Транзакція успішно видалена.";
     }
+    function getIncomeByMonth(){
+        $this->data['arr'] = $this->db->query("
+            SELECT SUM(`sum`) AS `value`, MONTH(`date`) AS `month`
+            FROM `actions`
+            WHERE `uid` = ? AND `type` = 'plus' AND `date` >= ? AND `date` <= ?
+            GROUP BY MONTH(`date`)
+        ", [$this->params['uid'], $this->params['dateFrom'], $this->params['dateTo']], false);
+        $this->data['status'] = 'success';
+    }
+    function getCostByMonth(){
+        $this->data['arr'] = $this->db->query("
+            SELECT SUM(`sum`) AS `value`, MONTH(`date`) AS `month`
+            FROM `actions`
+            WHERE `uid` = ? AND `type` = 'minus' AND `date` >= ? AND `date` <= ?
+            GROUP BY MONTH(`date`)
+        ", [$this->params['uid'], $this->params['dateFrom'], $this->params['dateTo']], false);
+        $this->data['status'] = 'success';
+    }
 }
 ?>
