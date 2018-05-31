@@ -63,7 +63,10 @@ class Router{
         'getProperties' => ['ctrl' => 'Properties', 'method' => 'getProperties', 'access' => ['user', 'admin']],
         'getProperty'   => ['ctrl' => 'Properties', 'method' => 'getProperty',   'access' => ['user', 'admin']],
         'editProperty'  => ['ctrl' => 'Properties', 'method' => 'editProperty',  'access' => ['user', 'admin']],
-        'delProperty'   => ['ctrl' => 'Properties', 'method' => 'delProperty',   'access' => ['user', 'admin']]
+        'delProperty'   => ['ctrl' => 'Properties', 'method' => 'delProperty',   'access' => ['user', 'admin']],
+        'getActiveByMonth' => ['ctrl' => 'Properties', 'method' => 'getActiveByMonth', 'access' => ['user', 'admin']],
+        'getPassiveByMonth' => ['ctrl' => 'Properties', 'method' => 'getPassiveByMonth', 'access' => ['user', 'admin']],
+        'getCapitalByMonth' => ['ctrl' => 'Properties', 'method' => 'getCapitalByMonth', 'access' => ['user', 'admin']]
     ];
 
 
