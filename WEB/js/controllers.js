@@ -1221,53 +1221,55 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 				messagesServ.showMessages(data.status, data.msg);
 			}
 		});
-		$('#gisto-actyvy, #gisto-pasyvy').tufteBar({
-			data: [
-				[20000, {label: 'Січ'}],
-				[30000, {label: 'Лют'}],
-				[35000, {label: 'Бер'}],
-				[15000, {label: 'Кві'}],
-				[20000, {label: 'Тра'}],
-				[40000, {label: 'Чер'}],
-				[40000, {label: 'Лип'}],
-				[43000, {label: 'Сер'}],
-				[44000, {label: 'Вер'}],
-				[47000, {label: 'Жов'}],
-				[50000, {label: 'Лис'}],
-				[52000, {label: 'Гру'}]
-			],
-			axisLabel: function(index) { return this[1].label },
-			colors: ['#337ab7']
+		analyticsServ.getActiveByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.active_sum, {label: $scope.months[--item.month]}, item.active_comment]);
+				});
+				$('#gisto-actyvy').tufteBar({
+					data: gistoData,
+					axisLabel: function(index) { return this[1].label },
+					colors: ['#337ab7'],
+					barLabel: function(index) { return '<span title="' + gistoData[index][2] + '">' + $.tufteBar.formatNumber(this[0]) + '</span>'; }
+				});
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
 		});
-		$('#gisto-capital').tufteBar({
-			data: [
-				[20000, {label: 'Січ'}],
-				[30000, {label: 'Лют'}],
-				[35000, {label: 'Бер'}],
-				[15000, {label: 'Кві'}],
-				[20000, {label: 'Тра'}],
-				[40000, {label: 'Чер'}],
-				[40000, {label: 'Лип'}],
-				[43000, {label: 'Сер'}],
-				[44000, {label: 'Вер'}],
-				[47000, {label: 'Жов'}],
-				[50000, {label: 'Лис'}],
-				[52000, {label: 'Гру'}],
-				[20000, {label: 'Січ'}],
-				[30000, {label: 'Лют'}],
-				[35000, {label: 'Бер'}],
-				[15000, {label: 'Кві'}],
-				[20000, {label: 'Тра'}],
-				[40000, {label: 'Чер'}],
-				[40000, {label: 'Лип'}],
-				[43000, {label: 'Сер'}],
-				[44000, {label: 'Вер'}],
-				[47000, {label: 'Жов'}],
-				[50000, {label: 'Лис'}],
-				[52000, {label: 'Гру'}]
-			],
-			axisLabel: function(index) { return this[1].label },
-			colors: ['#337ab7']
+		analyticsServ.getPassiveByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.passive_sum, {label: $scope.months[--item.month]}, item.passive_comment]);
+				});
+				$('#gisto-pasyvy').tufteBar({
+					data: gistoData,
+					axisLabel: function(index) { return this[1].label },
+					colors: ['#337ab7'],
+					barLabel: function(index) { return '<span title="' + gistoData[index][2] + '">' + $.tufteBar.formatNumber(this[0]) + '</span>'; }
+				});
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+		analyticsServ.getCapitalByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.sum, {label: $scope.months[--item.month]}]);
+				});
+				$('#gisto-capital').tufteBar({
+					data: gistoData,
+					axisLabel: function(index) { return this[1].label },
+					colors: ['#337ab7'],
+				});
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
 		});
 	}
 

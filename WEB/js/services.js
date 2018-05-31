@@ -251,16 +251,24 @@ moneyApp.service('accountsServ', function($rootScope, requestServ, messagesServ)
         }, cb);
     }
     this.editAccount = function(account, cb){
+        let date = new Date();
+        let dateMonth = (date.getMonth() + 1 < 10 ? '0' : '') + (date.getMonth() + 1);
+        let dateDay = (date.getDate() < 10 ? '0' : '') + date.getDate();
         requestServ.sendRequest('post', 'editAccount', {
             id:      account.id,
 			title:   account.title,
             balance: account.balance,
-            panel:   account.panel
+            panel:   account.panel,
+            date:    date.getFullYear() + '-' + dateMonth + '-' + dateDay
         }, cb);
 	}
     this.delAccount = function(id, cb){
+        let date = new Date();
+        let dateMonth = (date.getMonth() + 1 < 10 ? '0' : '') + (date.getMonth() + 1);
+        let dateDay = (date.getDate() < 10 ? '0' : '') + date.getDate();
         requestServ.sendRequest('post', 'delAccount', {
-			id: id
+			id:   id,
+            date: date.getFullYear() + '-' + dateMonth + '-' + dateDay
         }, cb);
     }
     this.getAccountsPanel = function(){
@@ -318,15 +326,23 @@ moneyApp.service('propertiesServ', function(requestServ){
         }, cb);
     }
     this.editProperty = function(property, cb){
+        let date = new Date();
+        let dateMonth = (date.getMonth() + 1 < 10 ? '0' : '') + (date.getMonth() + 1);
+        let dateDay = (date.getDate() < 10 ? '0' : '') + date.getDate();
         requestServ.sendRequest('post', 'editProperty', {
             id:    property.id,
 			title: property.title,
-            price: property.price
+            price: property.price,
+            date: date.getFullYear() + '-' + dateMonth + '-' + dateDay
         }, cb);
 	}
     this.delProperty = function(id, cb){
+        let date = new Date();
+        let dateMonth = (date.getMonth() + 1 < 10 ? '0' : '') + (date.getMonth() + 1);
+        let dateDay = (date.getDate() < 10 ? '0' : '') + date.getDate();
         requestServ.sendRequest('post', 'delProperty', {
-			id: id
+			id: id,
+            date: date.getFullYear() + '-' + dateMonth + '-' + dateDay
         }, cb);
     }
 });
@@ -350,36 +366,55 @@ moneyApp.service('analyticsServ', function($http, requestServ){
                 requestServ.getResponse('requestError', cb);
             });
     }
-    this.getIncomeByMonth = function(cb){
+    this.getDatesToFrom = function(years){
         let dateFrom = new Date();
         let dateTo = new Date();
         dateTo.setDate(0);
         dateFrom.setDate(1);
         dateFrom.setMonth(dateTo.getMonth() + 1);
-        dateFrom.setFullYear(dateTo.getFullYear() - 1);
+        dateFrom.setFullYear(dateTo.getFullYear() - (years ? years : 1));
         let dateToMonth = (dateTo.getMonth() + 1 < 10 ? '0' : '') + (dateTo.getMonth() + 1);
         let dateFromMonth = (dateFrom.getMonth() + 1 < 10 ? '0' : '') + (dateFrom.getMonth() + 1);
         let dateToDay = (dateTo.getDate() < 10 ? '0' : '') + dateTo.getDate();
         let dateFromDay = (dateFrom.getDate() < 10 ? '0' : '') + dateFrom.getDate();
-        requestServ.sendRequest('get', 'getIncomeByMonth', {
+        return {
             dateFrom: dateFrom.getFullYear() + '-' + dateFromMonth + '-' + dateFromDay,
             dateTo: dateTo.getFullYear() + '-' + dateToMonth + '-' + dateToDay
+        }
+    }
+    this.getIncomeByMonth = function(cb){
+        let dates = this.getDatesToFrom();
+        requestServ.sendRequest('get', 'getIncomeByMonth', {
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
         }, cb);
     }
     this.getCostByMonth = function(cb){
-        let dateFrom = new Date();
-        let dateTo = new Date();
-        dateTo.setDate(0);
-        dateFrom.setDate(1);
-        dateFrom.setMonth(dateTo.getMonth() + 1);
-        dateFrom.setFullYear(dateTo.getFullYear() - 1);
-        let dateToMonth = (dateTo.getMonth() + 1 < 10 ? '0' : '') + (dateTo.getMonth() + 1);
-        let dateFromMonth = (dateFrom.getMonth() + 1 < 10 ? '0' : '') + (dateFrom.getMonth() + 1);
-        let dateToDay = (dateTo.getDate() < 10 ? '0' : '') + dateTo.getDate();
-        let dateFromDay = (dateFrom.getDate() < 10 ? '0' : '') + dateFrom.getDate();
+        let dates = this.getDatesToFrom();
         requestServ.sendRequest('get', 'getCostByMonth', {
-            dateFrom: dateFrom.getFullYear() + '-' + dateFromMonth + '-' + dateFromDay,
-            dateTo: dateTo.getFullYear() + '-' + dateToMonth + '-' + dateToDay
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
+        }, cb);
+    }
+    this.getActiveByMonth = function(cb){
+        let dates = this.getDatesToFrom();
+        requestServ.sendRequest('get', 'getActiveByMonth', {
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
+        }, cb);
+    }
+    this.getPassiveByMonth = function(cb){
+        let dates = this.getDatesToFrom();
+        requestServ.sendRequest('get', 'getPassiveByMonth', {
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
+        }, cb);
+    }
+    this.getCapitalByMonth = function(cb){
+        let dates = this.getDatesToFrom(2);
+        requestServ.sendRequest('get', 'getCapitalByMonth', {
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
         }, cb);
     }
 });
