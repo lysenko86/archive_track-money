@@ -8,8 +8,8 @@
 <div class="row">
 	<div class="col-xs-12 col-md-6">
 		<h3><strong>Активи</strong></h3>
-		<div class="well" ng-if="!properties.length">Немає записів</div>
-		<table class="table table-bordered table-hover" ng-if="properties.length">
+		<div class="well" ng-if="!properties.length && !accounts.length">Немає записів</div>
+		<table class="table table-bordered table-hover" ng-if="properties.length || accounts.length">
 			<thead class="bg-primary"><tr>
 				<th>Назва</th>
 				<th width="90px">Ціна, грн</th>
@@ -29,7 +29,7 @@
 					<td class="colorPlus">{{mathRound(item.balance / exchangeRate.USD)}}.00</td>
 					<td class="colorPlus">{{mathRound(item.balance / exchangeRate.EUR)}}.00</td>
 				</tr>
-				<tr ng-if="properties.length">
+				<tr ng-if="properties.length || accounts.length">
 					<td><strong>Всього</strong></td>
 					<td><strong>{{totalPlus}}.00</strong></td>
 					<td><strong>{{mathRound(totalPlus / exchangeRate.USD)}}.00</strong></td>
@@ -40,8 +40,8 @@
 	</div>
 	<div class="col-xs-12 col-md-6">
 		<h3><strong>Пасиви</strong></h3>
-		<div class="well" ng-if="!properties.length">Немає записів</div>
-		<table class="table table-bordered table-hover" ng-if="properties.length">
+		<div class="well" ng-if="!properties.length && !accounts.length">Немає записів</div>
+		<table class="table table-bordered table-hover" ng-if="properties.length || accounts.length">
 			<thead class="bg-primary"><tr>
 				<th>Назва</th>
 				<th width="90px">Ціна, грн</th>
@@ -61,7 +61,7 @@
 					<td class="colorMinus">{{mathRound(item.balance / exchangeRate.USD)}}.00</td>
 					<td class="colorMinus">{{mathRound(item.balance / exchangeRate.EUR)}}.00</td>
 				</tr>
-				<tr ng-if="properties.length">
+				<tr ng-if="properties.length || accounts.length">
 					<td><strong>Всього</strong></td>
 					<td><strong>{{totalMinus}}.00</strong></td>
 					<td><strong>{{mathRound(totalMinus / exchangeRate.USD)}}.00</strong></td>
@@ -72,7 +72,7 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-xs-12"><h3><strong>Капітал складає: <span class="{{totalPlus - totalMinus >=0 ? 'colorPlus' : 'colorMinus'}}">{{totalPlus - totalMinus}}.00грн (${{mathRound((totalPlus - totalMinus) / exchangeRate.USD)}}.00, €{{mathRound((totalPlus - totalMinus) / exchangeRate.EUR)}}.00)</span></strong></h3></div>
+	<div class="col-xs-12"><h3><strong>Капітал складає: <span class="{{totalPlus - mathAbs(totalMinus) >=0 ? 'colorPlus' : 'colorMinus'}}">{{totalPlus - mathAbs(totalMinus)}}.00грн (${{mathRound((totalPlus - mathAbs(totalMinus)) / exchangeRate.USD)}}.00, €{{mathRound((totalPlus - mathAbs(totalMinus)) / exchangeRate.EUR)}}.00)</span></strong></h3></div>
 </div>
 <div class="row">
 	<div class="col-xs-12">

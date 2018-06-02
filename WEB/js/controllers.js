@@ -1153,6 +1153,7 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 			$scope.exchangeRate = data;
 		});
 		$scope.mathRound  = window.Math.round;
+		$scope.mathAbs    = window.Math.abs;
 		$scope.properties = $scope.accounts = $scope.goals = [];
 		$scope.totalPlus = $scope.totalMinus = 0;
 		propertiesServ.getProperties(function(data){
@@ -1198,11 +1199,13 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 				data.arr.map(function(item, index){
 					gistoData.push([item.value, {label: $scope.months[--item.month]}]);
 				});
-				$('#gisto-income').tufteBar({
-					data: gistoData,
-					axisLabel: function(index) { return this[1].label },
-					colors: ['#337ab7']
-				});
+				if (gistoData.length){
+					$('#gisto-income').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7']
+					});
+				}
 			} else {
 				messagesServ.showMessages(data.status, data.msg);
 			}
@@ -1214,11 +1217,13 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 				data.arr.map(function(item, index){
 					gistoData.push([item.value, {label: $scope.months[--item.month]}]);
 				});
-				$('#gisto-cost').tufteBar({
-					data: gistoData,
-					axisLabel: function(index) { return this[1].label },
-					colors: ['#337ab7']
-				});
+				if (gistoData.length){
+					$('#gisto-cost').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7']
+					});
+				}
 			} else {
 				messagesServ.showMessages(data.status, data.msg);
 			}
@@ -1230,12 +1235,14 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 				data.arr.map(function(item, index){
 					gistoData.push([item.active_sum, {label: $scope.months[--item.month]}, item.active_comment]);
 				});
-				$('#gisto-actyvy').tufteBar({
-					data: gistoData,
-					axisLabel: function(index) { return this[1].label },
-					colors: ['#337ab7'],
-					barLabel: function(index) { return '<span title="' + gistoData[index][2] + '">' + $.tufteBar.formatNumber(this[0]) + '</span>'; }
-				});
+				if (gistoData.length){
+					$('#gisto-actyvy').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7'],
+						barLabel: function(index) { return '<span title="' + gistoData[index][2] + '">' + $.tufteBar.formatNumber(this[0]) + '</span>'; }
+					});
+				}
 			} else {
 				messagesServ.showMessages(data.status, data.msg);
 			}
@@ -1247,12 +1254,14 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 				data.arr.map(function(item, index){
 					gistoData.push([item.passive_sum, {label: $scope.months[--item.month]}, item.passive_comment]);
 				});
-				$('#gisto-pasyvy').tufteBar({
-					data: gistoData,
-					axisLabel: function(index) { return this[1].label },
-					colors: ['#337ab7'],
-					barLabel: function(index) { return '<span title="' + gistoData[index][2] + '">' + $.tufteBar.formatNumber(this[0]) + '</span>'; }
-				});
+				if (gistoData.length){
+					$('#gisto-pasyvy').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7'],
+						barLabel: function(index) { return '<span title="' + gistoData[index][2] + '">' + $.tufteBar.formatNumber(this[0]) + '</span>'; }
+					});
+				}
 			} else {
 				messagesServ.showMessages(data.status, data.msg);
 			}
@@ -1264,11 +1273,13 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 				data.arr.map(function(item, index){
 					gistoData.push([item.sum, {label: $scope.months[--item.month]}]);
 				});
-				$('#gisto-capital').tufteBar({
-					data: gistoData,
-					axisLabel: function(index) { return this[1].label },
-					colors: ['#337ab7'],
-				});
+				if (gistoData.length){
+					$('#gisto-capital').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7'],
+					});
+				}
 			} else {
 				messagesServ.showMessages(data.status, data.msg);
 			}
