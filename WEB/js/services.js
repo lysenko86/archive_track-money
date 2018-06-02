@@ -176,10 +176,12 @@ moneyApp.service('forumServ', function(requestServ){
 
 
 moneyApp.service('actionsServ', function(requestServ){
-    this.getActions = function(from, count, cb){
+    this.getActions = function(filter, cb){
         requestServ.sendRequest('get', 'getActions', {
-            from:  from,
-            count: count
+            start:        filter.start,
+            timeInterval: filter.timeInterval,
+            searchBy:     filter.searchBy,
+            searchText:   filter.searchText
         }, cb);
     }
     this.getAction = function(id, cb){

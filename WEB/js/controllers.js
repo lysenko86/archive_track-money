@@ -453,14 +453,19 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 			sum: '',
 			description: ''
 		};
+		$scope.filter = {
+			start: $scope.dateToAPI($scope.getToday()),
+			timeInterval: 'day',
+			searchBy: '',
+			searchText: ''
+		};
 		$scope.actions = $scope.categories = $scope.accounts = [];
 		$scope.types   = {
 			plus: 'Доходи',
 			minus: 'Витрати',
 			move: 'Переказ'
 		};
-		$scope.isShowMoreButton = true;
-		$scope.formIsShown      = false;
+		$scope.formIsShown = false;
 		angular.element(document).find('#popupEditForm').on('hidden.bs.modal', function(){
 			$scope.formIsShown = false;
 		});
@@ -530,14 +535,11 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
         }
         return result != 0 ? result : NaN;
     }
-	$scope.getActions = function(data){
-		actionsServ.getActions($scope.actions.length, 20, function(data){
+	$scope.getActions = function(){
+		actionsServ.getActions($scope.filter, function(data){
 			if (data.status == 'success'){
 				data.arr       = data.arr ? data.arr : [];
-				$scope.actions = $scope.actions.concat(data.arr);
-				if (!data.arr.length){
-					$scope.isShowMoreButton = false;
-				}
+				$scope.actions = data.arr;
 			}
 			else{
 				messagesServ.showMessages(data.status, data.msg);

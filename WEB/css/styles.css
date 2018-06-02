@@ -300,6 +300,32 @@ nav.navbar{
         font-size: 18px;
         font-weight: bold;
     }
+    .main .filter-container{
+        display: inline;
+        position: relative;
+        padding: 10px 0px;
+    }
+        .main .filter-container .timeInterval{
+            width: 150px;
+            cursor: pointer;
+            display: inline;
+        }
+        .main .filter-container .searchBy{
+            width: 150px;
+            cursor: pointer;
+            display: inline;
+        }
+        .main .filter-container .searchText{
+            width: 290px;
+            display: inline;
+        }
+        .main .filter-container .descr{
+            position: absolute;
+            left: 5px;
+            top: -13px;
+            font-size: 11px;
+            font-weight: bold;
+        }
 
 
 
@@ -405,4 +431,7 @@ nav.navbar{
         position: absolute;
         z-index: 1;
         right: -50px;
+    }
+    .printMode .filter-container .descr{
+        display: none;
     }
