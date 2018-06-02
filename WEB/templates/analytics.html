@@ -1,7 +1,8 @@
 <div class="alert" ng-class="message.class" ng-if="message.text" ng-repeat="message in messages" ng-hide="formIsShown">{{message.text}}</div>
 <div class="row">
 	<div class="col-xs-12">
-		Курс $: {{exchangeRate.USD}}, Курс €: {{exchangeRate.EUR}}
+		<div class="pull-left">Курс $: {{exchangeRate.USD}}, Курс €: {{exchangeRate.EUR}}</div>
+		<button type="button" id="printModeButton" class="btn btn-primary pull-right" ng-click="togglePrintMode()" title="Друкувати"><span class="glyphicon glyphicon-print" aria-hidden="true"></span></button>
 	</div>
 </div>
 <div class="row">

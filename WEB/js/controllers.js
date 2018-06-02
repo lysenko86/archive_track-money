@@ -1272,6 +1272,9 @@ moneyApp.controller('analyticsCtrl', function($location, $scope, messagesServ, a
 			}
 		});
 	}
+	$scope.togglePrintMode = function(){
+		printServ.togglePrintMode();
+	}
 
 	this.init();
 });
