@@ -178,6 +178,7 @@ class Actions{
             FROM `actions`
             WHERE `uid` = ? AND `type` = 'plus' AND `date` >= ? AND `date` <= ?
             GROUP BY MONTH(`date`)
+            ORDER BY NULL
         ", [$this->params['uid'], $this->params['dateFrom'], $this->params['dateTo']], false);
         $this->data['status'] = 'success';
     }
@@ -187,6 +188,7 @@ class Actions{
             FROM `actions`
             WHERE `uid` = ? AND `type` = 'minus' AND `date` >= ? AND `date` <= ?
             GROUP BY MONTH(`date`)
+            ORDER BY NULL
         ", [$this->params['uid'], $this->params['dateFrom'], $this->params['dateTo']], false);
         $this->data['status'] = 'success';
     }
