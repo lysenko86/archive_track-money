@@ -538,8 +538,7 @@ moneyApp.controller('actionsCtrl', function($location, $scope, messagesServ, act
 	$scope.getActions = function(){
 		actionsServ.getActions($scope.filter, function(data){
 			if (data.status == 'success'){
-				data.arr       = data.arr ? data.arr : [];
-				$scope.actions = data.arr;
+				$scope.actions = data.arr ? data.arr : [];
 			}
 			else{
 				messagesServ.showMessages(data.status, data.msg);
