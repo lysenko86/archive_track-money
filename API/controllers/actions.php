@@ -9,22 +9,49 @@ class Actions{
         $this->db     = &$db;
     }
     function getActions(){
-        $this->data['arr'] = $this->db->query("
-            SELECT
-                `a`.*,
-                DATE_FORMAT(`a`.`date`, '%d.%m.%Y') AS `date`,
-                IFNULL(`a1`.`title`, 'Рахунок видалений') AS `accountFrom_title`,
-                IFNULL(`a2`.`title`, 'Рахунок видалений') AS `accountTo_title`,
-                IFNULL(`c`.`title`, 'Категорія видалена') AS `category_title`
-            FROM `actions` AS `a`
-                LEFT JOIN `accounts` AS `a1` ON (`a1`.`id` = `a`.`accountFrom_id`)
-                LEFT JOIN `accounts` AS `a2` ON (`a2`.`id` = `a`.`accountTo_id`)
-                LEFT JOIN `categories` AS `c` ON (`c`.`id` = `a`.`category_id`)
-            WHERE `a`.`uid` = ?
-            ORDER BY `a`.`date` DESC, `a`.`id` DESC
-            LIMIT ?,?
-        ", [$this->params['uid'], $this->params['from'], $this->params['count']], false);
-        $this->data['status'] = 'success';
+        if (!$this->params['timeInterval'] || !$this->params['start'] || !preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $this->params['start'])){
+            $this->data['status'] = 'error';
+            $this->data['msg']    = 'Помилка! Не коректний відрізок часу!';
+        }
+        else{
+            $year  = substr($this->params['start'], 0, 4);
+            $month = substr($this->params['start'], 5, 2);
+            $day   = substr($this->params['start'], 8, 2);
+            switch ($this->params['timeInterval']){
+                case 'day': $timeInterval = " AND `a`.`date` > '".date("Y-m-d", mktime(0, 0, 0, $month, $day - 1, $year))."'"; break;
+                case 'week': $timeInterval = " AND `a`.`date` > '".date("Y-m-d", mktime(0, 0, 0, $month, $day - 7, $year))."'"; break;
+                case 'month': $timeInterval = " AND `a`.`date` > '".date("Y-m-d", mktime(0, 0, 0, $month - 1, $day, $year))."'"; break;
+                case 'year': $timeInterval = " AND `a`.`date` > '".date("Y-m-d", mktime(0, 0, 0, $month, $day, $year - 1))."'"; break;
+                case 'all': $timeInterval = ''; break;
+            }
+            $timeInterval = " AND `a`.`date` <= '{$this->params['start']}'$timeInterval";
+            $searchBy = '';
+            if ($this->params['searchBy']){
+                $searchBy = explode('-', $this->params['searchBy']);
+                if ($searchBy[0] == 'category'){
+                    $searchBy = " AND `a`.`category_id` = '{$searchBy[1]}'";
+                }
+                elseif ($searchBy[0] == 'account'){
+                    $searchBy = " AND (`a`.`accountFrom_id` = '{$searchBy[1]}' OR `a`.`accountTo_id` = '{$searchBy[1]}')";
+                }
+            }
+            $searchText = $this->params['searchText'] ? " AND `a`.`description` LIKE '%{$this->params['searchText']}%'" : '';
+            $this->data['arr'] = $this->db->query("
+                SELECT
+                    `a`.*,
+                    DATE_FORMAT(`a`.`date`, '%d.%m.%Y') AS `date`,
+                    IFNULL(`a1`.`title`, 'Рахунок видалений') AS `accountFrom_title`,
+                    IFNULL(`a2`.`title`, 'Рахунок видалений') AS `accountTo_title`,
+                    IFNULL(`c`.`title`, 'Категорія видалена') AS `category_title`
+                FROM `actions` AS `a`
+                    LEFT JOIN `accounts` AS `a1` ON (`a1`.`id` = `a`.`accountFrom_id`)
+                    LEFT JOIN `accounts` AS `a2` ON (`a2`.`id` = `a`.`accountTo_id`)
+                    LEFT JOIN `categories` AS `c` ON (`c`.`id` = `a`.`category_id`)
+                WHERE `a`.`uid` = ?$timeInterval$searchBy$searchText
+                ORDER BY `a`.`date` DESC, `a`.`id` DESC
+            ", [$this->params['uid']], false);
+            $this->data['status'] = 'success';
+        }
     }
     function getAction(){
         $this->data['arr'] = $this->db->query(
