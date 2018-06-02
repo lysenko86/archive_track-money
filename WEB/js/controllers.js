@@ -872,7 +872,6 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, messagesServ, bud
 			want: 'Не обов\'язкові витрати',
 			save: 'Збережені кошти'
 		};
-		$scope.catPercent = 0;
 		let obj        = new Date();
 		var activeYear = obj.getFullYear();
 		$scope.years   = [activeYear-1, activeYear, activeYear+1];
