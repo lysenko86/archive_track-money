@@ -53,7 +53,22 @@
                 <div class="col col-20 text-center">Факт</div>
                 <div class="col col-20 text-center">Решта</div>
             </div>
-            <div class="row tableRow" ng-repeat="item in budget.categories" ng-if="item.type=='minus'">
+            <div class="row tableRow under-head"><div class="col">{{cats.need}} = {{budget.catsNeedPercent}}%</div></div>
+            <div class="row tableRow" ng-repeat="item in budget.categories" ng-if="item.type=='minus' && item.cat=='need'">
+                <div class="col col-40">{{item.category_title}}</div>
+                <div class="col col-20">{{item.plan}}</div>
+                <div class="col col-20">{{item.fact}}</div>
+                <div class="col col-20{{item.plan - item.fact < 0 ? ' colorOverMinus' : '' }}">{{item.plan - item.fact < 0 ? '-' : ''}}{{mathAbs(item.plan - item.fact)}}</div>
+            </div>
+            <div class="row tableRow under-head"><div class="col">{{cats.want}} = {{budget.catsWantPercent}}%</div></div>
+            <div class="row tableRow" ng-repeat="item in budget.categories" ng-if="item.type=='minus' && item.cat=='want'">
+                <div class="col col-40">{{item.category_title}}</div>
+                <div class="col col-20">{{item.plan}}</div>
+                <div class="col col-20">{{item.fact}}</div>
+                <div class="col col-20{{item.plan - item.fact < 0 ? ' colorOverMinus' : '' }}">{{item.plan - item.fact < 0 ? '-' : ''}}{{mathAbs(item.plan - item.fact)}}</div>
+            </div>
+            <div class="row tableRow under-head"><div class="col">{{cats.save}} = {{budget.catsSavePercent}}%</div></div>
+            <div class="row tableRow" ng-repeat="item in budget.categories" ng-if="item.type=='minus' && item.cat=='save'">
                 <div class="col col-40">{{item.category_title}}</div>
                 <div class="col col-20">{{item.plan}}</div>
                 <div class="col col-20">{{item.fact}}</div>

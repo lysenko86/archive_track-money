@@ -1,5 +1,37 @@
 <ion-view view-title="Транзакції">
     <ion-content ng-class="{ionViewActions: true, headerMarginTop: true, marginForAccountsTop: accountsPanel.length}">
+        <div class="row">
+            <div class="col col-50 filter-container">
+                <label class="item item-select">
+                    <select ng-model="filter.timeInterval" ng-change="getActions()">
+                        <option value='day'>День</option>
+                        <option value='week'>Тиждень</option>
+                        <option value='month'>Місяць</option>
+                        <option value='year'>Рік</option>
+                        <option value='all'>Весь час</option>
+                    </select>
+                </label>
+                <span class="descr">Відрізок часу</span>
+            </div>
+            <div class="col col-50 filter-container">
+                <label class="item item-select">
+                    <select ng-model="filter.searchBy" ng-change="getActions()">
+                        <option value=''>- Не вибрано -</option>
+                        <option value='account-{{item.id}}' ng-repeat="item in accounts">Рахунок "{{item.title}}</option>
+                        <option value='category-{{item.id}}' ng-repeat="item in categories" class="{{item.type == 'plus' ? 'colorPlus' : 'colorMinus'}}">Категорія "{{item.title}}"</option>
+                    </select>
+                </label>
+                <span class="descr">Рахунок / Категорія</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col filter-container">
+                <label class="item item-input">
+                    <input type="text" ng-model="filter.searchText" ng-change="getActions()" placeholder="Коментар..." />
+                </label>
+                <span class="descr">Текст коментаря</span>
+            </div>
+        </div>
         <div class="emptyListText" ng-if="!actions.length">Немає записів</div>
         <ion-list ng-if="actions.length">
             <ion-item class="listItem" ng-repeat="item in actions">
@@ -15,10 +47,5 @@
                 <div class="row rowDescr" ng-show="item.description">{{item.description}}</div>
             </ion-item>
         </ion-list>
-        <div class="row" ng-if="actions.length">
-        	<div class="col">
-        		<button class="button button-block button-positive" ng-click="getActions()" ng-show="isShowMoreButton">Показати щє 20 транзакцій</button>
-        	</div>
-        </div>
     </ion-content>
 </ion-view>

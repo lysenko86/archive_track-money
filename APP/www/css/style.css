@@ -144,6 +144,25 @@ ion-header-bar.bar.bar-header .title{
     padding-left: 10px;
     padding-right: 10px;
 }
+.ionViewActions .filter-container{
+    position: relative;
+    margin-top: 10px;
+}
+.ionViewActions .filter-container .descr{
+    position: absolute;
+    left: 5px;
+    top: -13px;
+    font-size: 11px;
+    font-weight: bold;
+}
+.ionViewActions .filter-container select{
+    max-width: none;
+    width: 100%;
+    direction: ltr;
+}
+.ionViewActionForm select{
+    direction: ltr;
+}
 
 
 
@@ -177,20 +196,63 @@ ion-header-bar.bar.bar-header .title{
 }
 .ionViewBudgets .select-years select, .ionViewBudgets .select-months select{
     max-width: none;
-    left: 0px;
     width: 100%;
+    direction: ltr;
 }
 .ionViewBudgets .totalSum{
     font-weight: bold;
 }
-.ionViewBudgets .tableHead{
+.ionViewBudgets .tableHead, .ionViewAnalytics .tableHead{
     background-color: #387ef5;
     color: #fff;
     padding-top: 5px;
 }
-.ionViewBudgets .tableRow{
+.ionViewBudgets .tableRow, .ionViewAnalytics .tableRow{
     border-bottom: 1px solid #eee;
     margin-top: 5px;
+}
+.ionViewBudgets .under-head{
+    font-weight: bold;
+}
+
+
+
+
+
+.ionViewAnalytics{}
+.ionViewAnalytics .progress{
+    margin-top: 30px;
+    height: 30px;
+}
+.ionViewAnalytics .progress .progress-bar{
+    line-height: 30px;
+    font-weight: bold;
+}
+.ionViewAnalytics .progress span{
+    position: absolute;
+    margin-top: -20px;
+    font-weight: bold;
+}
+.ionViewAnalytics .progress .progress-bar .goalProgress{
+    padding: 0;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+}
+.ionViewAnalytics .progress .progress-bar .progressBar{
+    text-align: center;
+    background-color: #337ab7;
+    font-size: 14px;
+    letter-spacing: normal;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    transition: width .6s ease;
+    padding: 0;
+    height: 30px;
+    min-width: 4em;
+}
+.ionViewAnalytics .gisto-title{
+    font-size: 16px;
+    font-weight: bold;
 }
 
 
@@ -246,6 +308,9 @@ ion-header-bar.bar.bar-header .title{
 .ionViewPostForm{}
 .ionViewPostForm textarea{
     height: 80px;
+}
+.ionViewPostForm select{
+    direction: ltr;
 }
 
 

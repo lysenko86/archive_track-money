@@ -53,6 +53,18 @@ moneyApp.config(function($stateProvider, $urlRouterProvider, localStorageService
         templateUrl: 'templates/budgets.html',
         controller: 'budgetsCtrl'
     })
+    .state('properties', {
+        url: '/properties',
+        cache: false,
+        templateUrl: 'templates/properties.html',
+        controller: 'propertiesCtrl'
+	})
+    .state('analytics', {
+        url: '/analytics',
+        cache: false,
+        templateUrl: 'templates/analytics.html',
+        controller: 'analyticsCtrl'
+	})
     .state('forum', {
         url: '/forum',
         cache: false,

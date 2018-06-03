@@ -1,0 +1,8 @@
+<ion-view view-title="Майно">
+    <ion-content ng-class="{ionViewProperties: true, headerMarginTop: true, marginForAccountsTop: accountsPanel.length}">
+        <div class="emptyListText" ng-if="!properties.length">Немає записів</div>
+        <ion-list ng-if="properties.length">
+            <ion-item ng-repeat="item in properties">{{item.title}}<span class="item-note{{item.price >= 0 ? ' colorPlus' : ' colorMinus'}}">{{item.price}}</span></ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

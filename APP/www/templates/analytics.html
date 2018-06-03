@@ -1,0 +1,111 @@
+<ion-view view-title="Аналітика">
+    <ion-content ng-class="{ionViewAnalytics: true, headerMarginTop: true, marginForAccountsTop: accountsPanel.length}">
+        <div class="row"><div class="col">Курс $: {{exchangeRate.USD}}, Курс €: {{exchangeRate.EUR}}</div></div>
+        <div class="row">
+            <div class="col">
+        		<h4><strong>Активи</strong></h4>
+                <div class="emptyListText" ng-if="!properties.length && !accounts.length">Немає записів</div>
+                <div ng-if="properties.length || accounts.length">
+                    <div class="row tableHead">
+                        <div class="col col-40 text-center">Назва</div>
+                        <div class="col col-20 text-center">Ціна, грн</div>
+                        <div class="col col-20 text-center">Ціна, $</div>
+                        <div class="col col-20 text-center">Ціна, €</div>
+                    </div>
+                    <div class="row tableRow" ng-repeat="item in properties" ng-if="item.price >= 0">
+                        <div class="col col-40 colorPlus">{{item.title}}</div>
+                        <div class="col col-20 colorPlus">{{item.price.replace('.00', '')}}</div>
+                        <div class="col col-20 colorPlus">{{mathRound(item.price / exchangeRate.USD)}}</div>
+                        <div class="col col-20 colorPlus">{{mathRound(item.price / exchangeRate.EUR)}}</div>
+                    </div>
+                    <div class="row tableRow" ng-repeat="item in accounts" ng-if="item.balance >= 0">
+                        <div class="col col-40 colorPlus">{{item.title}}</div>
+                        <div class="col col-20 colorPlus">{{item.balance.replace('.00', '')}}</div>
+                        <div class="col col-20 colorPlus">{{mathRound(item.balance / exchangeRate.USD)}}</div>
+                        <div class="col col-20 colorPlus">{{mathRound(item.balance / exchangeRate.EUR)}}</div>
+                    </div>
+                    <div class="row tableRow" ng-if="properties.length || accounts.length">
+                        <div class="col col-40"><strong>Всього</strong></div>
+                        <div class="col col-20"><strong>{{totalPlus}}</strong></div>
+                        <div class="col col-20"><strong>{{mathRound(totalPlus / exchangeRate.USD)}}</strong></div>
+                        <div class="col col-20"><strong>{{mathRound(totalPlus / exchangeRate.EUR)}}</strong></div>
+                    </div>
+                </div>
+        	</div>
+        </div>
+        <div class="row">
+            <div class="col">
+        		<h4><strong>Пасиви</strong></h4>
+                <div class="emptyListText" ng-if="!properties.length && !accounts.length">Немає записів</div>
+                <div ng-if="properties.length || accounts.length">
+                    <div class="row tableHead">
+                        <div class="col col-40 text-center">Назва</div>
+                        <div class="col col-20 text-center">Ціна, грн</div>
+                        <div class="col col-20 text-center">Ціна, $</div>
+                        <div class="col col-20 text-center">Ціна, €</div>
+                    </div>
+                    <div class="row tableRow" ng-repeat="item in properties" ng-if="item.price < 0">
+                        <div class="col col-40 colorMinus">{{item.title}}</div>
+                        <div class="col col-20 colorMinus">{{item.price.replace('.00', '')}}</div>
+                        <div class="col col-20 colorMinus">{{mathRound(item.price / exchangeRate.USD)}}</div>
+                        <div class="col col-20 colorMinus">{{mathRound(item.price / exchangeRate.EUR)}}</div>
+                    </div>
+                    <div class="row tableRow" ng-repeat="item in accounts" ng-if="item.balance < 0">
+                        <div class="col col-40 colorMinus">{{item.title}}</div>
+                        <div class="col col-20 colorMinus">{{item.balance.replace('.00', '')}}</div>
+                        <div class="col col-20 colorMinus">{{mathRound(item.balance / exchangeRate.USD)}}</div>
+                        <div class="col col-20 colorMinus">{{mathRound(item.balance / exchangeRate.EUR)}}</div>
+                    </div>
+                    <div class="row tableRow" ng-if="properties.length || accounts.length">
+                        <div class="col col-40"><strong>Всього</strong></div>
+                        <div class="col col-20"><strong>{{totalMinus}}</strong></div>
+                        <div class="col col-20"><strong>{{mathRound(totalMinus / exchangeRate.USD)}}</strong></div>
+                        <div class="col col-20"><strong>{{mathRound(totalMinus / exchangeRate.EUR)}}</strong></div>
+                    </div>
+                </div>
+        	</div>
+        </div>
+        <div class="row"><div class="col"><h4><strong>Капітал складає: <span class="{{totalPlus - mathAbs(totalMinus) >=0 ? 'colorPlus' : 'colorMinus'}}">{{totalPlus - mathAbs(totalMinus)}}грн (${{mathRound((totalPlus - mathAbs(totalMinus)) / exchangeRate.USD)}}, €{{mathRound((totalPlus - mathAbs(totalMinus)) / exchangeRate.EUR)}})</span></strong></h4></div></div>
+        <div class="row">
+            <div class="col">
+                <h4><strong>Фінансові цілі</strong></h4>
+                <div class="emptyListText" ng-if="!goals.length">Немає записів</div>
+                <div class="progress" ng-repeat="goal in goals">
+                    <span>{{goal.title}} ({{goal.paid}}грн / {{goal.goal}}грн)</span>
+                    <div id="goal-{{goal.id}}" class="progress-bar"></div>
+        		</div>
+            </div>
+        </div>
+        <div class="row"><div class="col"><h4><strong>Динаміка руху коштів</strong></h4></div></div>
+        <div class="row">
+            <div class="col">
+                <span class="gisto-title">Доходи</span>
+        		<div id="gisto-income" class="graph"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span class="gisto-title">Витрати</span>
+        		<div id="gisto-cost" class="graph"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span class="gisto-title">Активи</span>
+        		<div id="gisto-actyvy" class="graph"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span class="gisto-title">Пасиви</span>
+        		<div id="gisto-pasyvy" class="graph"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span class="gisto-title">Капітал</span>
+        		<div id="gisto-capital" class="graph"></div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

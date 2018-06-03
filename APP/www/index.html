@@ -7,6 +7,8 @@
         <link rel="manifest" href="manifest.json">
         <link href="lib/ionic/css/ionic.css" rel="stylesheet">
         <link href="css/loader.css" rel="stylesheet">
+        <link href="lib/progressbar/css/goalProgress.css" rel="stylesheet">
+        <link href="lib/gistograma/css/tufte-graph.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
 
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
@@ -17,6 +19,11 @@
         <script src="lib/ionic/js/ionic.bundle.js"></script>
         <script src="lib/ionic/js/ionic-datepicker.bundle.min.js"></script>
         <script src="lib/angular-local-storage.min.js"></script>
+        <script src="lib/jquery/jquery-3.1.0.min.js"></script>
+        <script src="lib/progressbar/js/goalProgress.min.js"></script>
+        <script src="lib/gistograma/js/raphael.js"></script>
+    	<script src="lib/gistograma/js/jquery.enumerable.js"></script>
+    	<script src="lib/gistograma/js/jquery.tufte-graph.js"></script>
         <style>
             .ionic_datepicker_popup .popup-body .selected_date_full{
                 background-color: #678c40;
@@ -68,7 +75,9 @@
                         <ion-item href="#/home" menu-close>Головна</ion-item>
                         <ion-item href="#/actions" menu-close>Транзакції</ion-item>
                         <ion-item href="#/accounts" menu-close>Рахунки</ion-item>
+                        <ion-item href="#/properties" menu-close>Майно</ion-item>
                         <ion-item href="#/budgets" menu-close>Бюджет</ion-item>
+                        <ion-item href="#/analytics" menu-close>Аналітика</ion-item>
                         <ion-item href="#/forum" menu-close>Форум</ion-item>
                         <a class="button button-block buttonMoney" href="https://www.liqpay.com/ru/checkout/trackmoney" target="_blank" title="Ну хоть 10 гривень киньте!">Закинуть грошенят :)</a>
                     </ion-list>

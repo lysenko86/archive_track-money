@@ -55,13 +55,18 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
 			sum: '',
 			description: ''
 		};
+        $scope.filter = {
+			start: $scope.dateToAPI($scope.getToday()),
+			timeInterval: 'day',
+			searchBy: '',
+			searchText: ''
+		};
         $scope.actions = $scope.categories = $scope.accounts = [];
         $scope.types   = {
 			plus: 'Доходи',
 			minus: 'Витрати',
 			move: 'Переказ'
 		};
-        $scope.isShowMoreButton = true;
         $scope.modal = false;
         categoriesServ.getCategories(function(data){
             if (data.status == 'success'){
@@ -133,12 +138,9 @@ moneyApp.controller('actionsCtrl', function($location, $scope, $rootScope, $stat
         });
     };
     $scope.getActions = function(data){
-		actionsServ.getActions($scope.actions.length, 20, function(data){
+		actionsServ.getActions($scope.filter, function(data){
 			if (data.status == 'success'){
-				$scope.actions = $scope.actions.concat(data.arr ? data.arr : []);
-				if (!data.arr.length){
-					$scope.isShowMoreButton = false;
-				}
+				$scope.actions = data.arr ? data.arr : [];
 			}
 			else{
 				$ionicPopup.alert({title:'Помилка!', template: data.msg});
@@ -288,6 +290,11 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, $rootScope, $ioni
 		if (!$scope.isAuth){
 			$location.url('home');
 		}
+        $scope.cats = {
+			need: 'Обов\'язкові витрати',
+			want: 'Не обов\'язкові витрати',
+			save: 'Збережені кошти'
+		};
         let obj        = new Date();
 		var activeYear = obj.getFullYear();
 		$scope.years   = [String(activeYear-1), String(activeYear), String(activeYear+1)];
@@ -318,8 +325,16 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, $rootScope, $ioni
 			else{
 				$scope.budget.minusPlan = $scope.budget.minusPlan*1 + $scope.budget.categories[i].plan*1;
 				$scope.budget.minusFact = $scope.budget.minusFact*1 + $scope.budget.categories[i].fact*1;
+                switch ($scope.budget.categories[i].cat){
+					case 'need': $scope.budget.catsNeedPercent = $scope.budget.catsNeedPercent*1 + $scope.budget.categories[i].fact*1; break;
+					case 'want': $scope.budget.catsWantPercent = $scope.budget.catsWantPercent*1 + $scope.budget.categories[i].fact*1; break;
+					case 'save': $scope.budget.catsSavePercent = $scope.budget.catsSavePercent*1 + $scope.budget.categories[i].fact*1; break;
+				}
 			}
 		}
+        $scope.budget.catsNeedPercent = Math.round($scope.budget.catsNeedPercent * 100 / $scope.budget.minusFact*1) || 0;
+		$scope.budget.catsWantPercent = Math.round($scope.budget.catsWantPercent * 100 / $scope.budget.minusFact*1) || 0;
+		$scope.budget.catsSavePercent = Math.round($scope.budget.catsSavePercent * 100 / $scope.budget.minusFact*1) || 0;
 		$scope.budget.plusRest    = $scope.budget.plusPlan - $scope.budget.plusFact;
 		$scope.budget.minusRest   = $scope.budget.minusPlan - $scope.budget.minusFact;
 		$scope.budget.balancePlan = $scope.budget.plusPlan - $scope.budget.minusPlan;
@@ -479,6 +494,186 @@ moneyApp.controller('forumCtrl', function($location, $scope, $rootScope, $state,
 				}
             });
 		}
+	}
+
+	this.init();
+});
+
+
+
+moneyApp.controller('propertiesCtrl', function($location, $scope, $rootScope, $ionicPopup, propertiesServ, localStorageService){
+    this.init = function(){
+        $rootScope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
+		$scope.properties = [];
+		$scope.getProperties();
+	}
+    $scope.getProperties = function(){
+		propertiesServ.getProperties(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr ? data.arr : [];
+				$scope.properties = data.arr;
+			}
+			else{
+                $ionicPopup.alert({title:'Помилка!', template: data.msg});
+			}
+		});
+    }
+
+	this.init();
+});
+
+
+
+moneyApp.controller('analyticsCtrl', function($location, $scope, $rootScope, $ionicPopup, analyticsServ, propertiesServ, accountsServ, categoriesServ, localStorageService){
+    this.init = function(){
+		$rootScope.isAuth = localStorageService.get('token');
+		if (!$scope.isAuth){
+			$location.url('home');
+		}
+        $scope.months = ["Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"];
+		analyticsServ.getExchangeRateFromNBU(function(data){
+			$scope.exchangeRate = data;
+		});
+        $scope.mathRound  = window.Math.round;
+		$scope.mathAbs    = window.Math.abs;
+		$scope.properties = $scope.accounts = $scope.goals = [];
+		$scope.totalPlus = $scope.totalMinus = 0;
+        propertiesServ.getProperties(function(data){
+			if (data.status == 'success'){
+				$scope.properties = data.arr || [];
+				$scope.properties.map(item => {
+					if (item.price >= 0){
+						$scope.totalPlus += item.price * 1;
+					} else {
+						$scope.totalMinus += item.price * 1;
+					}
+				});
+			}
+			else{
+				$ionicPopup.alert({title:'Помилка!', template: data.msg});
+			}
+		});
+        accountsServ.getAccounts(function(data){
+			if (data.status == 'success'){
+				$scope.accounts = data.arr || [];
+				$scope.accounts.map(item => {
+					if (item.balance >= 0){
+						$scope.totalPlus += item.balance * 1;
+					} else {
+						$scope.totalMinus += item.balance * 1;
+					}
+				});
+			} else {
+				$ionicPopup.alert({title:'Помилка!', template: data.msg});
+			}
+		});
+        categoriesServ.getGoals(function(data){
+			if (data.status == 'success'){
+				$scope.goals = data.arr || [];
+                $(function(){
+                    $scope.goals.map(function(goal){
+                        $('#goal-' + goal.id).goalProgress({goalAmount: 100, currentAmount: goal.paidPercent, textAfter: '%'});
+                    });
+                });
+			} else {
+				$ionicPopup.alert({title:'Помилка!', template: data.msg});
+			}
+		});
+        analyticsServ.getIncomeByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.value, {label: $scope.months[--item.month]}]);
+				});
+				if (gistoData.length){
+					$('#gisto-income').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7']
+					});
+				}
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+		analyticsServ.getCostByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.value, {label: $scope.months[--item.month]}]);
+				});
+				if (gistoData.length){
+					$('#gisto-cost').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7']
+					});
+				}
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+		analyticsServ.getActiveByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.active_sum, {label: $scope.months[--item.month]}, item.active_comment]);
+				});
+				if (gistoData.length){
+					$('#gisto-actyvy').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7'],
+						barLabel: function(index) { return '<span title="' + gistoData[index][2] + '">' + $.tufteBar.formatNumber(this[0]) + '</span>'; }
+					});
+				}
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+		analyticsServ.getPassiveByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.passive_sum, {label: $scope.months[--item.month]}, item.passive_comment]);
+				});
+				if (gistoData.length){
+					$('#gisto-pasyvy').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7'],
+						barLabel: function(index) { return '<span title="' + gistoData[index][2] + '">' + $.tufteBar.formatNumber(this[0]) + '</span>'; }
+					});
+				}
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
+		analyticsServ.getCapitalByMonth(function(data){
+			if (data.status == 'success'){
+				data.arr = data.arr || [];
+				let gistoData = [];
+				data.arr.map(function(item, index){
+					gistoData.push([item.sum, {label: $scope.months[--item.month]}]);
+				});
+				if (gistoData.length){
+					$('#gisto-capital').tufteBar({
+						data: gistoData,
+						axisLabel: function(index) { return this[1].label },
+						colors: ['#337ab7'],
+					});
+				}
+			} else {
+				messagesServ.showMessages(data.status, data.msg);
+			}
+		});
 	}
 
 	this.init();

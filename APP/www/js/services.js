@@ -101,10 +101,12 @@ moneyApp.service('forumServ', function(requestServ){
 
 
 moneyApp.service('actionsServ', function(requestServ){
-    this.getActions = function(from, count, cb){
+    this.getActions = function(filter, cb){
         requestServ.sendRequest('get', 'getActions', {
-            from:  from,
-            count: count
+            start:        filter.start,
+            timeInterval: filter.timeInterval,
+            searchBy:     filter.searchBy,
+            searchText:   filter.searchText
         }, cb);
     }
     this.getAction = function(id, cb){
@@ -137,6 +139,9 @@ moneyApp.service('categoriesServ', function(requestServ){
     this.getCategories = function(cb){
         requestServ.sendRequest('get', 'getCategories', {}, cb);
     }
+    this.getGoals = function(cb){
+        requestServ.sendRequest('get', 'getGoals', {}, cb);
+    }
 });
 
 
@@ -167,6 +172,86 @@ moneyApp.service('budgetsServ', function(requestServ){
         requestServ.sendRequest('get', 'getBudget', {
             month: budget.month,
             year:  budget.year
+        }, cb);
+    }
+});
+
+
+
+moneyApp.service('propertiesServ', function(requestServ){
+    this.getProperties = function(cb){
+        requestServ.sendRequest('get', 'getProperties', {}, cb);
+    }
+});
+
+
+
+moneyApp.service('analyticsServ', function($http, requestServ){
+    this.getExchangeRateFromNBU = function(cb){
+        angular.element(document).find('#loaderPage').css('display', 'flex');
+        $http.get('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json')
+            .success(function(data){
+                let rate = {};
+                data.map(item => {
+                    if (item.cc == 'USD' || item.cc == 'EUR'){
+                        rate[item.cc] = Math.round(item.rate * 100) / 100;
+                    }
+                });
+                requestServ.getResponse(rate, cb);
+            })
+            .error(function(error, status){
+                requestServ.getResponse('requestError', cb);
+            });
+    }
+    this.getDatesToFrom = function(years){
+        let dateFrom = new Date();
+        let dateTo = new Date();
+        dateTo.setDate(0);
+        dateFrom.setDate(1);
+        dateFrom.setMonth(dateTo.getMonth() + 1);
+        dateFrom.setFullYear(dateTo.getFullYear() - (years ? years : 1));
+        let dateToMonth = (dateTo.getMonth() + 1 < 10 ? '0' : '') + (dateTo.getMonth() + 1);
+        let dateFromMonth = (dateFrom.getMonth() + 1 < 10 ? '0' : '') + (dateFrom.getMonth() + 1);
+        let dateToDay = (dateTo.getDate() < 10 ? '0' : '') + dateTo.getDate();
+        let dateFromDay = (dateFrom.getDate() < 10 ? '0' : '') + dateFrom.getDate();
+        return {
+            dateFrom: dateFrom.getFullYear() + '-' + dateFromMonth + '-' + dateFromDay,
+            dateTo: dateTo.getFullYear() + '-' + dateToMonth + '-' + dateToDay
+        }
+    }
+    this.getIncomeByMonth = function(cb){
+        let dates = this.getDatesToFrom();
+        requestServ.sendRequest('get', 'getIncomeByMonth', {
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
+        }, cb);
+    }
+    this.getCostByMonth = function(cb){
+        let dates = this.getDatesToFrom();
+        requestServ.sendRequest('get', 'getCostByMonth', {
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
+        }, cb);
+    }
+    this.getActiveByMonth = function(cb){
+        let dates = this.getDatesToFrom();
+        requestServ.sendRequest('get', 'getActiveByMonth', {
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
+        }, cb);
+    }
+    this.getPassiveByMonth = function(cb){
+        let dates = this.getDatesToFrom();
+        requestServ.sendRequest('get', 'getPassiveByMonth', {
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
+        }, cb);
+    }
+    this.getCapitalByMonth = function(cb){
+        let dates = this.getDatesToFrom(2);
+        requestServ.sendRequest('get', 'getCapitalByMonth', {
+            dateFrom: dates.dateFrom,
+            dateTo: dates.dateTo
         }, cb);
     }
 });
