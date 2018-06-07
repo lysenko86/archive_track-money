@@ -160,9 +160,6 @@ ion-header-bar.bar.bar-header .title{
     width: 100%;
     direction: ltr;
 }
-.ionViewActionForm select{
-    direction: ltr;
-}
 
 
 

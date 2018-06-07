@@ -317,6 +317,7 @@ moneyApp.controller('budgetsCtrl', function($location, $scope, $rootScope, $ioni
 	}
     $scope.calculateTotalSum = function(){
 		$scope.budget.plusPlan = $scope.budget.plusFact = $scope.budget.plusRest = $scope.budget.minusPlan = $scope.budget.minusFact = $scope.budget.minusRest = $scope.budget.balancePlan = $scope.budget.balanceFact = '';
+        $scope.budget.catsNeedPercent = $scope.budget.catsWantPercent = $scope.budget.catsSavePercent = '';
 		for (var i=0; i<$scope.budget.categories.length; i++){
 			if ($scope.budget.categories[i].type == 'plus'){
 				$scope.budget.plusPlan = $scope.budget.plusPlan*1 + $scope.budget.categories[i].plan*1;

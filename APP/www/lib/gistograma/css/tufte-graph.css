@@ -11,8 +11,9 @@
   text-align: center;
   padding: 5px 0px;
   color: #000;
-  font-size: 12px;
+  font-size: 10px;
   cursor: pointer;
+  font-family: Arial, sans-serif;
 }
 .graph .axis-label{
     margin-top: -20px;
