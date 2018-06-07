@@ -851,6 +851,7 @@ moneyApp.controller('accountsCtrl', function($location, $scope, messagesServ, ac
 					}
 					accountsServ.getAccountsPanel();
 				}
+				$scope.formIsShown = false;
 				messagesServ.showMessages(data.status, data.msg);
 			});
 		}
